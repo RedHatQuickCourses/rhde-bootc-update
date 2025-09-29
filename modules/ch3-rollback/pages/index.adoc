@@ -1,0 +1,14 @@
+= Replacing the System Image of Image Mode Systems
+
+Goal::
+
+Repurpose RHEL for edge devices with image mode for RHEL by replacing their new bootc container images.
+
+WARNING: Not started yet
+
+== Introduction
+
+This chapter describes the usage of the bootc utility to replace the system image in a image mode systems over the network.
+
+You will see that there is not real difference between updating and repurposing an image mode system.
+There could be no relation between the current system image and the new system image being deployed as an update, which has interesting implications on how updates affect system configuration and application data.

@@ -1,0 +1,19 @@
+= Introduction to Image Mode Updates
+
+Goal::
+
+Describe how updates of image mode systems differ from updates to package mode systems.
+
+WARNING: Not started yet
+
+== Introduction
+
+This course, like the https://redhatquickcourses.github.io/rhde-bootc-provision/[previous course] of the image mode with Red Hat Device Edge quick course series, keeps focus on operations, but switches from day-1 to day-2 operations.
+It shows how to perform updates of image mode systems, how the overall process differs from updates to package mode systems, and how day-2 operations may impact bootc container image design and implementation.
+
+This initial chapter review the classroom environment, which you could be reusing from previous courses, or create anew, and presents the high-level process and considerations for updating image mode systems.
+
+The https://redhatquickcourses.github.io/rhde-bootc-build/[first course] of the image mode with Red Hat Device Edge quick course series focused on building bootc container images using Podman and them performing system testing using local VMs, so developers could release their new bootc containers with confidence that they are ready for use by production systems.
+
+The https://redhatquickcourses.github.io/rhde-bootc-provision/[second course] of the image mode with Red Hat Device Edge quick course series focused on provisioning devices from system images created with image mode for RHEL, that is, bootc container images, at scale and by using workflows that do not require a steep learning curve from operation technology (OT) personnel.
+
