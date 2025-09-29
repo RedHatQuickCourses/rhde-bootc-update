@@ -1,0 +1,27 @@
+:time_estimate: 7
+
+= Updates to Image Mode Systems
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Update edge devices by using the bootc utility.
+
+
+WARNING: Not started yet
+
+== How the booc utility applies updates to image mode systems.
+
+Lorem ipsum
+
+== The booc update timer service
+
+Lorem ipsum
+
+== Application and configuration data during image updates.
+
+Lorem ipsum
+
+== What's next
+
+Lorem ipsum

@@ -1,0 +1,204 @@
+:time_estimate: 5
+:httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: 75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+
+= Lab: Update Edge Devices from a Container Registry
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Update edge devices, manually and automatically, from new bootc container images published in an OCI container registry.
+
+WARNING: Work in progress
+
+== Before you Begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+== Instructions
+
+You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and them update that system to a new version of its bootc container image.
+After performing the update, you will verify that configuration and application data were preserved by the update.
+
+[ REVIEW PREVIOUS SUMMARY WHEN DONE ]
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities.
+
+.. If needed, create a local clone of the sample code repository of this course, but do NOT enter its directory.
+Stay on your home directory to start this lab.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *git clone https://github.com/RedHatQuickCourses/rhde-bootc-samples.git*
+Cloning into 'rhde-bootc-samples'...
+...
+--
+
+.. If needed, login to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to libvirt through its session interface.
+If you do not, please perform the preparation tasks from the xref:ch1-bib:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name   State
+--------------------
+
+--
++
+NOTE: It is fine if you have some local VMs on your system, as long as there isn't a VM named `bootc-iso`.
+
+2. Access a test system/edge device and perform some day-2 configurations.
+
+.. Record hash of the current image
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Change locale (config)
+
+.. Change index.html (data)
+
+.. Try to install package, fail.
+
+.. Show bootc update service is active, and disable it
++
+[source,subs="verbatim,quotes,attributes"]
+--
+# GUESS DONT NEED THE SERVICE JUST THE TIMER
+[core@bootc-iso ~]$ sudo systemctl status bootc-fetch-apply-updates.timer
+● bootc-fetch-apply-updates.timer - Apply bootc updates
+     Loaded: loaded (/usr/lib/systemd/system/bootc-fetch-apply-updates.timer; disabled; preset: disabled)
+     Active: active (waiting) since Mon 2025-09-29 23:07:02 UTC; 12min ago
+ Invocation: 13df57a9b97344ef94172eafde177f73
+    Trigger: Tue 2025-09-30 00:13:40 UTC; 54min left
+   Triggers: ● bootc-fetch-apply-updates.service
+       Docs: man:bootc(8)
+
+Sep 29 23:07:02 bootc-iso systemd[1]: Started bootc-fetch-apply-updates.timer - Apply bootc updates.
+[core@bootc-iso ~]$ sudo systemctl cat bootc-fetch-apply-updates.timer
+# /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
+[Unit]
+Description=Apply bootc updates
+Documentation=man:bootc(8)
+ConditionPathExists=/run/ostree-booted
+
+[Timer]
+OnBootSec=1h
+# This time is relatively arbitrary and obviously expected to be overridden/changed
+OnUnitInactiveSec=8h
+# When deploying a large number of systems, it may be beneficial to increase this value to help with load on the registry.
+RandomizedDelaySec=2h
+
+[Install]
+WantedBy=timers.target
+
+# Maybe this is better, more compact?
+[core@bootc-iso ~]$ sudo systemctl show bootc-fetch-apply-updates.timer --property TimersMonotonic
+TimersMonotonic={ OnUnitInactiveUSec=8h ; next_elapse=0 }
+TimersMonotonic={ OnBootUSec=1h ; next_elapse=1h }
+[core@bootc-iso ~]$ sudo systemctl show bootc-fetch-apply-updates.timer --property NextElapseUSecMonotonic
+NextElapseUSecMonotonic=1h 6min 47.141950s
+--
+
+.. Lorem ipsum
+
+3. Build an updated bootc container image.
+
+.. Copy sample files from git repo and SSH key from previous image (temp-test-iso)
+
+.. Fix webapp by moving HTML files outside of var
+
+.. Fix also changes httpd config
+
+.. Provide a changed /var/www/index.html that says "moved" to show data from the image is ignored on updates;
+
+.. Add a package (cockpit, if we can easily change portForwards)
+
+.. Build and publish
+
+.. Lorem ipsum
+
+4. Apply the image update.
+
+.. First attempt fails, because system lacks CA cert and credentials for private registry.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc upgrade --check*
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
+$ 
+--
+
+.. Add credentials and retry check
+
+.. bootc update, notice hash of new image
+
+.. reboot
+
+.. Lorem ipsum
+
+5. Verify the effects of the update.
+
+.. Clients receive the new web app, proving new /etc from image was applied
+
+.. Old image still on the system (compare hashes with previous steps)
+
+.. Can check for updated (didn't lose credentails for private registry)
+
+.. "moved" index.html is NOT in the system (no changes to /var)
+
+.. Cannot change webapp anymore (it's now read-only)
+
+.. Locale change persists
+
+.. Lorem ipsum
+
+6. Update the test VM (because of cockpit)
+
+.. Show that cockpit is available but cannot access it.
+
+.. Stop the test VM
+
+.. Add a portForward with virt-xml
+
+.. Restart the test VM
+
+.. Show remote access to Cockpit works.
+
+.. Lorem ipsum
+
+Lorem ipsum
+
+== What's Next
+
+.. Lorem ipsum
