@@ -1,5 +1,6 @@
 :time_estimate: 5
 :httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: 75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+:httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb: f7b6046dc81cbb80e79bdfb58fcd1c17a3ab84ae47f3b21b1af384f2277d59dc
 
 = Lab: Update Edge Devices from a Container Registry
 
@@ -29,7 +30,7 @@ After performing the update, you will verify that configuration and application 
 
 [ REVIEW PREVIOUS SUMMARY WHEN DONE ]
 
-1. Prepare to start this activity by checking that you have the outcomes from previous activities.
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
 .. If needed, create a local clone of the sample code repository of this course, but do NOT enter its directory.
 Stay on your home directory to start this lab.
@@ -59,22 +60,53 @@ $ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.
 ["v1.0"]
 --
 
-.. Verify that you have access to libvirt through its session interface.
+.. Verify that you have access to the local VM by using libvirt's session interface.
+That VM will be your _test machine_.
++
 If you do not, please perform the preparation tasks from the xref:ch1-bib:s3-prereqs-lab.adoc[first lab].
 +
 [source,subs="verbatim,quotes"]
 --
 $ *virsh list --all*
- Id   Name   State
---------------------
-
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
 --
 +
-NOTE: It is fine if you have some local VMs on your system, as long as there isn't a VM named `bootc-iso`.
+NOTE: It is fine if you have other local VMs on your system.
 
-2. Access a test system/edge device and perform some day-2 configurations.
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
 
-.. Record hash of the current image
+2. Access your _test machine_ and perform day-2 configurations, which affect system settings and application data.
++
+// Move or repeat some steps to the previous lab, to validate the newly built VM is fine?
+
+.. Enter the `temp-test-iso` directory and access the test system using the SSH key in that directory.
++
+// Need the ssh-kegen -R command in the first lab, here it could be left out.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cd temp-test-iso*
+$ *ssh-keygen -R '[127.0.0.1]:8022'*
+# Host [127.0.0.1]:8022 found: line 7
+/home/student/.ssh/known_hosts updated.
+Original contents retained as /home/student/.ssh/known_hosts.old
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Record the hash of the current bootc container image of the test system.
++
+The password for the `core` user is `redhat123`.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -84,90 +116,204 @@ $ *sudo bootc status*
        Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
 --
 
-.. Change locale (config)
+.. Verify that the system is configured with UTC as its timezone and change it to reflect local settings.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=UTC
+$ *sudo timedatectl set-timezone 'America/Cancun'*
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+--
 
-.. Change index.html (data)
+.. Change the HTML files which mock a single-page web application.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cat /var/www/html/index.html*
+Misc tests of bootc images and firewalld
+$ *sudo bash -c "echo 'Hacked the webapp' > /var/www/html/index.html"*
+$ *curl 127.0.0.1*
+Hacked the webapp
+--
 
-.. Try to install package, fail.
+.. Try to install Cockpit.
++
+IMPORTANT: It will fail, but do NOT add the `--transient` option.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q cockpit*
+package cockpit is not installed
+$ *sudo yum install cockpit*
+...
+This bootc system is configured to be read-only. Pass --transient to perform this transaction in a transient overlay which will reset when the system reboots.
+Operation aborted.
+--
 
-.. Show bootc update service is active, and disable it
+.. Show bootc update service is active, and disable it to ensure you have control of when the system will apply updates.
++
+// You may find that the service (not the time) failed, if your VM is running for long enough. It's because the VM has no certs or credentials to access the private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl is-active bootc-fetch-apply-updates.timer*
+active
+$ *sudo systemctl mask bootc-fetch-apply-updates.timer*
+Created symlink '/etc/systemd/system/bootc-fetch-apply-updates.timer' → '/dev/null'.
+$ *systemctl is-active bootc-fetch-apply-updates.timer*
+failed
+--
+
+.. Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
+Open a new terminal on your _development machine_ to proceed with the next step.
+
+3. Build and publish an updated bootc container image.
+
+.. Create a new working directory, copy sample files from git repo, and copy the SSH key from the previous working directory ,
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *mkdir temp-test-update*
+$ **cp -r rhde-bootc-samples/httpd-update/* temp-test-update**
+$ **cp temp-test-iso/edge-key* temp-test-update**
+$ *cd temp-test-update*
+--
+
+.. Review the Containerfile for the updated bootc container image.
+It makes the following changes:
++
+--
+... Install and enable the Cockpit service.
+
+... Store the updated single-page web application files in the `/webapp/html` directory.
+
+... Store a placeholder file in the old location for the web application files, the `/var/www/html` directory.
+--
++
+[source,subs="verbatim,quotes"]
+--
+include::1@samples:httpd-update:example$Containerfile[]
+--
+
+.. If you prefer, you can compare the updated Containerfile with the original one for the `httpd-system` bootc container image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *diff Containerfile ../rhde-bootc-samples/httpd-system*
+4c4
+<   dnf install -y firewalld httpd cockpit && \
+---
+>   dnf install -y firewalld httpd && \
+...
+--
+
+.. Build a new bootc container image and publish it in the private registry using the same tag used for initial provisioning of your _test machine_.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
-# GUESS DONT NEED THE SERVICE JUST THE TIMER
-[core@bootc-iso ~]$ sudo systemctl status bootc-fetch-apply-updates.timer
-● bootc-fetch-apply-updates.timer - Apply bootc updates
-     Loaded: loaded (/usr/lib/systemd/system/bootc-fetch-apply-updates.timer; disabled; preset: disabled)
-     Active: active (waiting) since Mon 2025-09-29 23:07:02 UTC; 12min ago
- Invocation: 13df57a9b97344ef94172eafde177f73
-    Trigger: Tue 2025-09-30 00:13:40 UTC; 54min left
-   Triggers: ● bootc-fetch-apply-updates.service
-       Docs: man:bootc(8)
-
-Sep 29 23:07:02 bootc-iso systemd[1]: Started bootc-fetch-apply-updates.timer - Apply bootc updates.
-[core@bootc-iso ~]$ sudo systemctl cat bootc-fetch-apply-updates.timer
-# /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
-[Unit]
-Description=Apply bootc updates
-Documentation=man:bootc(8)
-ConditionPathExists=/run/ostree-booted
-
-[Timer]
-OnBootSec=1h
-# This time is relatively arbitrary and obviously expected to be overridden/changed
-OnUnitInactiveSec=8h
-# When deploying a large number of systems, it may be beneficial to increase this value to help with load on the registry.
-RandomizedDelaySec=2h
-
-[Install]
-WantedBy=timers.target
-
-# Maybe this is better, more compact?
-[core@bootc-iso ~]$ sudo systemctl show bootc-fetch-apply-updates.timer --property TimersMonotonic
-TimersMonotonic={ OnUnitInactiveUSec=8h ; next_elapse=0 }
-TimersMonotonic={ OnBootUSec=1h ; next_elapse=1h }
-[core@bootc-iso ~]$ sudo systemctl show bootc-fetch-apply-updates.timer --property NextElapseUSecMonotonic
-NextElapseUSecMonotonic=1h 6min 47.141950s
+$ *podman build -t httpd-system:v1.0.1 .*
+...
+Successfully tagged localhost/httpd-system:v1.0.1
+e1390a4dc788a24e36c7ec2da82784ce4d594665eeed9060802e59c0fcfed6c7
+$ *skopeo copy containers-storage:localhost/httpd-system:v1.0.1 docker://registry.lab.example.com:5000/httpd-system:v1.0*
+...
+Copying config e1390a4dc7 done   | 
+Writing manifest to image destination
 --
-
-.. Lorem ipsum
-
-3. Build an updated bootc container image.
-
-.. Copy sample files from git repo and SSH key from previous image (temp-test-iso)
-
-.. Fix webapp by moving HTML files outside of var
-
-.. Fix also changes httpd config
-
-.. Provide a changed /var/www/index.html that says "moved" to show data from the image is ignored on updates;
-
-.. Add a package (cockpit, if we can easily change portForwards)
-
-.. Build and publish
-
-.. Lorem ipsum
 
 4. Apply the image update.
 
-.. First attempt fails, because system lacks CA cert and credentials for private registry.
+.. Return to the terminal running an SSH session to your _test machine_ and attempt to check for the availability of updates.
 +
-[source,subs="verbatim,quotes,attributes"]
+.. It is expected to fail, because the _test machine_ was never configured with credentials and a CA root for the private registry.
+You can confirm it by attempting to log in using Podman.
++
+[source,subs="verbatim,quotes"]
 --
 $ *sudo bootc upgrade --check*
 ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
-$ 
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Error: authenticating creds for "registry.lab.example.com:5000": pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
 --
 
-.. Add credentials and retry check
+.. Copy the CA root from the privage registry, add it to the system's trusted CAs, and try again to log in to the private registry using Podman.
++
+[source,subs="verbatim,quotes"]
+--
+$ *scp student@utility:/opt/registry/certs/domain.crt*
+domain.crt
+$ *sudo cp domain.crt /etc/pki/ca-trust/source/anchors/*
+$ *sudo update-ca-trust*
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
 
-.. bootc update, notice hash of new image
+.. Checking for bootc container image updates still fails because the bootc utility does not share registry access credentials with application containers.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc update --check*
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: reading manifest v1.0 in registry.lab.example.com:5000/httpd-system: authentication required
+--
 
-.. reboot
+.. Copy the root credentials file to the location expected by the bootc utility.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo cp /run/containers/0/auth.json /etc/ostree/auth.json*
+--
 
-.. Lorem ipsum
+.. Now it works.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc update --check*
+Update available for: docker://registry.lab.example.com:5000/httpd-system:v1.0
+  Version: 10.0
+  Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+...
+--
++
+NOTE: If you get an error about "updating mtime", you can safely ignore it.
 
-5. Verify the effects of the update.
+.. Apply the update, which reboots your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc update --apply*
+...
+Rebooting system
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Wait a few moments, to give your _test machine_ time to reboot, and reconnect to it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$ 
+--
+
+5. Verify the side-effects of the update.
+
+.. The new image is the current booted image, and the previous image is still available for rolling back.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+       Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
 
 .. Clients receive the new web app, proving new /etc from image was applied
 
