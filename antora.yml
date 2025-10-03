@@ -10,5 +10,6 @@ nav:
 - modules/ch1-updates/nav.adoc
 - modules/ch2-online/nav.adoc
 - modules/ch3-rollback/nav.adoc
-- modules/ch4-transient/nav.adoc
-- modules/ch5-offline/nav.adoc
+- modules/ch4-repurpose/nav.adoc
+- modules/ch5-transient/nav.adoc
+- modules/ch6-offline/nav.adoc

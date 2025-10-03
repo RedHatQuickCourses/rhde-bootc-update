@@ -1,14 +1,13 @@
-= Replacing the System Image of Image Mode Systems
+= Rolling Back Updates on Image Mode Systems
 
 Goal::
 
-Repurpose RHEL for edge devices with image mode for RHEL by replacing their new bootc container images.
+Undo updates of RHEL for edge devices with image mode for RHEL.
 
 WARNING: Not started yet
 
 == Introduction
 
-This chapter describes the usage of the bootc utility to replace the system image in a image mode systems over the network.
+This chapter describes the usage of the bootc utility to rollback the active system image to a previous bootc container image, as in returning a system to a previously known good configuration.
 
-You will see that there is not real difference between updating and repurposing an image mode system.
-There could be no relation between the current system image and the new system image being deployed as an update, which has interesting implications on how updates affect system configuration and application data.
+Image mode systems never discard the last sucesfully booted system image. It stays in the root disk, and you can make it again the active image.

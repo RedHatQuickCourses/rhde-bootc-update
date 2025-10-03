@@ -481,7 +481,7 @@ $ *virsh start bootc-iso*
 Domain 'bootc-iso' started
 --
 
-.. Wait a few moments to give your test VM, that is, your _test machine_, to reboot.
+.. Wait a few moments to give your test VM, that is, your _test machine_, time to reboot.
 Then open a web brower on your _development machine_ and use the URL `\https://127.0.0.1:8090` to access Cockpit on your _test machine_.
 
 You sucessfully updated your _test machine_ with a new bootc container image and demonstrated that configuration changes and applicaiton data are preserved.
