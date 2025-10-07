@@ -1,6 +1,329 @@
-= Section 2
+:time_estimate: 5
 
-* Create multiple copies of this section as needed.
-* Remove any unnecessary sections or chapter pages.
-* Customize the section as appropriate.
-* Ensure that each page contains a manageable amount of content.
+= Lab: Switch Images of Image Mode Systems
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Repurpose edge devices by switching to a different bootc container image.
+
+WARNING: Work in progress
+
+== Before you Begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+NOTE: You do not need any of the outcompes from the previous two activities, and could skip them.
+But you must execute the preparation tasks from the first lab of this course.
+
+== Instructions
+
+You will switch an image mode system to a different container image, and verify how the switch affects configuration and application data.
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. If needed, create a local clone of the sample code repository of this course, but do NOT enter its directory.
+Stay on your home directory to start this lab.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *git clone https://github.com/RedHatQuickCourses/rhde-bootc-samples.git*
+Cloning into 'rhde-bootc-samples'...
+...
+--
+
+.. If needed, login to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
+That VM will be your _test machine_.
++
+If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+2. Access your _test machine_ and perform day-2 configurations, which affect system settings and application data.
+
+.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
++
+// Need the ssh-kegen -R command in the first lab, here it could be left out.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cd temp-test-iso*
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Record the hash of the current bootc container image of the test system.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Change the system time zone to a different value.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=UTC
+$ *sudo timedatectl set-timezone 'Africa/Cairo'*
+$ *timedatectl show -p Timezone*
+Timezone=Africa/Cairo
+--
+
+.. Change the default Apache HTTP index page, which mocks a single-page web application.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cat /var/www/html/index.html*
+Misc tests of bootc images and firewalld
+$ *sudo bash -c "echo 'Soon-to-be inactive webapp' > /var/www/html/index.html"*
+$ *curl 127.0.0.1*
+Soon-to-be inactive webapp
+--
+
+.. Leave the SSH session open because you will return to it shortly.
+
+3. Build and publish a bootc container image to replace the one in your _test machine_.
+
+.. Open a new terminal and create a new temporary directory for building the new container image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *mkdir temp-php-bootc*
+$ **cp -r rhde-bootc-samples/php-bootc/* temp-php-bootc**
+$ *cd temp-php-bootc*
+$ *ls*
+Containerfile  html  yum.repos.d
+$ *ls html/*
+app.php
+--
+
+.. Review the Containerfile for the new image, and notice the following:
++
+--
+... It runs PHP under an Apache HTTP Server, using its FastCGI module, to serve a simplistic PHP application which prints information about the web server it runs under.
+
+... It also creates an `index.html` file on the default document root, which should not be used, but stands in for initial application data embedded in the bootc container image.
+--
+
+.. Build and publish the bootc container image in the private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman build -t php-bootc .*
+Successfully tagged localhost/php-bootc:latest
+be3640228ea7872d099c6a7eaa6c994c3f0d48ff397f3ffbd32924b316ba58d4
+$ *skopeo copy containers-storage:localhost/php-bootc docker://registry.lab.example.com:5000/php-bootc:v1.0*
+...
+Writing manifest to image destination
+--
+
+4. Switch your _test machine_ to the new bootc container image
+
+.. Return to the terminal with an open SSH session to your _test machine_
+
+.. Verify that the VM can access the private registry by checking for available updates:
++
+[source,subs="verbatim,quotes"]
+--
+$ sudo bootc upgrade --check
+No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
+--
++
+NOTE: If you are continuing from the xref:ch3-rolback:s2-rollback-lab.adoc[previous lab], which performed a roll back operation, the `bootc update` command will still report "no updates available" because it already downloaded and deployed the latest image, which was rolled back.
+That means the `bootc update` command is smart enough to NOT retry an update which was rolled back.
+
+.. If you skipped the previous two activities of this course, the `bootc upgrade` command will fail because your _test machine_ does not have TLS certificates and credentails for acessing the private registry.
++
+In that case, configure your _test machine_ for acessing the private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc update --check*
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: reading manifest v1.0 in registry.lab.example.com:5000/httpd-system: authentication required
+$ *scp student@utility:/opt/registry/certs/domain.crt*
+domain.crt
+$ *sudo cp domain.crt /etc/pki/ca-trust/source/anchors/*
+$ *sudo update-ca-trust*
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+$ *sudo cp /run/containers/0/auth.json /etc/ostree/auth.json*
+$ *sudo bootc upgrade --check*
+No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
+--
+
+.. Switch to the new bootc container image
++
+[source,subs="verbatim,quotes"]
+--
+$ sudo bootc switch registry.lab.example.com:5000/php-bootc:v1.0
+...
+Queued for next boot: registry.lab.example.com:5000/php-bootc:v1.0
+  Version: 10.0
+  Digest: sha256:cea5e54156044edc63d0f52c46890a90f0332e0d6616a8d3b8fc7b84afe1d002
+--
+
+.. Verify that the new image is staged for the next boot.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ sudo bootc status
+  Staged image: registry.lab.example.com:5000/php-bootc:v1.0
+        Digest: sha256:cea5e54156044edc63d0f52c46890a90f0332e0d6616a8d3b8fc7b84afe1d002
+       Version: 10.0 (2025-10-07 22:27:57.066802937 UTC)
+
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+         Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+--
++
+NOTE: If you skipped the previous activity, you would not see a "rollback image" in the output of the `bootc status` command.
+
+.. Reboot the your _test machine_
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo systemctl reboot --now*
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Wait a few moments, to give your _test machine_ time to reboot, and verify that it now runs the updated web application.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *curl 127.0.0.1:8080/app.php*
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>503 Service Unavailable</title>
+</head><body>
+<h1>Service Unavailable</h1>
+<p>The server is temporarily unable to service your
+request due to maintenance downtime or capacity
+problems. Please try again later.</p>
+</body></html>
+--
++
+LOOKS LIKE THE HTTP LOG ISSUE FROM SLACK. NEED A TEMPFILES.D UNIT?
+
+.. Reconnect to your _test machine_ so you can verify all changes to the system image, configurations, and data.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$ 
+--
+
+.. lorem ipsum
+
+5. Verify which among configuration and application data was preserved in your _test machine_ and which was applied from the new bootc container image.
+
+.. 
++
+[source,subs="verbatim,quotes,attributes"]
+--
+● Booted image: registry.lab.example.com:5000/php-bootc:v1.0
+        Digest: sha256:cea5e54156044edc63d0f52c46890a90f0332e0d6616a8d3b8fc7b84afe1d002
+       Version: 10.0 (2025-10-07 22:27:57.066802937 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Fix the FastCGI module.
++
+[source,subs="verbatim,quotes"]
+--
+$ sudo systemctl status php-fpm
+× php-fpm.service - The PHP FastCGI Process Manager
+     Loaded: loaded (/usr/lib/systemd/system/php-fpm.service; disabled; preset: disabled)
+     Active: failed (Result: exit-code) since Tue 2025-10-07 18:00:18 EST; 4min 11s ago
+...
+Oct 07 18:00:20 bootc-iso php-fpm[969]: [07-Oct-2025 18:00:18] ERROR: failed to open error_log (/var/log/php-fpm/error.log): No such file or directory (2)
+...
+$ sudo mkdir /var/log/php-fpm/
+$ sudo systemctl restart php-fpm
+$ sudo systemctl status php-fpm
+● php-fpm.service - The PHP FastCGI Process Manager
+     Loaded: loaded (/usr/lib/systemd/system/php-fpm.service; disabled; preset: disabled)
+     Active: active (running) since Tue 2025-10-07 18:07:39 EST; 6s ago
+...
+$ curl 127.0.0.1/app.php
+PHP running at 127.0.0.1 under Apache/2.4.63 (Red Hat Enterprise Linux)
+--
+
+.. NEED A REAL FIX IN THE IMAGE ITSELF.
++
+Following are troublesooting/test done inside the image, it's now in the Containerfile and it works :-)
++
+[source,subs="verbatim,quotes"]
+--
+$ echo 'd /var/log/php-fpm 0755' > /etc/tmpfiles.d/php-fpm.conf
+$ sudo systemd-tmpfiles --create /etc/tmpfiles.d/php-fpm.conf
+--
+
+
+.. lorem ipsum
+
+
+lorem ipsum
+
+== What's next
+
+lorem ipsum

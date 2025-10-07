@@ -1,6 +1,22 @@
-= Section 1
+:time_estimate: 7
 
-* Create multiple copies of this section as needed.
-* Remove any unnecessary sections or chapter pages.
-* Customize the section as appropriate.
-* Ensure that each page contains a manageable amount of content.
+= Switch Images of Image Mode Systems
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Repurpose edge devices by using the bootc utility to switch to a different, and possibly unrelated, bootc container iamge.
+
+WARNING: Not started yet
+
+== Image names, tags, and digests.
+
+Lorem ipsum
+
+== Application and configuration data during image switches.
+
+Lorem ipsum
+
+== What's next
+
+Lorem ipsum
