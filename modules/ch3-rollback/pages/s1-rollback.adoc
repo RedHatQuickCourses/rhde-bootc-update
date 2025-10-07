@@ -1,6 +1,23 @@
-= Section 1
+:time_estimate: 7
 
-* Create multiple copies of this section as needed.
-* Remove any unnecessary sections or chapter pages.
-* Customize the section as appropriate.
-* Ensure that each page contains a manageable amount of content.
+= Rollback Updates to Image Mode Systems
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Rollback updates to edge devices by using the bootc utility.
+
+
+WARNING: Not started yet
+
+== How the booc utility rollbacks updates to image mode systems.
+
+Lorem ipsum
+
+== Application and configuration data during image rollback.
+
+Lorem ipsum
+
+== What's next
+
+Lorem ipsum

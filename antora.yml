@@ -4,6 +4,9 @@ version: 1
 asciidoc:
   attributes:
     experimental: true
+    httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: 75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+    httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb: f7b6046dc81cbb80e79bdfb58fcd1c17a3ab84ae47f3b21b1af384f2277d59dc
+
 nav:
 - modules/ROOT/nav.adoc
 - modules/LABENV/nav.adoc

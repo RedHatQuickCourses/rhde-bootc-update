@@ -1,4 +1,4 @@
-= Rolling Back Updates on Image Mode Systems
+= Undo Updates on Image Mode Systems
 
 Goal::
 

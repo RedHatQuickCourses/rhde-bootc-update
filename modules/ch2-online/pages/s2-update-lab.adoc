@@ -1,6 +1,4 @@
 :time_estimate: 5
-:httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: 75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
-:httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb: f7b6046dc81cbb80e79bdfb58fcd1c17a3ab84ae47f3b21b1af384f2277d59dc
 
 = Lab: Update Edge Devices from a Container Registry
 
@@ -26,9 +24,7 @@ Make sure you verified your test environment by following the xref:ch1-updates:s
 == Instructions
 
 You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and them update that system to a new version of its bootc container image.
-After performing the update, you will verify that configuration and application data were preserved by the update.
-
-[ REVIEW PREVIOUS SUMMARY WHEN DONE ]
+After performing the update, you will verify that configuration and application data are preserved by the update.
 
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
