@@ -205,6 +205,8 @@ $ *sudo cp /run/containers/0/auth.json /etc/ostree/auth.json*
 $ *sudo bootc upgrade --check*
 No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
 --
++
+IMPORTANT: TODO Move this config to the first lab, so it doesn't need to be repeated here and in the update lab.
 
 .. Switch to the new bootc container image
 +
@@ -310,7 +312,7 @@ Oct 07 18:00:20 bootc-iso php-fpm[969]: [07-Oct-2025 18:00:18] ERROR: failed to 
 ...
 --
 
-.. Confirm that the directory is really missing -- instead of having incorrect permissions or incorrect SELinux context on it or its parent directories -- and that it is provided by the `php-fpm` package.
+.. Confirm that the offending directory is really missing, instead of having either incorrect permissions or an incorrect SELinux context, on it or its parent directories, and that it is provided by the `php-fpm` package.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -320,10 +322,52 @@ $ *rpm -qf /var/log/php-fpm*
 php-fpm-8.3.15-1.el10.x86_64
 --
 
-.. Remember that changes to `/var` are NOT applied to an image mode system during image updates.
-This explains why the new bootc container image would work, if tested on a container engine, or if used to provision a new system, but fails on updates.
+6. There could be additional files and directories that the package initializes which belongs to application data on image mode systems, but that didn't appear in our simplistic test.
+Find these files, so you can deliver to a proper fix for the bootc container image.
++
+IMPORTANT: Remember that changes to `/var` are NOT applied to an image mode system during image updates.
+This explains why the new bootc container image would work, if tested on a container engine, or if used to provision a new system, but fail on switch and update.
 
-.. Now that you have a diagnostic, rollback the system to its original image, so you can later retry switching to the new image, after it is fixed.
+.. Verify whether the package contains other files in `/var`.
++
+The additional files you see are required by PHP session management features.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -ql php-fpm | grep /var*
+/var/lib/php/opcache
+/var/lib/php/session
+/var/lib/php/wsdlcache
+/var/log/php-fpm
+--
+
+.. Verify that the package creates or changes files in `/var` from its RPM scriptlets.
++
+This package does not.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q --scripts php-fpm*
+postinstall scriptlet (using /bin/sh):
+
+ 
+if [ $1 -eq 1 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Initial installation 
+    /usr/lib/systemd/systemd-update-helper install-system-units php-fpm.service || : 
+fi
+preuninstall scriptlet (using /bin/sh):
+
+ 
+if [ $1 -eq 0 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Package removal, not upgrade 
+    /usr/lib/systemd/systemd-update-helper remove-system-units php-fpm.service || : 
+fi 
+
+
+# Raised by new pool installation or new extension installation
+--
+
+.. Now that you have a diagnostic, rollback the _test machine_ to its original image, so you can later retry switching to the new image, after you implement a fix.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -334,9 +378,18 @@ $ *sudo systemctl reboot --now*
 Connection to 127.0.0.1 closed.
 --
 
-6. Update the new bootc container image to initialize application data at boot time instead of at build time.
+7. Update the new bootc container image to initialize application data at boot time instead of at build time.
+The fix uses Systemd to create all required directories with proper owner and permissions.
 
-.. Return to the terminal which you used to build the bootc image and append the following line to its Containerfile.
+.. Return to the terminal which you used to build the bootc image
++
+[source,subs="verbatim,quotes"]
+--
+$ *basename $(pwd)*
+temp-php-bootc
+--
+
+.. Append the following line to the Containerfile.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -364,9 +417,9 @@ $ *skopeo copy containers-storage:localhost/php-bootc docker://registry.lab.exam
 Writing manifest to image destination
 --
 
-7. Try again switching you your _test machine_ to the new bootc container image, to verify that the fix works as intended.
+8. Return to the terminal used to access your _test machine_ and try again switching to the new bootc container image, to verify that the fix works as intended.
 
-.. Reconnect to your local VM, which should be finished rebooting by now.
+.. Reconnect to your local VM, which should be finished rebooting by now, from the roll back operation.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -403,7 +456,7 @@ $ *sudo systemctl reboot --now*
 Connection to 127.0.0.1 closed.
 --
 
-.. Give your _test machine_ a few moments to reboot and verify that it now runs the updated system image succesfully.
+.. Give your _test machine_ a few moments to reboot (again!) and verify that it now runs the updated system image succesfully.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -413,7 +466,7 @@ $ *curl 127.0.0.1:8080/app.php*
 PHP running at 172.25.250.9 under Apache/2.4.63 (Red Hat Enterprise Linux)
 --
 
-You experienced an issue that's not uncommon when your repurpose an image mode system, which is RPM packages that initialize application data at build time instead of at boot time.
+You experienced an issue that's not uncommon when your repurpose an image mode system, caused by RPM packages that initialize application data at build time instead of at boot time.
 You diagnosed and fixed the issue by using Systemd features.
 
 == What's next
