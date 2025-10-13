@@ -28,15 +28,13 @@ After performing the update, you will verify that configuration and application 
 
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
-.. If needed, create a local clone of the sample code repository of this course, but do NOT enter its directory.
-Stay on your home directory to start this lab.
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
 +
 [source,subs="verbatim,quotes"]
 --
 $ *cd*
-$ *git clone https://github.com/RedHatQuickCourses/rhde-bootc-samples.git*
-Cloning into 'rhde-bootc-samples'...
-...
+$ *ls rhde-bootc-samples/*
+LICENSE     bib-cloud-init  bib-qcow2 ...
 --
 
 .. If needed, login to your private registry.
