@@ -1,0 +1,346 @@
+:time_estimate: 5
+
+= Lab: Prepare to Update Edge Devices Using Bootc Container Images
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Prepare a test environment for performing connected and disconnected updates to image mode systems.
+
+== Before you Begin
+
+You need a _development machine_ running Red Hat Enterprise Liunux (RHEL), to which you have unrestricted sudo rights, and access to RHEL package repositories.
+That machine must have plenty of disk space to store multiple container images and multiple virtual machine (VM) images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+== Instructions
+
+You will verify that you have access to mirrors of RHEL package repositories and bootc container images from RHEL. 
+You will also configure your _development machine_ with RHEL virtualization tools, based on libvirt, to use local VMs to stand in for physical edge devices.
+
+In the end of this lab, you provision a _test machine_, as a local VM, from a bootc container image.
+Most activities of this course will focus on the _test machine_.
+
+// Is it better to configure the creds for the private registry here or in the update and repurpose labs? The final lab, the disconnected updates, won't need that.
+
+If you are reusing the same classroom environment of the https://redhatquickcourses.github.io/rhde-bootc-build/[previous^] https://redhatquickcourses.github.io/rhde-bootc-provision/[courses^] in the image mode with Red Hat Device Edge quick course series, you should have everything ready and will skip most steps here.
+
+1. Verify that your _development machine_ has access to the RHEL package repositories from a DNF mirror.
+
+.. List the configured package repositories.
+They should match the standard RHEL package repositories.
++
+[source,subs="verbatim,quotes"]
+--
+$ *dnf repolist*
+rhel-10.0-for-x86_64-appstream-rpms                                                                       Red Hat Enterprise Linux 10.0 AppStream (dvd)
+rhel-10.0-for-x86_64-baseos-rpms                                                                          Red Hat Enterprise Linux 10.0 BaseOS (dvd)
+--
+
+.. Verify that your RHEL package repositories do NOT point to the Red Hat customer portal.
+Instead they should point to a machine inside your virtual labs environment.
++
+[source,subs="verbatim,quotes"]
+--
+$ *dnf repoinfo rhel-10.0-for-x86_64-baseos-rpms | grep baseurl*
+...
+Repo-baseurl       : http://content.example.com/rhel10.0/x86_64/dvd/BaseOS
+--
+
+2. Install the container tools on your _development machine_.
++
+You already have Podman installed, but during this course you will use additional convenience tools, such as Skopeo.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dnf install skopeo buildah*
+...
+Complete!
+--
+
+3. Verify that your _development machine_ has access to bootc base images from a private registry.
+
+.. The private registry requires authentication, even for images that would be public on the Red Hat registries.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. List all images available on the private registry.
+The list should include some application container images and some bootc container images, for different releases of RHEL.
++
+NOTE: if you are continuing from the https://redhatquickcourses.github.io/rhde-bootc-build/[previous^] https://redhatquickcourses.github.io/rhde-bootc-provision/[courses^], your search results will include more images than displayed here.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman search registry.lab.example.com:5000/*
+NAME                                                                  DESCRIPTION
+registry.lab.example.com:5000/openshift4/microshift-bootc-rhel9       
+registry.lab.example.com:5000/rhel10/bootc-image-builder              
+registry.lab.example.com:5000/rhel10/rhel-bootc                       
+registry.lab.example.com:5000/rhel9-eus/rhel-9.6-bootc                
+registry.lab.example.com:5000/rhel9-eus/rhel-9.6-bootc-image-builder  
+registry.lab.example.com:5000/ubi10/ubi                               
+registry.lab.example.com:5000/ubi9/ubi 
+--
+IMPORTANT: The `podman search` command, and similar commands from other tools such as Docker, are not reliable to list container images in a production container registry nor to verify the availability of an image by its name and tag.
+The `podman search` command works here only because there is a small number of container images stored in the private registry.
+
+4. Install the RHEL virtualization tools.
+
+.. Install the Libvirt tools and enable the Libvirt socket.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dnf install qemu-kvm libvirt virt-install virt-viewer*
+...
+Complete!
+$ *sudo systemctl enable virtqemud.socket --now*
+Created symlink /etc/systemd/system/multi-user.target.wants/virtqemud.socket → /usr/lib/systemd/system/virtqemud.socket.
+--
+
+.. Check that your unprivileged user can connect to Libvirt's session interface.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh uri*
+qemu:///session
+$ *virsh nodeinfo*
+CPU model:           x86_64
+...
+--
+
+5. If you need, clone the course samples repository from GitHub.
+
+.. If you already cloned that Git repository from the previous course you can skip to the next step.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls rhde-bootc-samples*
+LICENSE  antora.yml  bib-cloud-init  bib-iso  bib-qcow2  ...
+--
++
+NOTE: It is OK if your clone contains more directories than listed above.
+
+.. If you do not have a directory named `rhde-bootc-samples` with subdirectories named `httpd-system`, `bib-iso`, and `php-bootc`, you need to clone the repository from scratch.
++
+[source,subs="verbatim,quotes"]
+--
+$ *git clone https://github.com/RedHatQuickCourses/rhde-bootc-samples.git*
+Cloning into 'rhde-bootc-samples'...
+...
+--
+
+.. If you think that your clone may be outdated, because you started the previous courses before this remaining courses was released, you can just update your local clone.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd rhde-bootc-samples*
+$ *git pull*
+--
+
+6. Build a bootc container image and publish it in an OCI container registry.
+
+.. If you already have the `httpd-system:v1.0` container image on your private container registry, you can skip to the next step of this lab.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+[v1.0]
+--
++
+NOTE: It is OK if there are more tags for the `httpd-system` container image, as long as there is a tag named `v1.0`.
+
+.. If you do not have the `httpd-system:v1.0` container image, you must build it from the course samples git repository.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd rhde-bootc-samples*
+$ *cd httpd-system*
+$ *podman build -t httpd-system .*
+...
+Successfully tagged localhost/httpd-system:latest
+--
+
+.. Publish the image with the `v1.0` tag.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo copy containers-storage:localhost/httpd-system docker://registry.lab.example.com:5000/httpd-system:v1.0*
+...
+Copying config 8f58cf789c done   | 
+Writing manifest to image destination
+--
+
+7. Create a custom installation ISO from the bootc container image.
+
+.. If you already have the `httpd-system.iso` file on your `temp-test-iso` directory, you can skip to the next step of this lab.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *cd temp-test-iso*
+$ **ls *iso**
+httpd-system.iso
+--
+
+.. If you do not have the `httpd-system.iso` file, you must create it by using bootc image builder.
++
+Start by creating a working directory and copying the sample files to it.
+Then make the temporary working directory your current directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *mkdir temp-test-iso*
+$ **cp rhde-bootc-samples/bib-iso/* temp-test-iso** 
+$ *cd temp-test-iso*
+--
+
+.. Create an SSH key for use with your test VM and embed it in your TOML file.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh-keygen -N '' -f edge-key -C 'initial key for edge devices'*
+Generating public/private rsa key pair.
+...
+$ *SSH_PUB_KEY=$( cat edge-key.pub )*
+$ *sed -i "s|REPLACE_WITH_SSH_PUB_KEY|$SSH_PUB_KEY|" config.toml*
+--
+
+.. Log in again on your private registry, but this time as the root user.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Download the bootc container image to the container storage of the root user.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo podman pull registry.lab.example.com:5000/httpd-system:v1.0*
+...
+Writing manifest to image destination
+...
+--
+
+.. Create an output directory for the bootc image builder utility.
++
+[source,subs="verbatim,quotes"]
+--
+$ *mkdir output*
+--
+
+.. Invoke the script which runs the bootc image builder utility.
++
+Be patient, it takes several minutes running.
++
+[source,subs="verbatim,quotes"]
+--
+$ *bash bib-iso.sh*
+...
+Message: Results saved in .
+--
+
+8. Create a _test machine_ using the custom installation ISO.
+
+.. If you already have the `bootc-iso` VM on your _developer machine_, you can skip to the end of this lab.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other VMs besides `bootc-iso`.
+
+.. If you do not have the `bootc-iso` VM, you must create it by using libvirt.
++
+Start by copying the installable ISO from the bootc image builder output directory to a more permanent location.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cp output/bootiso/install.iso httpd-system.iso*
+--
+
+.. Set an environment variable with the disk label of your generated ISO image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *export LABEL=RHEL-10-0-BaseOS-x86_64*
+--
+
+.. Invoke the script which creates a _test VM_ from the ISO.
++
+After the installation is complete and the VM reboots, detach from its virtual serial console using kbd:[Ctrl+C].
++
+[source,subs="verbatim,quotes"]
+--
+$ *bash virt-install.sh*
+...
+[  114.660806] reboot: Restarting system
+
+Domain creation completed.
+Restarting guest.
+Running text console command: virsh --connect qemu:///session console bootc-iso
+Connected to domain 'bootc-iso'
+Escape character is ^] (Ctrl + ])
+--
+
+9. Verify that the test VM runs a web server with the mock web application files.
+
+.. Use the SSH hey to access your _test VM_.
+If you are using the same classroom from previous courses, first remove any host key from your known hosts file.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh-keygen -R '[127.0.0.1]:8022'*
+...
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$
+--
+
+.. Verify that your _test VM_ was provisioned using image mode.
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:068dc70b8eca43a0fa3c4a436d7098305898e5235c677f489b69ddc370885f6d
+       Version: 10.0 (2025-08-15 21:23:47.500494502 UTC)
+--
+
+.. Terminate the SSH session to your _test VM_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *exit*
+--
+
+.. Verify that the host can also access the mock web application, through port-forwarding, similar to how SSH access works.
++
+[source,subs="verbatim,quotes"]
+--
+$ *curl 127.0.0.1:8080*
+Misc tests of bootc images and firewalld.
+--
+
+If you need more context and explanation about the `httpd-system:v1.0` bootc container image, please refer to the https://redhatquickcourses.github.io/rhde-bootc-build/[first course^], which includes an explanation of its Containerfile.
+
+If you need more context and explanation about the `bootc-iso` VM, please refer to the https://redhatquickcourses.github.io/rhde-bootc-provision/[previous course^], which includes an explanation of the steps to provision this system from a custom installation ISO.
+
+== What's next
+
+The next chapter demonstrates how to update an image mode system to a new bootc container image from an OCI container registry.
+Later in this course we will also demonstrate how to update an image mode system to a new bootc container iamge from removable media, for scenarios that network access to an OCI container registry is not practical.

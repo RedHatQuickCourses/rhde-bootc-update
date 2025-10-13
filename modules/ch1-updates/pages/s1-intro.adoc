@@ -1,0 +1,19 @@
+:time_estimate: 5
+
+= Connected and Disconnected Updates to Image Mode Systems
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Compare the processes for updating systems by switching bootc container images with the process of updating systems by updating individual RPM packages.
+
+
+WARNING: Not started yet
+
+== Review of the image mdoe system installation and update workflows
+
+Lorem ipsum
+
+== What's next
+
+Lorem ipsum
