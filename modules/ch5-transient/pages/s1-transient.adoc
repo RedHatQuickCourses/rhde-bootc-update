@@ -1,0 +1,22 @@
+:time_estimate: 5
+
+= Troubleshoot Image Mode Systems
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Troubleshoot RHEL for edge devices with image mode for RHEL
+
+WARNING: Not started yet
+
+== Using transient overlays
+
+Lorem ipsum
+
+== Using toolbox containers
+
+Lorem ipsum
+
+== What's next
+
+Lorem ipsum

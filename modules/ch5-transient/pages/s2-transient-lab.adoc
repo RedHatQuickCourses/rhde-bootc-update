@@ -1,0 +1,411 @@
+:time_estimate: 5
+
+= Lab: Troubleshoot Image Mode Systems
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Troubleshoot issues with edge devices by installing transient packages and running toolbox containers.
+
+WARNING: Work in progress
+
+== Before you Begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+NOTE: You do not need any of the outcompes from the previous three activities, and could skip them.
+But you must execute the preparation tasks from the first lab of this course.
+
+== Instructions
+
+// Toolbox (https://github.com/containers/toolbox) is the same as Toolbx (https://containertoolbx.org/) and the later is now the cannonical name (but commands and container images didn't change)
+
+Lorem ipsum
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *ls rhde-bootc-samples/*
+LICENSE     bib-cloud-init  bib-qcow2 ...
+--
+
+.. If needed, login to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
+That VM will be your _test machine_.
++
+If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+2. Access your _test machine_ and verify that it lacks online docs and troubleshooting utilities.
+
+.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
++
+// Need the ssh-kegen -R command in the first lab, here it could be left out.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cd temp-test-iso*
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Find which is the bootc container image that is currently booted.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Attempt to access online documentation for the bootc utility.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *man bootc*
+-bash: man: command not found
+--
+
+.. Attempt to access online documentation for the bootc utility.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *man bootc*
+-bash: man: command not found
+--
+
+.. Attempt to retrieve information about the system's NUMA architecture.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *lstopo*
+-bash: lstopo: command not found
+--
+
+.. Attempt to retrieve information about the system's IO performance.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *iostat*
+-bash: iostat: command not found
+--
+
+3. Lorem ipsum
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo dnf install man-db*
+...
+This bootc system is configured to be read-only. Pass --transient to perform this transaction in a transient overlay which will reset when the system reboots.
+Operation aborted.
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo dnf install --transient man-db*
+...
+Complete!
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *man bootc*
+...
+NAME
+       bootc - Deploy and transactionally in-place with bootable container images
+
+SYNOPSIS
+       bootc [-h|--help] [-V|--version] <subcommands>
+...
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo systemctl reboot --now*
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Give it some time to reboot and reconnect.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Verify that the Man utility is gone.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *man bootc*
+-bash: man: command not found
+--
+
+4. Lorem ipsum
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo dnf install --transient sysstat*
+..
+Complete!
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *iostat*
+Linux 6.12.0-55.24.1.el10_0.x86_64 (bootc-iso)  10/13/25        _x86_64_        (2 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           0.68    0.00    0.98    0.53    0.07   97.73
+
+Device             tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd
+sr0               0.08         2.64         0.00         0.00       2104          0          0
+vda              15.38       393.80        63.56         0.00     313408      50585          0
+--
+
+.. Lorem ipsum
+
+5. Toolbx
++
+// FIND HOW TO REDIRECT TO AN IMAGE IN THE PRIVATE REGISTRY
+// toolbx image have a label "com.github.containers.toolbox": "true"
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *skopeo copy docker://registry.access.redhat.com/ubi10/toolbox:10.0 docker://registry.lab.example.com:5000/ubi10/toolbox:10.0*
+GRAB OUTPUT
+$ *toolbox create --image registry.lab.example.com:5000/ubi10/toolbox:10.0*
+Image required to create Toolbx container.
+Download registry.lab.example.com:5000/ubi10/toolbox:10.0 (245.1MB)? [y/N]: y
+Created container: rhel-toolbox-10.0
+Enter with: toolbox enter
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *toolbox enter*
+⬢ [core@toolbx ~]$ *pwd*
+/var/home/corre
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo cp /run/host/etc/yum.repos.d/rhel_mirror.repo /etc/yum.repos.d/*
+$ *sudo rm /etc/yum.repos.d/ubi.repo*
+$ *sudo dnf install hwloc*
+...
+Complete!
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *lstopo-no-graphics*
+Machine (3909MB total)
+  NUMANode L#0 (P#0 3909MB)
+  Package L#0 + L3 L#0 (16MB) + L2 L#0 (4096KB) + L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
+  Package L#1 + L3 L#1 (16MB) + L2 L#1 (4096KB) + L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
+  HostBridge
+    PCIBridge
+      PCI 01:00.0 (Ethernet)
+        Net "enp1s0"
+    PCIBridge
+      PCI 04:00.0 (SCSI)
+        Block "vda"
+    PCIBridge
+      PCI 05:00.0 (Other)
+    PCIBridge
+      PCI 06:00.0 (Other)
+    PCI 00:1f.2 (SATA)
+      Block(Removable Media Device) "sr0"
+--
+
+.. something
++
+[source,subs="verbatim,quotes"]
+--
+$ *exit*
+logout
+--
+
+.. something REVIEW AFTER UPDATING HOL019
++
+[source,subs="verbatim,quotes"]
+--
+$ *toolbox list*
+IMAGE ID      IMAGE NAME                                        CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED      STATUS   IMAGE NAME
+2251b66a79b8  rhel-toolbox-10.0  3 hours ago  running  registry.lab.example.com:5000/ubi10/toolbox:10.0
+$ *podman ps*
+CONTAINER ID  IMAGE                                             COMMAND               CREATED      STATUS         PORTS       NAMES
+2251b66a79b8  registry.lab.example.com:5000/ubi10/toolbox:10.0  toolbox --log-lev...  3 hours ago  Up 10 minutes              rhel-toolbox-10.0
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *toolbox create stat --image registry.lab.example.com:5000/ubi10/toolbox:10.0*
+Created container: stat
+Enter with: toolbox enter stat
+--
+
+.. something
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo cp /run/host/etc/yum.repos.d/rhel_mirror.repo /etc/yum.repos.d/*
+$ *sudo rm /etc/yum.repos.d/ubi.repo*
+$ *sudo dnf install sysstat*
+...
+Complete!
+--
+
+.. something
++
+[source,subs="verbatim,quotes"]
+--
+$ *iostat*
+Linux 6.12.0-55.24.1.el10_0.x86_64 (bootc-iso)  10/13/25        _x86_64_        (2 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           0.68    0.00    0.98    0.53    0.07   97.73
+
+Device             tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd
+sr0               0.08         2.64         0.00         0.00       2104          0          0
+vda              15.38       393.80        63.56         0.00     313408      50585          0
+--
+
+.. something
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl reboot --now*
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Give it a few moments to reboot and reconnect using SSH
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$
+--
+
+.. something
++
+[source,subs="verbatim,quotes"]
+--
+$ *toolbox list*
+IMAGE ID      IMAGE NAME                                       CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED        STATUS  IMAGE NAME
+2251b66a79b8  rhel-toolbox-10.0  3 hours ago    exited  registry.lab.example.com:5000/ubi10/toolbox:10.0
+dab414a31a73  stat               5 minutes ago  exited  registry.lab.example.com:5000/ubi10/toolbox:10.0
+--
+
+.. something
++
+[source,subs="verbatim,quotes"]
+--
+$ toolbox enter
+⬢ [core@toolbx ~]$ rpm -q hwloc
+hwloc-2.11.1-3.el10.x86_64
+⬢ [core@toolbx ~]$ exit
+logout
+--
+
+.. something
++
+[source,subs="verbatim,quotes"]
+--
+$ toolbox enter sysstat
+⬢ [core@toolbx ~]$ rpm -q stat
+sysstat-12.7.6-2.el10.x86_64
+⬢ [core@toolbx ~]$ exit
+logout
+--
+
+.. Lorem ipsum
+
+Lorem ipsum
+
+== What's next
+
+Lorem ipsum
