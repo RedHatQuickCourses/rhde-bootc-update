@@ -1,6 +1,6 @@
 :time_estimate: 5
 
-= Lab: Troubleshoot Image Mode Systems Using Transient Packages
+= Lab: Troubleshoot Edge Devices Using Transient Packages
 
 _Estimated reading time: *{time_estimate} minutes*._
 
