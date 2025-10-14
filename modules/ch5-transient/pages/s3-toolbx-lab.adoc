@@ -1,0 +1,490 @@
+:time_estimate: 5
+
+= Lab: Troubleshoot Image Mode Systems Using Toolbx Containers
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Troubleshoot issues with edge devices by running toolbox containers.
+
+WARNING: Work in progress
+
+== Before you Begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+NOTE: You do not need any of the outcomes from the previous three activities, and could skip them.
+But you must execute the preparation tasks from the first lab of this course.
+
+== Instructions
+
+// Toolbox (https://github.com/containers/toolbox) is the same as Toolbx (https://containertoolbx.org/) and the later is now the cannonical name (but commands and container images didn't change)
+
+You will experiment with another approach to add troubleshooting tools which might be missing in an image mode system: creating toolbx containers, which continue available after reboot, until you explicitly delete them.
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *ls rhde-bootc-samples/*
+LICENSE     bib-cloud-init  bib-qcow2 ...
+--
+
+.. If needed, login to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
+That VM will be your _test machine_.
++
+If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+2. Access your _test machine_ and verify that it lacks a couple troubleshooting utilities.
+
+.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd temp-test-iso*
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Find which is the bootc container image that is currently booted.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Attempt to retrieve information about the system's NUMA architecture, using utilities from the hardware locality package, and find that they are not installed.
++
+[source,subs="verbatim,quotes"]
+--
+$ *lstopo*
+-bash: lstopo: command not found
+$ *rpm -q hwloc*
+package hwloc is not installed
+--
+
+.. Also attempt to get information about the system's IO performance, and find that the Sysstat package is not installed either.
++
+[source,subs="verbatim,quotes"]
+--
+$ *iostat*
+-bash: iostat: command not found
+$ *rpm -q sysstat*
+package sysstat is not installed
+--
+
+.. Leave the current running the SSH session to your _test machine_ and open another terminal on your _development machine_ to proceed to the next step.
+
+3. Make a toolbx container available in the private registry.
++
+// Remove this step after an update of HOL019 to provide that image preloaded.
+
+.. On your _development machine_, verify if there is a copy of standard UBI toolbox container on the private registry.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *podman search registry.lab.example.com:5000/toolbox*
+NAME                                         DESCRIPTION
+registry.lab.example.com:5000/ubi10/toolbox 
+$ *skopeo inspect docker://registry.lab.example.com:5000/ubi10/toolbox:10.0*
+{
+    "Name": "registry.lab.example.com:5000/ubi10/toolbox",
+...
+--
+
+.. If the copy is not available, your output will be similar to the following.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *podman search registry.lab.example.com:5000/toolbox*
+$ *skopeo inspect docker://registry.lab.example.com:5000/ubi10/toolbox:10.0*
+FATA[0000] Error parsing image name "docker://registry.lab.example.com:5000/ubi10/toolbox:10.0": reading manifest 10.0 in registry.lab.example.com:5000/ubi10/toolbox: manifest unknown 
+--
++
+NOTE: Remember that the `podman search` command and its equivalents with other container engines are NOT a reliable way to determine if a container image exists in an OCI container registry, because of limitations inherited from the Docker Distribution API.
+
+.. If the copy is not available, create it so you can keep with the scenario of air-gapped deployments.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *skopeo copy --remove-signatures docker://registry.access.redhat.com/ubi10/toolbox:10.0 docker://registry.lab.example.com:5000/ubi10/toolbox:10.0*
+..
+Writing manifest to image destination
+--
+
+4. Use a toolbx container to collect information about the NUMA architecture of your _test machine_.
+
+.. Switch to the terminal on your _test machine) and use the copy of the toolbx image to create a toolbx container.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+$ *toolbox create --image registry.lab.example.com:5000/ubi10/toolbox:10.0*
+Image required to create Toolbx container.
+Download registry.lab.example.com:5000/ubi10/toolbox:10.0 (245.1MB)? [y/N]: y
+Created container: rhel-toolbox-10.0
+Enter with: toolbox enter
+--
+
+.. Enter the toolbox container you just created.
++
+Notice the change of the system prompt, which doesn't display the current directory anymore, but includes an hexxagonal bullet.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *toolbox enter*
+⬢ [core@toolbx ~]$ *pwd*
+/var/home/core
+--
+
+.. View the file systems which are backed by actual disk contents and which are overlays.
+Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same comands from the previous lab.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *mount -t xfs*
+/dev/vda3 on /run/host/etc type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /run/host/sysroot type xfs (ro,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+...
+$ *mount -t overlay*
+composefs on /run/host type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)
+...
+--
+
+.. Because the toolbx container image does NOT contain the package repository settings for the classroom environment, copy them from the host machine.
+Also delete the configuration for the UBI repositories.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo cp /run/host/etc/yum.repos.d/rhel_mirror.repo /etc/yum.repos.d/*
+$ *sudo rm /etc/yum.repos.d/ubi.repo*
+--
++
+NOTE: You could create a custom toolbx image, including such settings and also your preferred choice of troubleshooting tools.
+
+.. Install the hardware locality package.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo dnf install hwloc*
+...
+Complete!
+--
+
+.. Finally, use the text mode hardware locality viewer.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *lstopo-no-graphics*
+Machine (3909MB total)
+  NUMANode L#0 (P#0 3909MB)
+  Package L#0 + L3 L#0 (16MB) + L2 L#0 (4096KB) + L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
+  Package L#1 + L3 L#1 (16MB) + L2 L#1 (4096KB) + L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
+  HostBridge
+    PCIBridge
+      PCI 01:00.0 (Ethernet)
+        Net "enp1s0"
+    PCIBridge
+      PCI 04:00.0 (SCSI)
+        Block "vda"
+    PCIBridge
+      PCI 05:00.0 (Other)
+    PCIBridge
+      PCI 06:00.0 (Other)
+    PCI 00:1f.2 (SATA)
+      Block(Removable Media Device) "sr0"
+--
+
+.. Exit the toolbx container and return to your _test machine_ shell.
++
+[source,subs="verbatim,quotes"]
+--
+$ *exit*
+logout
+--
+
+5. Verify that toolbx containers are application containers, and you can have multiple of them, each with their own container file system.
+
+.. Verify that toolbx containers are application containers, which you can manage using Podman.
++
+[source,subs="verbatim,quotes"]
+--
+$ *toolbox list*
+IMAGE ID      IMAGE NAME                                        CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED      STATUS   IMAGE NAME
+2251b66a79b8  rhel-toolbox-10.0  3 hours ago  running  registry.lab.example.com:5000/ubi10/toolbox:10.0
+$ *podman image list*
+REPOSITORY                                   TAG         IMAGE ID      CREATED      SIZE
+registry.lab.example.com:5000/ubi10/toolbox  10.0        261e188dd142  2 weeks ago  1.18 GB
+$ *podman ps*
+CONTAINER ID  IMAGE                                             COMMAND               CREATED      STATUS         PORTS       NAMES
+2251b66a79b8  registry.lab.example.com:5000/ubi10/toolbox:10.0  toolbox --log-lev...  3 hours ago  Up 10 minutes              rhel-toolbox-10.0
+--
+
+.. Create another toolbx container, this time giving it a name.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *toolbox create stat --image registry.lab.example.com:5000/ubi10/toolbox:10.0*
+Created container: stat
+Enter with: toolbox enter stat
+--
+
+.. Verify that the new toolbx container is not running, because you didn't enter yet.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *toolbox list*
+IMAGE ID      IMAGE NAME                                        CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED        STATUS   IMAGE NAME
+e6876646ee2e  rhel-toolbox-10.0  3 hours ago    running  registry.lab.example.com:5000/ubi10/toolbox:10.0
+b8952ec51a35  stat               6 seconds ago  created  registry.lab.example.com:5000/ubi10/toolbox:10.0
+$ *podman ps -a*
+CONTAINER ID  IMAGE                                             COMMAND               CREATED         STATUS         PORTS       NAMES
+e6876646ee2e  registry.lab.example.com:5000/ubi10/toolbox:10.0  toolbox --log-lev...  23 hours ago    Up 15 minutes              rhel-toolbox-10.0
+b8952ec51a35  registry.lab.example.com:5000/ubi10/toolbox:10.0  toolbox --log-lev...  45 seconds ago  Created                    stat
+--
+
+.. Enter the second toolbx container
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *toolbox enter stat*
+⬢ [core@toolbx ~]$
+--
+
+.. Configure the second toolbx container for your disconnected environment and install the Sysstat package.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo cp /run/host/etc/yum.repos.d/rhel_mirror.repo /etc/yum.repos.d/*
+$ *sudo rm /etc/yum.repos.d/ubi.repo*
+$ *sudo dnf install sysstat*
+...
+Complete!
+--
+
+.. Get information about I/O performance of your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *iostat*
+Linux 6.12.0-55.24.1.el10_0.x86_64 (bootc-iso)  10/13/25        _x86_64_        (2 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           0.68    0.00    0.98    0.53    0.07   97.73
+
+Device             tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd
+sr0               0.08         2.64         0.00         0.00       2104          0          0
+vda              15.38       393.80        63.56         0.00     313408      50585          0
+--
+
+6. Verify that toolbx containers are partially isolated from their host system (that is, your _test machine_) settings and application data.
+
+.. Create a file on your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *id*
+uid=1000(core) gid=10(wheel) groups=10(wheel)
+$ *echo '1,2,3 testing' > $HOME/test.txt*
+--
+
+.. Attempt to change the timezone of your toolbx container.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+$ *sudo timedatectl set-timezone 'Asia/Tokyo'*
+Failed to set time zone: Access denied
+--
+
+.. Install and attempt to start a MySQL Server.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dnf install mysql8.4-server*
+...
+Complete!
+$ *sudo systemctl start mysqld*
+Failed to connect to system scope bus via local transport: No such file or directory
+--
+
+.. Verify that, despite the failure to start the database server, there are configuration files and data directories crated by installing its package.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls /etc/my.cnf.d*
+client.cnf  mysql-server.cnf
+$ *ls -a /var/lib/mysql*
+.  ..
+--
+
+.. Exit the toolbx container and return to your _test machine_ shell.
++
+[source,subs="verbatim,quotes"]
+--
+$ *exit*
+logout
+--
+
+7. Verify if any of the changes made while in the second toolbox container affect your _test machine_.
+
+.. Verify if there is text file on your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ **ls $HOME/*txt**
+/var/home/core/test.txt
+$ *cat $HOME/test.txt*
+1,2,3 testing
+--
+
+.. Verify if there are MySQL Server configuration and data files.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls /etc/my.cnf.d*
+client.cnf  mysql-server.cnf
+$ *ls -a /var/lib/mysql*
+.  ..
+--
+
+8. Verify that you can still enter your two toolbx containers after reboot.
+
+.. Reboot your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl reboot --now*
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Give it a few moments to reboot and reconnect using SSH
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$
+--
+
+.. Verify that you still have two toolbx containers.
++
+[source,subs="verbatim,quotes"]
+--
+$ *toolbox list*
+IMAGE ID      IMAGE NAME                                       CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED        STATUS  IMAGE NAME
+2251b66a79b8  rhel-toolbox-10.0  3 hours ago    exited  registry.lab.example.com:5000/ubi10/toolbox:10.0
+dab414a31a73  stat               5 minutes ago  exited  registry.lab.example.com:5000/ubi10/toolbox:10.0
+--
+
+.. Enter the first toolbx container and verify it still contains the hardware locality utilities.
++
+[source,subs="verbatim,quotes"]
+--
+$ *toolbox enter*
+⬢ [core@toolbx ~]$ *rpm -q hwloc*
+hwloc-2.11.1-3.el10.x86_64
+⬢ [core@toolbx ~]$ *exit*
+logout
+--
+
+.. Enter the second toolbx container and verify it still contains the Sysstat package.
++
+[source,subs="verbatim,quotes"]
+--
+$ *toolbox enter stat*
+⬢ [core@toolbx ~]$ *rpm -q sysstat*
+sysstat-12.7.6-2.el10.x86_64
+⬢ [core@toolbx ~]$ *exit*
+logout
+--
+
+.. If you wish, stop and delete your toolbx containers using Podman.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman stop rhel-toolbox-10.0*
+rhel-toolbox-10.0
+$ *podman rm rhel-toolbox-10.0*
+rhel-toolbox-10.0
+$ *podman stop stat*
+stat
+$ *podman rm stat*
+stat
+$ *podman image rm registry.lab.example.com:5000/ubi10/toolbox:10.0*
+Untagged: registry.lab.example.com:5000/ubi10/toolbox:10.0
+Deleted: 261e188dd1428d36b03a512e4f67a7285ed6f68a743e07efbdd16e70473e680d
+$ *toolbox list*
+--
+
+You created two toolbx containers, installed different packages in each, and verified what they can and cannot affect their host system.
+Then you cleaned up your _test machine_ to get rid of the toolbx containers.
+
+== What's next
+
+The final chapter of this course demonstrates a workflow for performing off-line updates of edge devices running image mode for RHEL.

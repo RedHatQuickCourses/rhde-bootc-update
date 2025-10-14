@@ -28,7 +28,7 @@ If not, please adapt the instructions to your test environment.
 
 Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
 
-NOTE: You do not need any of the outcompes from the previous two activities, and could skip them.
+NOTE: You do not need any of the outcomes from the previous two activities, and could skip them.
 But you must execute the preparation tasks from the first lab of this course.
 
 == Instructions
