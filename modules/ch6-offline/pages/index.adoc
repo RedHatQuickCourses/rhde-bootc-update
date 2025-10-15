@@ -12,4 +12,4 @@ This chapter describes a worflow for applying updates updates to image mode to d
 
 While this worflow is not directly supported by the bootc utility, its implementation requires just a few commands using RHEL container tools such as Skopeo, and could be automated by using standard RHEL tools, such as Systemd.
 
-Your image mode systems may not be fully disconnected, but require a disconnected update workflow because the cannot reliably download multiple GB of bootc container images over the network.
+Even if you edge systems are fully disconnected, they might benefit from a disconnected update workflow if they cannot reliably download multiple GB of bootc container images over the network.

@@ -5,7 +5,7 @@
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
-Update edge devices, manually and automatically, from new bootc container images published in an OCI container registry.
+Update edge devices manually from new bootc container images published in an OCI container registry.
 
 WARNING: Work in progress
 

@@ -1,4 +1,4 @@
-= Troubleshooting Image Mode Systems
+= Troubleshoot Image Mode Systems
 
 Goal::
 

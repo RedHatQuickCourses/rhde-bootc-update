@@ -1,11 +1,11 @@
 :time_estimate: 5
 
-= Troubleshoot Image Mode Systems
+= Troubleshoot Image Mode Systems Using Transient Packages and Toolbx Containers
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
-Troubleshoot RHEL for edge devices with image mode for RHEL
+Troubleshoot RHEL for edge devices with image mode for RHEL by running tools not included in their system image.
 
 WARNING: Not started yet
 

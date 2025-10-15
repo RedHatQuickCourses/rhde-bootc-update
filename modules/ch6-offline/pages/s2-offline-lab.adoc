@@ -1,0 +1,273 @@
+:time_estimate: 5
+
+= Lab: Update Edge Devices from a Removable Media
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Update edge devices manually from new bootc container images stored in removable media.
+
+WARNING: Work in progress
+
+== Before you Begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+== Instructions
+
+You will create a removable media image which can be used for both provisioning new systems and updating existing systems, and then you will emulate the usage of the image as removable media in a local VM.
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *ls rhde-bootc-samples/*
+LICENSE     bib-cloud-init  bib-qcow2 ...
+--
+
+.. If needed, login to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
+That VM will be your _test machine_.
++
+If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+2. Access your _test machine_ and perform day-2 configurations, which affect system settings and application data, to demonstrate that behavior is the same as with online updates.
+
+.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cd temp-test-iso*
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Record the hash of the current bootc container image of the test system.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Change the system time zone.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=UTC
+$ *sudo timedatectl set-timezone 'Asia/Tokyo'*
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+--
+
+.. Change the HTML files which mock a single-page web application.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cat /var/www/html/index.html*
+Misc tests of bootc images and firewalld
+$ *sudo bash -c "echo 'Before a disconnected update' > /var/www/html/index.html"*
+$ *curl 127.0.0.1*
+Before a disconnected update
+--
+
+.. Disable the bootc update timer to ensure you have control of when the system will apply updates.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl mask bootc-fetch-apply-updates.timer*
+Created symlink '/etc/systemd/system/bootc-fetch-apply-updates.timer' → '/dev/null'.
+$ *systemctl is-active bootc-fetch-apply-updates.timer*
+failed
+--
+
+.. Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
+Open a new terminal on your _development machine_ to proceed with the next step.
+
+3. Build and publish an updated bootc container image.
+
+.. Create a new working directory, copy sample files from git repo, and copy the SSH key from the previous working directory.
++
+NOTE: If you already performed the previous xref:ch2-online/update-lab[update lab], you have this directory and the new bootc container image ready to go, and can skip to the next step.
+If you need more details about the update image, please refer to that lab.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *mkdir temp-test-update*
+$ **cp -r rhde-bootc-samples/httpd-update/* temp-test-update**
+$ **cp temp-test-iso/edge-key* temp-test-update**
+$ *cd temp-test-update*
+--
+
+.. Build a new bootc container image and publish it in the private registry using the same floating tag used for initial provisioning of your _test machine_.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *podman build -t httpd-system:v1.0.1 .*
+...
+Successfully tagged localhost/httpd-system:v1.0.1
+e1390a4dc788a24e36c7ec2da82784ce4d594665eeed9060802e59c0fcfed6c7
+$ *skopeo copy containers-storage:localhost/httpd-system:v1.0.1 docker://registry.lab.example.com:5000/httpd-system:v1.0*
+...
+Copying config e1390a4dc7 done   | 
+Writing manifest to image destination
+--
+
+4. Create an update media.
+
+.. lorem ipsum
+
+5. Connect the update media on your _test machine_.
+
+.. lorem ipsum
+
+6. Apply the disconnected image update.
+
+.. Apply the update, which reboots your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc switch --apply --transport oci /run/LABEL/containers:httpd-system:v1.0*
+...
+Rebooting system
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Wait a few moments, to give your _test machine_ time to reboot, and verify that it now runs the updated web application.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *curl 127.0.0.1:8080*
+Misc tests of bootc images and firewalld, v1.1
+--
+
+.. Reconnect to your _test machine_ so you can verify all changes to the system image, configurations, and data.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$ 
+--
+
+7. Verify that changes, from the new image, were applied to your _test machine_, and day-2 changes to configuration and data were retained.
+
+.. Verify that the new image is the current booted image, and the previous image is still available for rolling back.
++
+Compare the hashes of each image with your notes from previous steps.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+GRAB OUTPUT
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+       Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Verify that the Apache Web Server configurations were changed, and that the web application files are in the `/webapp` directory, proving that changes to `/etc` from the new image were applied.
++
+[source,subs="verbatim,quotes"]
+--
+$ *grep DocumentRoot /etc/httpd/conf/httpd.conf*
+# DocumentRoot: The directory out of which you will serve your
+DocumentRoot "/webapp/html"
+    # access content that does not live under the DocumentRoot.
+$ *ls /webapp/html*
+index.html
+$ *cat /webapp/html/index.html*
+Misc tests of bootc images and firewalld, v1.1
+--
+
+.. Verify that the changed web application are still in the system, because application data is NOT affected by bootc image upgrades.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls /var/www/html*
+index.html
+$ *cat /var/www/html/index.html*
+Before a disconnected update
+--
+
+.. Verify that you can still check for the availability of bootc image updates, because the system retained the certificate and credentails for acessing the private registry.
++
+DOES THIS MAKE SENSE WITH REMOVABLE MEDIA?
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc upgrade --check*
+No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
+--
+
+.. Verify that the system locale changes were also preserved.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+--
+
+Lorem ipsum
+
+== What's Next
+
+This was the latest activity of this course.
+Stay tuned for new enablement courses for Red Hat Device Edge in the future!

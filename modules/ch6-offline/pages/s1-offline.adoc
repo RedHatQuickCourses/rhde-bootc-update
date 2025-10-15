@@ -1,0 +1,24 @@
+:time_estimate: 5
+
+= Update Image Mode Systems in Disconnected Mode
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Update edge devices without reliable network connections to OCI container registries.
+
+WARNING: Not started yet
+
+== Using alternate transports with the bootc utility
+
+Lorem ipsum
+
+== Creating offline update media
+
+// Can be the ISO from bootc image builder but could be a smaller, image-only media (is there any advantage?)
+
+Lorem ipsum
+
+== What's next
+
+Lorem ipsum
