@@ -21,6 +21,8 @@ If not, please adapt the instructions to your test environment.
 
 Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
 
+IMPORTANT: This lab applies the same update as in a ch2-online:s2-update-lab.adoc[previous lab] but using a different method (disconnected vs. connected). If you performed the previous lab, which performs a connected update, it is expected that you also performed its  ch3-rollback-lab.adoc[following lab], which rollbacks that update, so your _test machine_ should be the state it was be before the update, which is the same state as in the end of the first lab.
+
 == Instructions
 
 You will create a removable media image which can be used for both provisioning new systems and updating existing systems, and then you will emulate the usage of the image as removable media in a local VM.
@@ -137,6 +139,28 @@ failed
 Open a new terminal on your _development machine_ to proceed with the next step.
 
 3. Build and publish an updated bootc container image.
++
+SWITCH TO THE nginx-bootc IMAGE BUT IT MAY NEED TMPFILES.D CONFIGS
++
+////
+From nginx-core package
+/var/lib/nginx
+/var/lib/nginx/tmp
+/var/log/nginx
+/var/log/nginx/access.log
+/var/log/nginx/error.log
+
+[root@bootc-iso ~]# ls -lZd /var/lib/nginx
+drwxrwx---. 3 nginx root system_u:object_r:httpd_var_lib_t:s0 17 Oct 15 15:10 /var/lib/nginx
+[root@bootc-iso ~]# ls -lZd /var/log/nginx
+drwx--x--x. 2 root root system_u:object_r:httpd_log_t:s0 41 Oct 15 15:10 /var/log/nginx
+[root@bootc-iso ~]# ls -lZ /var/log/nginx
+total 8
+-rw-r--r--. 1 root root system_u:object_r:httpd_log_t:s0   90 Oct 15 15:11 access.log
+-rw-r--r--. 1 root root system_u:object_r:httpd_log_t:s0 2677 Oct 15 15:19 error.log
+[root@bootc-iso ~]# ls -lZd /var/lib/nginx/tmp
+drwxrwx---. 7 nginx root system_u:object_r:httpd_var_lib_t:s0 78 Oct 15 15:10 /var/lib/nginx/tmp
+////
 
 .. Create a new working directory, copy sample files from git repo, and copy the SSH key from the previous working directory.
 +
@@ -165,13 +189,112 @@ $ *skopeo copy containers-storage:localhost/httpd-system:v1.0.1 docker://registr
 Copying config e1390a4dc7 done   | 
 Writing manifest to image destination
 --
++
+NOTE: a production workflow would also copy the updated image to a non-floating tag, in the example it would be `1.0.1`.
 
-4. Create an update media.
+4. Create an updated installation media.
 
-.. lorem ipsum
+.. Log in again on your private registry, but this time as the root user.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Download the bootc container image to the container storage of the root user.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo podman pull registry.lab.example.com:5000/httpd-system:v1.0*
+...
+Writing manifest to image destination
+...
+--
+
+.. Copy and invoke the script which runs the bootc image builder utility.
++
+Be patient, it takes several minutes running.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cp ../temp-test-iso/bib-iso.sh .*
+$ *bash bib-iso.sh*
+...
+Message: Results saved in .
+--
+
+.. Copy the installable ISO from the bootc image builder output directory to a more permanent location, and give it an easily identifiable name.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cp output/bootiso/install.iso httpd-system-update.iso*
+--
 
 5. Connect the update media on your _test machine_.
 
+.. On your _test machine_, list the disk devices recognized by your local VM.
++
+[source,subs="verbatim,quotes"]
+--
+$ *lsblk *
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0     11:0    1  1.8G  0 rom  
+vda    252:0    0   20G  0 disk 
+├─vda1 252:1    0    1M  0 part 
+├─vda2 252:2    0    1G  0 part /boot
+└─vda3 252:3    0   19G  0 part /var
+                                /sysroot/ostree/deploy/default/var
+                                /etc
+                                /sysroot
+--
+
+.. On your _development machine_, hot-plug a virtual usb disk in your local VM.
++
+// MUST BE sdb because the cd-rom device from installation is the sda, though the VM sees it as sr0
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh attach-disk bootc-iso $PWD/httpd-system.iso sdb --targetbus usb --mode readonly --live*
+Disk attached successfully
+--
+
+.. Verify that the kernel on your local VM thins a new USB disk was attached.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dmesg | tail*
+[17625.346096] usbcore: registered new interface driver uas
+[17626.375851] scsi 6:0:0:0: Direct-Access     QEMU     QEMU HARDDISK    2.5+ PQ: 0 ANSI: 5
+[17626.376748] scsi 6:0:0:0: Attached scsi generic sg1 type 0
+[17626.389850] sd 6:0:0:0: Power-on or device reset occurred
+[17626.392628] sd 6:0:0:0: [sda] 3846408 512-byte logical blocks: (1.97 GB/1.83 GiB)
+[17626.393591] sd 6:0:0:0: [sda] Write Protect is on
+[17626.393833] sd 6:0:0:0: [sda] Mode Sense: 63 00 80 08
+[17626.394500] sd 6:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[17626.664333]  sda: sda1 sda2 sda3
+[17626.665089] sd 6:0:0:0: [sda] Attached SCSI disk
+--
+
+.. Mount the first partition, which contains the actual installer file system, and verify it contains a bootc continer image in the `containers` directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo mount -o ro /dev/sda1 /var/mnt/*
+mount: /var/mnt: WARNING: source write-protected, mounted read-only.
+$ *ls /var/mnt/*
+EFI  boot  container  images  osbuild-base.ks  osbuild.ks
+$ *ls /var/mnt/container/*
+blobs  index.json  oci-layout
+--
+
+.. When done, you can unplug the virtual USB device.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh detach-disk bootc-iso sdb*
+Disk detached successfully
+--
 .. lorem ipsum
 
 6. Apply the disconnected image update.
