@@ -1,7 +1,7 @@
 :time_estimate: 5
 :nginx-bootc-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: c1832c2dafbb1e1908e422dbaf6f9c7165a8399b24b90db3da2eb120b4977d8f
 
-= Lab: Update Edge Devices from a Removable Media
+= Lab: Update Edge Devices from Removable Media
 
 _Estimated reading time: *{time_estimate} minutes*._
 
