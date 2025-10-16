@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Troubleshoot Edge Devices Using Transient Packages :: Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</title>
+    <link rel="prev" href="s1-transient.html">
+    <link rel="next" href="s3-toolbx-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/rhde-bootc-update/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="rhde-bootc-update" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-updates/index.html">Introduction to Image Mode Updates</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s1-intro.html">Connected and Disconnected Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s2-review.html">TBD: Review of Building and Provisioning Edge Devices With RHEL Image Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s3-prereqs-lab.html">Lab: Prepare to Update Edge Devices Using Bootc Container Images</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-online/index.html">Apply Updates to Image Mode Systems from the Network</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-online/s1-update.html">Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-online/s2-update-lab.html">Lab: Update Edge Devices from a Container Registry</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-repurpose/index.html">Repurpose Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s1-repurpose.html">Switch Images of Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s2-repurpose-lab.html">Lab: Switch System Images of Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Troubleshoot Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-transient.html">Troubleshoot Image Mode Systems Using Transient Packages and Toolbx Containers</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-transient-lab.html">Lab: Troubleshoot Edge Devices Using Transient Packages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-toolbx-lab.html">Lab: Troubleshoot Edge Devices Using Toolbx Containers</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch6-offline/index.html">Apply Updates to Disconnected Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch6-offline/s1-offline.html">Update Image Mode Systems in Disconnected Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch6-offline/s2-offline-lab.html">Lab: Update Edge Devices from Removable Media</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <a class="title" href="../../../samples/1/index.html">samples</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../samples/1/index.html">1</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <a class="title" href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></li>
+    <li><a href="index.html">Troubleshoot Image Mode Systems</a></li>
+    <li><a href="s2-transient-lab.html">Lab: Troubleshoot Edge Devices Using Transient Packages</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Troubleshoot Edge Devices Using Transient Packages</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Troubleshoot issues with edge devices by installing transient packages.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Work in progress
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
+The <em>development machine</em> has access to mirrors of RHEL package repositories and bootc container images.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.</p>
+</div>
+<div class="paragraph">
+<p>If you are using the course classroom, log in on the <code>workstation</code> VM as the user <code>student</code> with password <code>student</code>.
+If not, please adapt the instructions to your test environment.</p>
+</div>
+<div class="paragraph">
+<p>Make sure you verified your test environment by following the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a> of this course.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You do not need any of the outcomes from the previous three activities, and could skip them.
+But you must execute the preparation tasks from the first lab of this course.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will experiment with one approach to add troubleshooting tools which might be missing in an image mode system: installing transient packages, which disappear after reboot.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Prepare to start this activity by checking that you have the outcomes from previous activities on your <em>development machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that you have a clone of the sample code repository of this course in your home directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
+$ <strong>ls rhde-bootc-samples/</strong>
+LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If needed, login to your private registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Login Succeeded!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have a bootc container image named <code>httpd-system:v1.0</code> in your private container registry.
+If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="xref unresolved">first lab</a>, which builds and publishes that image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0</strong>
+["v1.0"]</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
+That VM will be your <em>test machine</em>.</p>
+<div class="paragraph">
+<p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh list --all</strong>
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is fine if you have other local VMs on your system.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>If your <code>bootc-iso</code> VM is not running (like in the output of the previous command), start it.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh start bootc-iso</strong>
+Domain 'bootc-iso' started</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Access your <em>test machine</em> and verify that it lacks the ability to display online documentation, that is, man pages.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Enter the <code>temp-test-iso</code> directory and access your local VM using the SSH key in that directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd temp-test-iso</strong>
+$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Find which is the bootc container image that is currently booted.</p>
+<div class="paragraph">
+<p>The password for the <code>core</code> user is <code>redhat123</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc status</strong>
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now suppose you want to find out if the <code>bootc status</code> command can provide additional details.</p>
+<div class="paragraph">
+<p>The usual way would be acessing its online documentation, but the <code>man</code> command is missing in the standard base bootc container image for RHEL.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>man bootc</strong>
+-bash: man: command not found
+$ <strong>rpm -q man-db</strong>
+package man-db is not installed</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Use transient packages to access online documentation on your <em>test machine</em>.</p>
+<div class="paragraph">
+<p>It is possible to install RHEL excluding documentation from all packages, but this is not the case of the standard bootc container image for RHEL.
+It is missing just the <code>man</code> command.</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>First, review the mounted file systems.
+The complete list of mounted file is very long, because of the many virtual filesystems and ramdisks such as <code>/proc</code> and <code>/run</code>, so filter the list to display only on-disk file system using XFS.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t xfs</strong>
+/dev/vda3 on /sysroot type xfs (ro,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /etc type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /sysroot/ostree/deploy/default/var type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /var type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda2 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Also notice that the root file system is actually an overlay file system, backed by the currently deployed ostree image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t overlay</strong>
+composefs on / type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Attempt to install the <code>man-db</code> package, as you would do in a package mode system.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo dnf install man-db</strong>
+...
+This bootc system is configured to be read-only. Pass --transient to perform this transaction in a transient overlay which will reset when the system reboots.
+Operation aborted.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Try again, this time specifying the use of transient packages.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo dnf install --transient man-db</strong>
+...
+Complete!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the online docs for the <code>bootc</code> command.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>man bootc status</strong>
+...
+SYNOPSIS
+       bootc status [--format] [--format-version] [--booted] [-h|--help]
+
+DESCRIPTION
+       Display status
+
+       If  standard  output  is a terminal, this will output a description of the bootc system state. If standard output is not a terminal, output a YAML-formatted object using a schema intended to match a Kubernetes
+       resource that describes the state of the booted system.
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that there is now a second overlay file system, on <code>/usr</code>.
+This overlay enables transient packages.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t overlay</strong>
+composefs on / type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)
+overlay on /usr type overlay (ro,relatime,seclabel,lowerdir=usr,upperdir=/var/tmp/ostree-unlock-ovl.ENSDE3/upper,workdir=/var/tmp/ostree-unlock-ovl.ENSDE3/work,uuid=on)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To show that transient packages can leave lasting side-effects on image mode systems, install and start a MySQL Server.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo dnf install --transient mysql8.4-server</strong>
+..
+Complete!
+$ <strong>sudo systemctl start mysqld</strong></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the MySQL Server package added system configuration files and application data files.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls /etc/my.cnf.d/</strong>
+client.cnf  mysql-server.cnf
+$ <strong>sudo ls /var/lib/mysql/</strong>
+'#ib_16384_0.dblwr'  '#innodb_temp'   binlog.index   client-cert.pem   ibdata1   mysql.ibd         mysql_upgrade_history   mysqlx.sock.lock     public_key.pem    sys
+'#ib_16384_1.dblwr'   auto.cnf        ca-key.pem     client-key.pem    ibtmp1    mysql.sock        mysql_upgrade_info      performance_schema   server-cert.pem   undo_001
+'#innodb_redo'        binlog.000001   ca.pem         ib_buffer_pool    mysql     mysql.sock.lock   mysqlx.sock             private_key.pem      server-key.pem    undo_002</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify that transient packages are gone after a reboot.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Reboot your <em>test machine</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl reboot --now</strong>
+...
+Connection to 127.0.0.1 closed.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Give it some time to reboot and reconnect using SSH.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the <code>man</code> command and its package are gone.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>man bootc</strong>
+-bash: man: command not found
+$ <strong>rpm -q man-db</strong>
+package man-db is not installed</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that there the overlay on <code>/usr</code> is also gone.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t overlay</strong>
+composefs on / type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the MySQL Server is gone.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -q mysql8.4-server</strong>
+package mysql8.4-server is not installed
+$ <strong>sudo systemctl status mysqld</strong>
+Unit mysqld.service could not be found.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the configuration and data files of the MySQL Server are still present in your <em>test machine</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls /etc/my.cnf.d/</strong>
+client.cnf  mysql-server.cnf
+$ <strong>sudo ls /var/lib/mysql/</strong>
+'#ib_16384_0.dblwr'  '#innodb_redo'   auto.cnf        binlog.index   ca.pem            client-key.pem   ibdata1   mysql.ibd               mysql_upgrade_info   private_key.pem   server-cert.pem   sys        undo_002
+'#ib_16384_1.dblwr'  '#innodb_temp'   binlog.000001   ca-key.pem     client-cert.pem   ib_buffer_pool   mysql     mysql_upgrade_history   performance_schema   public_key.pem    server-key.pem    undo_001</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If you wish, you can leave the SSH session your <em>test machine</em> open, because you will use it in the next activity.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You installed transient packages, verified that the packages themselves (and their executable programs) disappear after reboot, but changes they made to system settings and application data do not disappear and may require manual cleaning up.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The next activity demonstrates the use of toolbx containers to as a way of installing troubleshooting utilities in an image mode system.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-transient.html">Troubleshoot Image Mode Systems Using Transient Packages and Toolbx Containers</a></span>
+  <span class="next"><a href="s3-toolbx-lab.html">Lab: Troubleshoot Edge Devices Using Toolbx Containers</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

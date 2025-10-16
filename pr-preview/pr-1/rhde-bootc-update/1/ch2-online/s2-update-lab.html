@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Update Edge Devices from a Container Registry :: Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</title>
+    <link rel="prev" href="s1-update.html">
+    <link rel="next" href="../ch3-rollback/index.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/rhde-bootc-update/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="rhde-bootc-update" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-updates/index.html">Introduction to Image Mode Updates</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s1-intro.html">Connected and Disconnected Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s2-review.html">TBD: Review of Building and Provisioning Edge Devices With RHEL Image Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s3-prereqs-lab.html">Lab: Prepare to Update Edge Devices Using Bootc Container Images</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Apply Updates to Image Mode Systems from the Network</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-update.html">Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-update-lab.html">Lab: Update Edge Devices from a Container Registry</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-repurpose/index.html">Repurpose Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s1-repurpose.html">Switch Images of Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s2-repurpose-lab.html">Lab: Switch System Images of Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-transient/index.html">Troubleshoot Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-transient/s1-transient.html">Troubleshoot Image Mode Systems Using Transient Packages and Toolbx Containers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-transient/s2-transient-lab.html">Lab: Troubleshoot Edge Devices Using Transient Packages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-transient/s3-toolbx-lab.html">Lab: Troubleshoot Edge Devices Using Toolbx Containers</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch6-offline/index.html">Apply Updates to Disconnected Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch6-offline/s1-offline.html">Update Image Mode Systems in Disconnected Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch6-offline/s2-offline-lab.html">Lab: Update Edge Devices from Removable Media</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <a class="title" href="../../../samples/1/index.html">samples</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../samples/1/index.html">1</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <a class="title" href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></li>
+    <li><a href="index.html">Apply Updates to Image Mode Systems from the Network</a></li>
+    <li><a href="s2-update-lab.html">Lab: Update Edge Devices from a Container Registry</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Update Edge Devices from a Container Registry</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Update edge devices manually from new bootc container images published in an OCI container registry.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Work in progress
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
+The <em>development machine</em> has access to mirrors of RHEL package repositories and bootc container images.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.</p>
+</div>
+<div class="paragraph">
+<p>If you are using the course classroom, log in on the <code>workstation</code> VM as the user <code>student</code> with password <code>student</code>.
+If not, please adapt the instructions to your test environment.</p>
+</div>
+<div class="paragraph">
+<p>Make sure you verified your test environment by following the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a> of this course.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and them update that system to a new version of its bootc container image.
+After performing the update, you will verify that configuration and application data are preserved by the update.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Prepare to start this activity by checking that you have the outcomes from previous activities on your <em>development machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that you have a clone of the sample code repository of this course in your home directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
+$ <strong>ls rhde-bootc-samples/</strong>
+LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If needed, login to your private registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Login Succeeded!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have a bootc container image named <code>httpd-system:v1.0</code> in your private container registry.
+If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="xref unresolved">first lab</a>, which builds and publishes that image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0</strong>
+["v1.0"]</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
+That VM will be your <em>test machine</em>.</p>
+<div class="paragraph">
+<p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh list --all</strong>
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is fine if you have other local VMs on your system.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>If your <code>bootc-iso</code> VM is not running (like in the output of the previous command), start it.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh start bootc-iso</strong>
+Domain 'bootc-iso' started</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Access your <em>test machine</em> and perform day-2 configurations, which affect system settings and application data.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Enter the <code>temp-test-iso</code> directory and access your local VM using the SSH key in that directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd temp-test-iso</strong>
+$ <strong>ssh-keygen -R '[127.0.0.1]:8022'</strong>
+# Host [127.0.0.1]:8022 found: line 7
+/home/student/.ssh/known_hosts updated.
+Original contents retained as /home/student/.ssh/known_hosts.old
+$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Record the hash of the current bootc container image of the test system.</p>
+<div class="paragraph">
+<p>The password for the <code>core</code> user is <code>redhat123</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc status</strong>
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the system is configured with UTC as its timezone and change it to reflect local settings.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>timedatectl show -p Timezone</strong>
+Timezone=UTC
+$ <strong>sudo timedatectl set-timezone 'America/Cancun'</strong>
+$ <strong>timedatectl show -p Timezone</strong>
+Timezone=America/Cancun</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Change the HTML files which mock a single-page web application.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cat /var/www/html/index.html</strong>
+Misc tests of bootc images and firewalld
+$ <strong>sudo bash -c "echo 'Hacked the webapp' &gt; /var/www/html/index.html"</strong>
+$ <strong>curl 127.0.0.1</strong>
+Hacked the webapp</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Try to install Cockpit.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+It will fail, but do NOT add the <code>--transient</code> option.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -q cockpit</strong>
+package cockpit is not installed
+$ <strong>sudo yum install cockpit</strong>
+...
+This bootc system is configured to be read-only. Pass --transient to perform this transaction in a transient overlay which will reset when the system reboots.
+Operation aborted.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Show bootc update timer is active, and disable it to ensure you have control of when the system will apply updates.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl is-active bootc-fetch-apply-updates.timer</strong>
+active
+$ <strong>sudo systemctl mask bootc-fetch-apply-updates.timer</strong>
+Created symlink '/etc/systemd/system/bootc-fetch-apply-updates.timer' → '/dev/null'.
+$ <strong>systemctl is-active bootc-fetch-apply-updates.timer</strong>
+failed</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you notice that the timer, or its associated service, failed, ignore that for now.
+As you will see later in this lab, the <em>test machine</em> is not properly configured to access the private registry which would provide bootc container image updates.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
+Open a new terminal on your <em>development machine</em> to proceed with the next step.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Build and publish an updated bootc container image.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Create a new working directory, copy sample files from git repo, and copy the SSH key from the previous working directory ,</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
+$ <strong>mkdir temp-test-update</strong>
+$ <strong>cp -r rhde-bootc-samples/httpd-update/* temp-test-update</strong>
+$ <strong>cp temp-test-iso/edge-key* temp-test-update</strong>
+$ <strong>cd temp-test-update</strong></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Review the Containerfile for the updated bootc container image.
+It makes the following changes:</p>
+<div class="openblock">
+<div class="content">
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Install and enable the Cockpit service.</p>
+</li>
+<li>
+<p>Move the updated single-page web application files to the <code>/webapp/html</code> directory, which is read-only, and changed the Apache Web Server configuration to match.</p>
+</li>
+<li>
+<p>Put a placeholder file in the old location for the web application files, the <code>/var/www/html</code> directory, which is actually an application data directory.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">FROM registry.lab.example.com:5000/rhel10/rhel-bootc:10.0
+ADD yum.repos.d /etc/yum.repos.d
+RUN mkdir -p /usr/lib/bootc/kargs.d &amp;&amp; \
+  dnf install -y firewalld httpd cockpit &amp;&amp; \
+  dnf clean all &amp;&amp; \
+  firewall-offline-cmd --zone=public --add-service=http &amp;&amp; \
+  firewall-offline-cmd --zone=public --add-service=cockpit &amp;&amp; \
+  systemctl enable httpd &amp;&amp; \
+  systemctl enable firewalld &amp;&amp; \
+  systemctl enable cockpit.socket
+ADD sysctl.d /usr/lib/sysctl.d
+ADD kargs.d /usr/lib/bootc/kargs.d
+ADD html /webapp/html
+RUN sed -i '1,$ s?/var/www/?/webapp/?' /etc/httpd/conf/httpd.conf &amp;&amp; \
+  chmod -R a+rX /webapp &amp;&amp; \
+  semanage fcontext -a -t httpd_sys_content_t "/webapp(/.*)?" &amp;&amp; \
+  echo 'Webapp files are not here' &gt; /var/www/html/index.html</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If you prefer, you can compare the updated Containerfile with the original one for the <code>httpd-system</code> bootc container image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>diff Containerfile ../rhde-bootc-samples/httpd-system</strong>
+4c4
+&lt;   dnf install -y firewalld httpd cockpit &amp;&amp; \
+---
+&gt;   dnf install -y firewalld httpd &amp;&amp; \
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build a new bootc container image and publish it in the private registry using the same tag used for initial provisioning of your <em>test machine</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman build -t httpd-system:v1.0.1 .</strong>
+...
+Successfully tagged localhost/httpd-system:v1.0.1
+e1390a4dc788a24e36c7ec2da82784ce4d594665eeed9060802e59c0fcfed6c7
+$ <strong>skopeo copy containers-storage:localhost/httpd-system:v1.0.1 docker://registry.lab.example.com:5000/httpd-system:v1.0</strong>
+...
+Copying config e1390a4dc7 done   |
+Writing manifest to image destination</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Apply the image update.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Return to the terminal running an SSH session to your <em>test machine</em> and attempt to check for the availability of updates.</p>
+</li>
+<li>
+<p>It is expected to fail, because the <em>test machine</em> was never configured with credentials and a CA root for the private registry.
+You can confirm it by attempting to log in using Podman.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc upgrade --check</strong>
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
+$ <strong>sudo podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Error: authenticating creds for "registry.lab.example.com:5000": pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Copy the CA root from the privage registry, add it to the system&#8217;s trusted CAs, and try again to log in to the private registry using Podman.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>scp student@utility:/opt/registry/certs/domain.crt</strong>
+domain.crt
+$ <strong>sudo cp domain.crt /etc/pki/ca-trust/source/anchors/</strong>
+$ <strong>sudo update-ca-trust</strong>
+$ <strong>sudo podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Login Succeeded!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Checking for bootc container image updates still fails because the bootc utility does not share registry access credentials with application containers.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc update --check</strong>
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: reading manifest v1.0 in registry.lab.example.com:5000/httpd-system: authentication required</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Copy the registry credentials file from the root user&#8217;s runtime data directory to the location expected by the bootc utility.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo cp /run/containers/0/auth.json /etc/ostree/auth.json</strong></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now it works.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc update --check</strong>
+Update available for: docker://registry.lab.example.com:5000/httpd-system:v1.0
+  Version: 10.0
+  Digest: sha256:f7b6046dc81cbb80e79bdfb58fcd1c17a3ab84ae47f3b21b1af384f2277d59dc
+...</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you get an error about "updating mtime", you can safely ignore it.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Apply the update, which reboots your <em>test machine</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc update --apply</strong>
+...
+Rebooting system
+...
+Connection to 127.0.0.1 closed.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Wait a few moments, to give your <em>test machine</em> time to reboot, and verify that it now runs the updated web application.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl 127.0.0.1:8080</strong>
+Misc tests of bootc images and firewalld, v1.1</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Reconnect to your <em>test machine</em> so you can verify all changes to the system image, configurations, and data.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify which of the changes, from the new image, were actually applied to your <em>test machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that the new image is the current booted image, and the previous image is still available for rolling back.</p>
+<div class="paragraph">
+<p>Compare the hashes of each image with your notes from previous steps.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc status</strong>
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:f7b6046dc81cbb80e79bdfb58fcd1c17a3ab84ae47f3b21b1af384f2277d59dc
+       Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the Cockpit is installed and active.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -q cockpit</strong>
+cockpit-334.1-1.el10_0.x86_64
+$ <strong>systemctl is-active cockpit.socket</strong>
+active</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the Apache Web Server configurations were changed, and that the web application files are in the <code>/webapp</code> directory, proving that changes to <code>/etc</code> from the new image were applied.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>grep DocumentRoot /etc/httpd/conf/httpd.conf</strong>
+# DocumentRoot: The directory out of which you will serve your
+DocumentRoot "/webapp/html"
+    # access content that does not live under the DocumentRoot.
+$ <strong>ls /webapp/html</strong>
+index.html
+$ <strong>cat /webapp/html/index.html</strong>
+Misc tests of bootc images and firewalld, v1.1</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the placeholder file, added to the new bootc image, is NOT present in the system.</p>
+<div class="paragraph">
+<p>Also notice that the changed web application are still in the system, because application data is NOT affected by bootc image upgrades.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls /var/www/html</strong>
+index.html
+$ <strong>cat /var/www/html/index.html</strong>
+Hacked the webapp</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Attempt to make changes to the current the web application files.
+It will fail because now application files are in a read-only directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bash -c "echo 'Hacked the webapp, again' &gt; /webapp/html/index.html"</strong>
+bash: line 1: /webapp/html/index.html: Read-only file system</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify the status of configuration and application data changes applied to your <em>test machine</em> before the update.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that you can still check for the availability of bootc image updates, because the system retained the certificate and credentails for acessing the private registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc upgrade --check</strong>
+No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the system locale changes were also preserved.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>timedatectl show -p Timezone</strong>
+Timezone=America/Cancun</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Remember that you already checked that application data changes (in the <code>/var/www/html</code> directory) were preserved by the bootc image upgrade.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Optional:</strong> Change settings of the local test VM, to enable access to Cockpit.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Still on your <em>test machine</em>, show that cockpit is available, but cannot access it because there is no port-forward setting for TCP port 9090 of your local VM.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl -s 127.0.0.1:9090 | head</strong>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;title&gt;Loading...&lt;/title&gt;
+  &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+  &lt;meta name="robots" content="noindex" /&gt;
+  &lt;meta insert="dynamic_content_here" /&gt;&lt;base href="/"&gt;
+    &lt;script&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Stop your test VM</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh destroy bootc-iso</strong>
+Domain 'bootc-iso' destroyed</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If you wish, you can review the raw XML definition of your test VM.</p>
+<div class="paragraph">
+<p>It&#8217;s a very long and verbose definition, but notice, close to its end, the <code>&lt;interface&gt;</code> element which includes two <code>&lt;portForward&gt;</code> child elements.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh dumpxml bootc-iso | less</strong>
+&lt;domain type='kvm'&gt;
+  &lt;name&gt;bootc-iso&lt;/name&gt;
+...
+  &lt;devices&gt;
+    &lt;emulator&gt;/usr/libexec/qemu-kvm&lt;/emulator&gt;
+...
+    &lt;interface type='user'&gt;
+      &lt;mac address='52:54:00:af:21:3a'/&gt;
+      &lt;portForward proto='tcp'&gt;
+        &lt;range start='8022' to='22'/&gt;
+      &lt;/portForward&gt;
+      &lt;portForward proto='tcp'&gt;
+        &lt;range start='8080' to='80'/&gt;
+      &lt;/portForward&gt;
+      &lt;model type='virtio'/&gt;
+      &lt;backend type='passt'/&gt;
+      &lt;address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/&gt;
+    &lt;/interface&gt;
+...
+  &lt;/devices&gt;
+&lt;/domain&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You could make edits to the XML file and apply them back to libvirt by using the <code>virsh edit bootc-iso</code> command, but the next steps show a scriptable approach for making the change.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Add a third <code>portForward</code> element to your the libvirt domain of your test VM.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virt-xml bootc-iso --print-diff --define --edit --network portForward2.proto=tcp,portForward2.range0.start=8090,portForward2.range0.to=9090</strong>
+--- Original XML
++++ Altered XML
+@@ -136,6 +136,9 @@
+       &lt;model type="virtio"/&gt;
+       &lt;backend type="passt"/&gt;
+       &lt;address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/&gt;
++      &lt;portForward proto="tcp"&gt;
++        &lt;range start="8090" to="9090"/&gt;
++      &lt;/portForward&gt;
+     &lt;/interface&gt;
+     &lt;serial type="pty"&gt;
+       &lt;target type="isa-serial" port="0"&gt;
+
+Domain 'bootc-iso' defined successfully.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Restart your test VM.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh start bootc-iso</strong>
+Domain 'bootc-iso' started</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Wait a few moments to give your test VM, that is, your <em>test machine</em>, time to reboot.
+Then open a web brower on your <em>development machine</em> and use the URL <code>https://127.0.0.1:8090</code> to access Cockpit on your <em>test machine</em>.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You sucessfully updated your <em>test machine</em> with a new bootc container image and demonstrated that configuration changes and applicaiton data are preserved.
+You also demonstrated that new configurations from the updated image are applied, but new application data is not.
+if you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to intialize data at first boot instead of just having data files on the image.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The next section introduces the process for rolling back updates of image mode systems, and how it affects configuration and application data.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-update.html">Updates to Image Mode Systems</a></span>
+  <span class="next"><a href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

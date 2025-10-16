@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Troubleshoot Edge Devices Using Toolbx Containers :: Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</title>
+    <link rel="prev" href="s2-transient-lab.html">
+    <link rel="next" href="../ch6-offline/index.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/rhde-bootc-update/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="rhde-bootc-update" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-updates/index.html">Introduction to Image Mode Updates</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s1-intro.html">Connected and Disconnected Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s2-review.html">TBD: Review of Building and Provisioning Edge Devices With RHEL Image Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s3-prereqs-lab.html">Lab: Prepare to Update Edge Devices Using Bootc Container Images</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-online/index.html">Apply Updates to Image Mode Systems from the Network</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-online/s1-update.html">Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-online/s2-update-lab.html">Lab: Update Edge Devices from a Container Registry</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-repurpose/index.html">Repurpose Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s1-repurpose.html">Switch Images of Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s2-repurpose-lab.html">Lab: Switch System Images of Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Troubleshoot Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-transient.html">Troubleshoot Image Mode Systems Using Transient Packages and Toolbx Containers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-transient-lab.html">Lab: Troubleshoot Edge Devices Using Transient Packages</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s3-toolbx-lab.html">Lab: Troubleshoot Edge Devices Using Toolbx Containers</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch6-offline/index.html">Apply Updates to Disconnected Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch6-offline/s1-offline.html">Update Image Mode Systems in Disconnected Mode</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch6-offline/s2-offline-lab.html">Lab: Update Edge Devices from Removable Media</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <a class="title" href="../../../samples/1/index.html">samples</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../samples/1/index.html">1</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <a class="title" href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></li>
+    <li><a href="index.html">Troubleshoot Image Mode Systems</a></li>
+    <li><a href="s3-toolbx-lab.html">Lab: Troubleshoot Edge Devices Using Toolbx Containers</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Troubleshoot Edge Devices Using Toolbx Containers</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Troubleshoot issues with edge devices by running toolbox containers.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Work in progress
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
+The <em>development machine</em> has access to mirrors of RHEL package repositories and bootc container images.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.</p>
+</div>
+<div class="paragraph">
+<p>If you are using the course classroom, log in on the <code>workstation</code> VM as the user <code>student</code> with password <code>student</code>.
+If not, please adapt the instructions to your test environment.</p>
+</div>
+<div class="paragraph">
+<p>Make sure you verified your test environment by following the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a> of this course.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You do not need any of the outcomes from the previous three activities, and could skip them.
+But you must execute the preparation tasks from the first lab of this course.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will experiment with another approach to add troubleshooting tools which might be missing in an image mode system: creating toolbx containers, which continue available after reboot, until you explicitly delete them.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Prepare to start this activity by checking that you have the outcomes from previous activities on your <em>development machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that you have a clone of the sample code repository of this course in your home directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
+$ <strong>ls rhde-bootc-samples/</strong>
+LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If needed, login to your private registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Login Succeeded!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have a bootc container image named <code>httpd-system:v1.0</code> in your private container registry.
+If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="xref unresolved">first lab</a>, which builds and publishes that image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0</strong>
+["v1.0"]</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
+That VM will be your <em>test machine</em>.</p>
+<div class="paragraph">
+<p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh list --all</strong>
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is fine if you have other local VMs on your system.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>If your <code>bootc-iso</code> VM is not running (like in the output of the previous command), start it.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh start bootc-iso</strong>
+Domain 'bootc-iso' started</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Access your <em>test machine</em> and verify that it lacks a couple troubleshooting utilities.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Enter the <code>temp-test-iso</code> directory and access your local VM using the SSH key in that directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd temp-test-iso</strong>
+$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Find which is the bootc container image that is currently booted.</p>
+<div class="paragraph">
+<p>The password for the <code>core</code> user is <code>redhat123</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc status</strong>
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Attempt to retrieve information about the system&#8217;s NUMA architecture, using utilities from the hardware locality package, and find that they are not installed.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>lstopo</strong>
+-bash: lstopo: command not found
+$ <strong>rpm -q hwloc</strong>
+package hwloc is not installed</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Also attempt to get information about the system&#8217;s IO performance, and find that the Sysstat package is not installed either.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>iostat</strong>
+-bash: iostat: command not found
+$ <strong>rpm -q sysstat</strong>
+package sysstat is not installed</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Leave the current running the SSH session to your <em>test machine</em> and open another terminal on your <em>development machine</em> to proceed to the next step.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Make a toolbx container available in the private registry.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On your <em>development machine</em>, verify if there is a copy of standard UBI toolbox container on the private registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman search registry.lab.example.com:5000/toolbox</strong>
+NAME                                         DESCRIPTION
+registry.lab.example.com:5000/ubi10/toolbox
+$ <strong>skopeo inspect docker://registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
+{
+    "Name": "registry.lab.example.com:5000/ubi10/toolbox",
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If the copy is not available, your output will be similar to the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman search registry.lab.example.com:5000/toolbox</strong>
+$ <strong>skopeo inspect docker://registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
+FATA[0000] Error parsing image name "docker://registry.lab.example.com:5000/ubi10/toolbox:10.0": reading manifest 10.0 in registry.lab.example.com:5000/ubi10/toolbox: manifest unknown</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Remember that the <code>podman search</code> command and its equivalents with other container engines are NOT a reliable way to determine if a container image exists in an OCI container registry, because of limitations inherited from the Docker Distribution API.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>If the copy is not available, create it so you can keep with the scenario of air-gapped deployments.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>skopeo copy --remove-signatures docker://registry.access.redhat.com/ubi10/toolbox:10.0 docker://registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
+..
+Writing manifest to image destination</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Use a toolbx container to collect information about the NUMA architecture of your <em>test machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Switch to the terminal on your _test machine) and use the copy of the toolbx image to create a toolbx container.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Login Succeeded!
+$ <strong>toolbox create --image registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
+Image required to create Toolbx container.
+Download registry.lab.example.com:5000/ubi10/toolbox:10.0 (245.1MB)? [y/N]: y
+Created container: rhel-toolbox-10.0
+Enter with: toolbox enter</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Enter the toolbox container you just created.</p>
+<div class="paragraph">
+<p>Notice the change of the system prompt, which doesn&#8217;t display the current directory anymore, but includes an hexxagonal bullet.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox enter</strong>
+⬢ [core@toolbx ~]$ <strong>pwd</strong>
+/var/home/core</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>View the file systems which are backed by actual disk contents and which are overlays.
+Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same comands from the previous lab.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t xfs</strong>
+/dev/vda3 on /run/host/etc type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /run/host/sysroot type xfs (ro,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+...
+$ <strong>mount -t overlay</strong>
+composefs on /run/host type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Because the toolbx container image does NOT contain the package repository settings for the classroom environment, copy them from the host machine.
+Also delete the configuration for the UBI repositories.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo cp /run/host/etc/yum.repos.d/rhel_mirror.repo /etc/yum.repos.d/</strong>
+$ <strong>sudo rm /etc/yum.repos.d/ubi.repo</strong></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You could create a custom toolbx image, including such settings and also your preferred choice of troubleshooting tools.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Install the hardware locality package.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo dnf install hwloc</strong>
+...
+Complete!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Finally, use the text mode hardware locality viewer.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>lstopo-no-graphics</strong>
+Machine (3909MB total)
+  NUMANode L#0 (P#0 3909MB)
+  Package L#0 + L3 L#0 (16MB) + L2 L#0 (4096KB) + L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
+  Package L#1 + L3 L#1 (16MB) + L2 L#1 (4096KB) + L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
+  HostBridge
+    PCIBridge
+      PCI 01:00.0 (Ethernet)
+        Net "enp1s0"
+    PCIBridge
+      PCI 04:00.0 (SCSI)
+        Block "vda"
+    PCIBridge
+      PCI 05:00.0 (Other)
+    PCIBridge
+      PCI 06:00.0 (Other)
+    PCI 00:1f.2 (SATA)
+      Block(Removable Media Device) "sr0"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Exit the toolbx container and return to your <em>test machine</em> shell.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>exit</strong>
+logout</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify that toolbx containers are application containers, and you can have multiple of them, each with their own container file system.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that toolbx containers are application containers, which you can manage using Podman.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox list</strong>
+IMAGE ID      IMAGE NAME                                        CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED      STATUS   IMAGE NAME
+2251b66a79b8  rhel-toolbox-10.0  3 hours ago  running  registry.lab.example.com:5000/ubi10/toolbox:10.0
+$ <strong>podman image list</strong>
+REPOSITORY                                   TAG         IMAGE ID      CREATED      SIZE
+registry.lab.example.com:5000/ubi10/toolbox  10.0        261e188dd142  2 weeks ago  1.18 GB
+$ <strong>podman ps</strong>
+CONTAINER ID  IMAGE                                             COMMAND               CREATED      STATUS         PORTS       NAMES
+2251b66a79b8  registry.lab.example.com:5000/ubi10/toolbox:10.0  toolbox --log-lev...  3 hours ago  Up 10 minutes              rhel-toolbox-10.0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create another toolbx container, this time giving it a name.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox create stat --image registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
+Created container: stat
+Enter with: toolbox enter stat</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the new toolbx container is not running, because you didn&#8217;t enter yet.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox list</strong>
+IMAGE ID      IMAGE NAME                                        CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED        STATUS   IMAGE NAME
+e6876646ee2e  rhel-toolbox-10.0  3 hours ago    running  registry.lab.example.com:5000/ubi10/toolbox:10.0
+b8952ec51a35  stat               6 seconds ago  created  registry.lab.example.com:5000/ubi10/toolbox:10.0
+$ <strong>podman ps -a</strong>
+CONTAINER ID  IMAGE                                             COMMAND               CREATED         STATUS         PORTS       NAMES
+e6876646ee2e  registry.lab.example.com:5000/ubi10/toolbox:10.0  toolbox --log-lev...  23 hours ago    Up 15 minutes              rhel-toolbox-10.0
+b8952ec51a35  registry.lab.example.com:5000/ubi10/toolbox:10.0  toolbox --log-lev...  45 seconds ago  Created                    stat</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Enter the second toolbx container</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox enter stat</strong>
+⬢ [core@toolbx ~]$</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Configure the second toolbx container for your disconnected environment and install the Sysstat package.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo cp /run/host/etc/yum.repos.d/rhel_mirror.repo /etc/yum.repos.d/</strong>
+$ <strong>sudo rm /etc/yum.repos.d/ubi.repo</strong>
+$ <strong>sudo dnf install sysstat</strong>
+...
+Complete!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Get information about I/O performance of your <em>test machine</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>iostat</strong>
+Linux 6.12.0-55.24.1.el10_0.x86_64 (bootc-iso)  10/13/25        <em>x86_64</em>        (2 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           0.68    0.00    0.98    0.53    0.07   97.73
+
+Device             tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd
+sr0               0.08         2.64         0.00         0.00       2104          0          0
+vda              15.38       393.80        63.56         0.00     313408      50585          0</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify that toolbx containers are partially isolated from their host system (that is, your <em>test machine</em>) settings and application data.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Create a file on your home directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>id</strong>
+uid=1000(core) gid=10(wheel) groups=10(wheel)
+$ <strong>echo '1,2,3 testing' &gt; $HOME/test.txt</strong></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Attempt to change the timezone of your toolbx container.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>timedatectl show -p Timezone</strong>
+Timezone=America/Cancun
+$ <strong>sudo timedatectl set-timezone 'Asia/Tokyo'</strong>
+Failed to set time zone: Access denied</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Install and attempt to start a MySQL Server.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo dnf install mysql8.4-server</strong>
+...
+Complete!
+$ <strong>sudo systemctl start mysqld</strong>
+Failed to connect to system scope bus via local transport: No such file or directory</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that, despite the failure to start the database server, there are configuration files and data directories crated by installing its package.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls /etc/my.cnf.d</strong>
+client.cnf  mysql-server.cnf
+$ <strong>ls -a /var/lib/mysql</strong>
+.  ..</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Exit the toolbx container and return to your <em>test machine</em> shell.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>exit</strong>
+logout</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify if any of the changes made while in the second toolbox container affect your <em>test machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify if there is text file on your home directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls $HOME/<strong>txt</strong>
+/var/home/core/test.txt
+$ *cat $HOME/test.txt</strong>
+1,2,3 testing</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify if there are MySQL Server configuration and data files.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls /etc/my.cnf.d</strong>
+client.cnf  mysql-server.cnf
+$ <strong>ls -a /var/lib/mysql</strong>
+.  ..</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify that you can still enter your two toolbx containers after reboot.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Reboot your <em>test machine</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl reboot --now</strong>
+...
+Connection to 127.0.0.1 closed.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Give it a few moments to reboot and reconnect using SSH</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you still have two toolbx containers.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox list</strong>
+IMAGE ID      IMAGE NAME                                       CREATED
+261e188dd142  registry.lab.example.com:5000/ubi10/toolbox:10.0  2 weeks ago
+
+CONTAINER ID  CONTAINER NAME     CREATED        STATUS  IMAGE NAME
+2251b66a79b8  rhel-toolbox-10.0  3 hours ago    exited  registry.lab.example.com:5000/ubi10/toolbox:10.0
+dab414a31a73  stat               5 minutes ago  exited  registry.lab.example.com:5000/ubi10/toolbox:10.0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Enter the first toolbx container and verify it still contains the hardware locality utilities.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox enter</strong>
+⬢ [core@toolbx ~]$ <strong>rpm -q hwloc</strong>
+hwloc-2.11.1-3.el10.x86_64
+⬢ [core@toolbx ~]$ <strong>exit</strong>
+logout</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Enter the second toolbx container and verify it still contains the Sysstat package.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox enter stat</strong>
+⬢ [core@toolbx ~]$ <strong>rpm -q sysstat</strong>
+sysstat-12.7.6-2.el10.x86_64
+⬢ [core@toolbx ~]$ <strong>exit</strong>
+logout</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If you wish, stop and delete your toolbx containers using Podman.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman stop rhel-toolbox-10.0</strong>
+rhel-toolbox-10.0
+$ <strong>podman rm rhel-toolbox-10.0</strong>
+rhel-toolbox-10.0
+$ <strong>podman stop stat</strong>
+stat
+$ <strong>podman rm stat</strong>
+stat
+$ <strong>podman image rm registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
+Untagged: registry.lab.example.com:5000/ubi10/toolbox:10.0
+Deleted: 261e188dd1428d36b03a512e4f67a7285ed6f68a743e07efbdd16e70473e680d
+$ <strong>toolbox list</strong></code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You created two toolbx containers, installed different packages in each, and verified what they can and cannot affect their host system.
+Then you cleaned up your <em>test machine</em> to get rid of the toolbx containers.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The final chapter of this course demonstrates a workflow for performing off-line updates of edge devices running image mode for RHEL.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-transient-lab.html">Lab: Troubleshoot Edge Devices Using Transient Packages</a></span>
+  <span class="next"><a href="../ch6-offline/index.html">Apply Updates to Disconnected Image Mode Systems</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
