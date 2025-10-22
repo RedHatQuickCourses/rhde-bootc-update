@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Not started yet
+Work in progress
 </td>
 </tr>
 </table>
@@ -226,26 +226,177 @@ Not started yet
 </div>
 </div>
 <div class="sect1">
+<h2 id="_about_transactional_updates_of_image_mode_systems"><a class="anchor" href="#_about_transactional_updates_of_image_mode_systems"></a>About transactional updates of image mode systems</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Image mode systems are said to apply updates in am atomic and transactional way.
+If you are familiar with other transactional systems, such as relational databases, you would expect that image mode systems possess two properties:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><em>Atomicity</em>: updates are either applied entirely, or not at all.
+There is no possible intermediate state, where updates would be only partially applied.</p>
+</li>
+<li>
+<p><em>Transactionality</em>: updates can be undone, or rolled back, cleanly.
+You can revert a system completely to the state it was before the update was applied.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>These two properties hold true regarding the read-only system image, that is, the contents of its root partition, especially its <code>/usr</code> directory, which contains all installed system software, and also regarding its kernel and boot loader.</p>
+</div>
+<div class="paragraph">
+<p>But they to not apply to mutable system state, that is, to system configurations stored in the <code>/etc</code> directory and to application data stored in the <code>/var</code> directory.
+It may be necessary to provide additional code or processes around bootc updates to ensure the mutable system state ends up in a consistent and working state.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_bootc_update_and_switch_operations"><a class="anchor" href="#_bootc_update_and_switch_operations"></a>Bootc update and switch operations</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>The bootc utility provides two commands related to bootc image updates:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Upgrade</dt>
+<dd>
+<p>Checks if the current image reference points to a newer bootc container image than the one currently running image.
+If it does, then bootc downloads, stages, and deploys the new bootc container image.</p>
+</dd>
+<dt class="hdlist1">Switch</dt>
+<dd>
+<p>Changes the image reference and then downloads, stages, and deploys the new bootc container image, if it is different than the currently running image.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Both commands accept the <code>--apply</code> option, which immediately reboot after downloading and deploying the new bootc container image.
+If you do not specify the <code>--apply</code> option, you must reboot manually for the update to take effect.</p>
+</div>
+<div class="paragraph">
+<p>The concept of "updates" with image mode systems is loosely defined, because there is no constraint that the new bootc continer image actually be an update of the currently running image.
+It could be a totally unrelated image, which creates interesting possibilities but also some concerns.</p>
+</div>
+<div class="paragraph">
+<p>Intuitively, you could associate the <code>bootc upgrade</code> command with an actual update, because it does not change the image reference, and <code>bootc switch</code> with reimaging or repurposing a system, because it changes the image reference.
+But consider that the new reference could point to a copy of the same bootc container image in a different OCI container registry.</p>
+</div>
+<div class="paragraph">
+<p>What users consider the "name" of a container image is actually the name of an image <em>repository</em>, which could store multiple, possibly unrelated images, each one identified by its digest.
+Red Hat products such as OpenShift and MicroShift do exactly that.
+Even the "tag" of a container image is optional.</p>
+</div>
+<div class="paragraph">
+<p>While a pair of name and tag identifies only one container image at a given moment in time, that pair may refer to different images over time.
+This is the concept of a <em>floating tag</em>.</p>
+</div>
+<div class="paragraph">
+<p>So your choice of the <code>bootc upgrade</code> or <code>bootc switch</code> commands is only dependent on how you organize your container image repositories and how you tag your bootc container images.
+For example, if your organization uses different tags for minor updates, and avoids the use of floating tags, then you must use <code>bootc switch</code> to perform all updates.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For the remaining of this course, any topic that references the <code>bootc upgrade</code> command or an "update" operation also applies to the <code>bootc switch</code> command, because they are equivalent for most practical purposes.
+Any exceptions will stated be explicitly.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_booc_update_timer_service"><a class="anchor" href="#_the_booc_update_timer_service"></a>The booc update timer service</h2>
+<h2 id="_updates_with_private_container_registries"><a class="anchor" href="#_updates_with_private_container_registries"></a>Updates with private container registries</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>For a networked update workflow, the bootc utility must connect to an OCI container registry, and that usually requires access credentials.
+By default, the bootc utility does NOT share registry configurations with the container tools from RHEL, such as Podman and Skopeo.
+That means being able to pull a bootc container image with Podman or inspecting that container image using Skopeo is not sufficient for bootc to be able to perform an update.</p>
+</div>
+<div class="paragraph">
+<p>Bootc honors the system-wide certificate authority (CA) trust chain, so you do not require configuring bootc with a TLS certificate, and though you can instruct bootc to ignore TLS validation, we strongly recommend that you configure your image mode systems with your internal CA roots.</p>
+</div>
+<div class="paragraph">
+<p>Bootc stores its registry credentials in the <code>/etc/ostree/auth.json</code> file, using the same format as the continer tools.
+So you can login using Podman or Skopeo and copy the user&#8217;s registry authentitication file to the Bootc registry credentials file.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_application_and_configuration_data_during_image_updates"><a class="anchor" href="#_application_and_configuration_data_during_image_updates"></a>Application and configuration data during image updates.</h2>
+<h2 id="_the_bootc_update_timer_service"><a class="anchor" href="#_the_bootc_update_timer_service"></a>The bootc update timer service</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>For the common scenario that organizations use a floating tag to refer to a stream of updates to a bootc container image, image mode systems run an update timer service named <code>bootc-fetch-apply-updates</code>.</p>
+</div>
+<div class="paragraph">
+<p>That timer, managed by Systemd, performs a periodic <code>bootc upgrade --apply</code> command.
+It enables edge devices, in locations with intermitent network connectivity, to pick updates on their own time.</p>
+</div>
+<div class="paragraph">
+<p>You may wish to disable the timer, to avoid such automatic updates entirely, or to change it to not reboot immediately, but reboot manually or using a different timer service.
+For example, to stage updates during the day, whenever network connectivity is available, but reboot only during a maintenance window.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_system_configurations_during_image_updates"><a class="anchor" href="#_system_configurations_during_image_updates"></a>System configurations during image updates.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When the bootc utility downloads and applies a new bootc container image, it also performs the deployment process of the bootc container image.
+The deployment process extracts the image contents, so it can run in a live system, and builds the overlay file system which becomes the read-only system root directory (<code>/</code>).</p>
+</div>
+<div class="paragraph">
+<p>The deployment process also intializes a new read-write <code>/etc</code> directory, by performing a three-way merge between the contents of the currenty running <code>/etc</code> directory, the new container image, and the currently running container image.</p>
+</div>
+<div class="paragraph">
+<p>The tree-way merge process acts on a file-by-file basis, so that new and changed files in the new container image, which didn&#8217;t exist or changed in the currently running system, are applied to it.
+Oh the other hand, any file that changed in the running system is kept as-is, to not override any day-2 configurations already performed to the system.</p>
+</div>
+<div class="paragraph">
+<p>As the system reboots into the new image, it also switches to the new read-write copy of the <code>/etc</code> directory, while the previous copy is retained as part of the old bootc container image deployment.
+If any Systemd unit changes files in the <code>/etc</code> directory, those changes affect the new read-write copy, which starts to diverge from its bootc container image during its first boot.</p>
+</div>
+<div class="paragraph">
+<p>Because of the way the three-way merge works, it is recommended that any system configuration which is embedded into a bootc container image, and that is not supposed to be changed at day-2, be performed in the <code>/usr/lib</code> directory instead of the <code>/etc</code> directory.
+Some legacy system services and demons may not support configurations in the <code>/usr</code> directory and may require special care diring boot updates.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_data_during_image_updates"><a class="anchor" href="#_application_data_during_image_updates"></a>Application data during image updates.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A bootc update remains using the same copy of the <code>/var</code> directory that was already in use by the currently running system.
+Bootc updates do NOT change the <code>/var</code> directory in anyway.
+So, if a new bootc container image includes new content in <code>/var</code>, it will NOT be applied by an update.</p>
+</div>
+<div class="paragraph">
+<p>This means that bootc container images may require Systemd units to run at boot time to initialize data directories, including locations of their temporary and log files.
+Applications that abide by currently recommended practices create such directories at run time, instead of assuming they are pre-created during package installation, or defers their initialization to Systemd units.</p>
+</div>
+<div class="paragraph">
+<p>If an update requires migration or conversion of application data to different formats and locations, it also must be perfomed either manually, after the bootc update operation, or by a Systemd unit embedded in the bootc container image.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Scriplets of RPM packages run during bootc container image build time.
+They do NOT run during actual image mode system updates.
+Consequently, package updates which work with no further action in package mode may require workarounds to work in image mode.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -253,7 +404,7 @@ Not started yet
 <h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>The next lab configures an image mode system to connect to a private registry to apply bootc container image updates, and also demonstrates the effect of such updates on local system configurations and data from aplications.</p>
 </div>
 </div>
 </div>

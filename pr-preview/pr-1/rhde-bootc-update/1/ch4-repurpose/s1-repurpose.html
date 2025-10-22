@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Not started yet
+Work in progress
 </td>
 </tr>
 </table>
@@ -226,10 +226,30 @@ Not started yet
 </div>
 </div>
 <div class="sect1">
-<h2 id="_image_names_tags_and_digests"><a class="anchor" href="#_image_names_tags_and_digests"></a>Image names, tags, and digests.</h2>
+<h2 id="_repurpose_vs_update_image_mode_systems"><a class="anchor" href="#_repurpose_vs_update_image_mode_systems"></a>Repurpose vs. update image mode systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>As explained during the previous section, about image updates, the <code>bootc update</code> and <code>bootc switch</code> commands perform the same actions, except that the first uses the current system image reference and the second changes the system image reference.
+From the perspective of the bootc utility, the new and old images could be completely unrelated.
+Alternatively, the new reference could point to a copy of the same image, just in a different container registry, or assigned to a differen tag.</p>
+</div>
+<div class="paragraph">
+<p>If your organization uses floating tags, then <code>bootc upgrade</code> can be used to update an image mode system to a newer bootc container image assigned to the same tag.
+If not, all updates would require a <code>bootc switch</code>, so you can specify the image tag which provides the expected new version of the system software.</p>
+</div>
+<div class="paragraph">
+<p>It was already possible to repurpose a system running package mode, but it was potentially hard: you had to install, update, and remove multiple packages, and deal with their configurations and data files and directories.
+Repurposing an image mode system is conceptually simpler, because it means just switching to a different system image.
+But it still requires dealing with left overs from the packages on the old image in system configurations and application data directories.</p>
+</div>
+<div class="paragraph">
+<p>If you use the <code>bootc switch</code> command to repurpose an image mode system, there&#8217;s also a higher risk that you will encounter issues caused by RPM package scriplets desgined to work only with package mode.</p>
+</div>
+<div class="paragraph">
+<p>For example, if an RPM package includes an empty directory to store application logs, named <code>/var/app/logs</code>, that directory is incorporated into a bootc container image and created during initial system provsioning, but it is NOT created by a <code>bootc switch</code> command.</p>
+</div>
+<div class="paragraph">
+<p>As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot.</p>
 </div>
 </div>
 </div>
@@ -237,7 +257,11 @@ Not started yet
 <h2 id="_application_and_configuration_data_during_image_switches"><a class="anchor" href="#_application_and_configuration_data_during_image_switches"></a>Application and configuration data during image switches.</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>Because switch and update operations are the same, repurposing an image mode system retains all its day-2 changes to system configurations.
+Nothing guarantees that the contents of its <code>/etc</code> directory are compatible with the new image, and any necessary changes must be performed by the image, a user, or by automation.</p>
+</div>
+<div class="paragraph">
+<p>By the same reason, the <code>/var</code> directory may retain data from applications which are not present in the new system image, and could be removed to clean up the system, or may retain data which is incompatible with the versions of software in the new system image, and require manual or automated conversion after the switch.</p>
 </div>
 </div>
 </div>
@@ -245,7 +269,8 @@ Not started yet
 <h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>The next lab switches an image mode system to a bootc container image which includes a package not designed for image mode.
+The it demonstrates how to troubleshoot the issues that happen after the switch, and how to update the bootc container image so it works for a switch or update operation without manual intervention.</p>
 </div>
 </div>
 </div>
