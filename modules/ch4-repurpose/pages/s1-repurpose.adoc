@@ -7,16 +7,35 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Repurpose edge devices by using the bootc utility to switch to a different, and possibly unrelated, bootc container iamge.
 
-WARNING: Not started yet
+WARNING: Work in progress
 
-== Image names, tags, and digests.
+== Repurpose vs. update image mode systems
 
-Lorem ipsum
+As explained during the previous section, about image updates, the `bootc update` and `bootc switch` commands perform the same actions, except that the first uses the current system image reference and the second changes the system image reference.
+From the perspective of the bootc utility, the new and old images could be completely unrelated.
+Alternatively, the new reference could point to a copy of the same image, just in a different container registry, or assigned to a differen tag.
+
+If your organization uses floating tags, then `bootc upgrade` can be used to update an image mode system to a newer bootc container image assigned to the same tag.
+If not, all updates would require a `bootc switch`, so you can specify the image tag which provides the expected new version of the system software.
+
+It was already possible to repurpose a system running package mode, but it was potentially hard: you had to install, update, and remove multiple packages, and deal with their configurations and data files and directories.
+Repurposing an image mode system is conceptually simpler, because it means just switching to a different system image.
+But it still requires dealing with left overs from the packages on the old image in system configurations and application data directories.
+
+If you use the `bootc switch` command to repurpose an image mode system, there's also a higher risk that you will encounter issues caused by RPM package scriplets desgined to work only with package mode.
+
+For example, if an RPM package includes an empty directory to store application logs, named `/var/app/logs`, that directory is incorporated into a bootc container image and created during initial system provsioning, but it is NOT created by a `bootc switch` command.
+
+As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot.
 
 == Application and configuration data during image switches.
 
-Lorem ipsum
+Because switch and update operations are the same, repurposing an image mode system retains all its day-2 changes to system configurations.
+Nothing guarantees that the contents of its `/etc` directory are compatible with the new image, and any necessary changes must be performed by the image, a user, or by automation.
+
+By the same reason, the `/var` directory may retain data from applications which are not present in the new system image, and could be removed to clean up the system, or may retain data which is incompatible with the versions of software in the new system image, and require manual or automated conversion after the switch.
 
 == What's next
 
-Lorem ipsum
+The next lab switches an image mode system to a bootc container image which includes a package not designed for image mode.
+The it demonstrates how to troubleshoot the issues that happen after the switch, and how to update the bootc container image so it works for a switch or update operation without manual intervention.
