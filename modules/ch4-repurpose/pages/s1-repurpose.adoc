@@ -11,9 +11,9 @@ WARNING: Work in progress
 
 == Repurpose vs. update image mode systems
 
-As explained during the previous section, about image updates, the `bootc update` and `bootc switch` commands perform the same actions, except that the first uses the current system image reference and the second changes the system image reference.
+As explained during a xref:ch2-online:s1-update-lab[previous section] about image updates, the `bootc update` and `bootc switch` commands perform the same actions, except that the first uses the current system image reference and the second changes the system image reference.
 From the perspective of the bootc utility, the new and old images could be completely unrelated.
-Alternatively, the new reference could point to a copy of the same image, just in a different container registry, or assigned to a differen tag.
+Alternatively, the new reference could point to a copy of the same image, just in a different container registry, or assigned to a different tag.
 
 If your organization uses floating tags, then `bootc upgrade` can be used to update an image mode system to a newer bootc container image assigned to the same tag.
 If not, all updates would require a `bootc switch`, so you can specify the image tag which provides the expected new version of the system software.
@@ -26,14 +26,14 @@ If you use the `bootc switch` command to repurpose an image mode system, there's
 
 For example, if an RPM package includes an empty directory to store application logs, named `/var/app/logs`, that directory is incorporated into a bootc container image and created during initial system provsioning, but it is NOT created by a `bootc switch` command.
 
-As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot.
+As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot into the new image.
 
 == Application and configuration data during image switches.
 
 Because switch and update operations are the same, repurposing an image mode system retains all its day-2 changes to system configurations.
-Nothing guarantees that the contents of its `/etc` directory are compatible with the new image, and any necessary changes must be performed by the image, a user, or by automation.
+Nothing guarantees that the contents of its `/etc` directory are compatible with the new image, and any necessary changes must be performed by the image, by a user, or by automation.
 
-By the same reason, the `/var` directory may retain data from applications which are not present in the new system image, and could be removed to clean up the system, or may retain data which is incompatible with the versions of software in the new system image, and require manual or automated conversion after the switch.
+By the same reason, the `/var` directory may retain data from applications which are not present in the new system image, and could be removed to clean up the system; or it may retain data which is incompatible with the versions of software in the new system image, and require manual or automated conversion after the switch.
 
 == What's next
 
