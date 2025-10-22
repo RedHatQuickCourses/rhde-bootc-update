@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Not started yet
+Work in progress
 </td>
 </tr>
 </table>
@@ -226,18 +226,110 @@ Not started yet
 </div>
 </div>
 <div class="sect1">
-<h2 id="_using_transient_overlays"><a class="anchor" href="#_using_transient_overlays"></a>Using transient overlays</h2>
+<h2 id="_troubleshooting_image_mode_systems"><a class="anchor" href="#_troubleshooting_image_mode_systems"></a>Troubleshooting image mode systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>Image mode systems run Red Hat Enterprise Linux and have a wide range of the tools available from RHEL itself, third-party vendors, and the open source community, to perform troubleshooting.
+You could use anything from simple system utilities, such as top, to more sophisticated data collection tools, such as performance co-pilot.</p>
+</div>
+<div class="paragraph">
+<p>There is always some tension between running a minimal system image, which is faster to provision and update, and presents a smaller attack surface, and running a larger system image which provides a number of troubleshooting tools ready to use, but potentially adding to its vulnerable attack vectors.</p>
+</div>
+<div class="paragraph">
+<p>With package mode, it is easy to just install any troubleshooting tool the moment you miss it, and then leave it in the system, for the next time you need it.
+This is one of the reasons that make systems configuration diverge over time and create maintainability issues, but also one of the factors that make some professionals insecure about adopting image mode for RHEL.</p>
+</div>
+<div class="paragraph">
+<p>With image mode, you must either include all troubleshooting tools you could ever need on all each and every bootc container image, or learn to live without your preferred tools, right?
+Not true: image mode for RHEL lets you install transient packages using a transient file system overlay.</p>
+</div>
+<div class="paragraph">
+<p>Package mode also needs the ability of installing troubleshooting tools which do not become a permanent part of a system and do not increase the overhead of managing and maintaining systems.
+RHEL has offered an alternative since early 9.x releases, and it supports both package and image mode: toolbx containers.</p>
+</div>
+<div class="paragraph">
+<p>These two approaches enable you to use a troubleshooting tool, which was not available in a bootc container image, without making permanent changes to a system or to its bootc container image.
+In both cases, the troubleshooting tool will be gone when you do not need it anymore, after either a reboot or deleting its toolbx container.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_using_toolbox_containers"><a class="anchor" href="#_using_toolbox_containers"></a>Using toolbox containers</h2>
+<h2 id="_using_transient_overlays"><a class="anchor" href="#_using_transient_overlays"></a>Using transient overlays</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>DNF in RHEL 9.6 and 10 is able to install transient packages by creating a read-write overlay over the <code>/usr</code> directory.
+You just add the <code>--transient</code> option to the <code>dnf install</code> command.
+It works with packages downloads which come from any Yum repository (including Satellite) and also with packages available from local directories.</p>
+</div>
+<div class="paragraph">
+<p>For packages that comply with the Linux Filesystem Hierarchy Standard (FHS) having a read-write <code>/usr</code> directory is sufficient&#8201;&#8212;&#8201;they shouldn&#8217;t be writing to any other directory, except for <code>/etc</code> and <code>/var</code>, which are mutable in image mode systems.</p>
+</div>
+<div class="paragraph">
+<p>If you install more transient packages, they share the same read-write overlay.
+The read-write overlay is discarded in the next boot, so it is intended for packages you intent to use for a short time.</p>
+</div>
+<div class="paragraph">
+<p>Transient packages are useful for scenarios such as verifying if a package update fixes an issue, before you build a new bootc container image using the package update.</p>
+</div>
+<div class="paragraph">
+<p>They are also useful for adding troubleshooting tools which work as system services, for example the <a href="https://access.redhat.com/solutions/276533">Sysstat</a> performance monitoring utilities.
+Install the <code>sysstat</code> package using <code>--transient</code>, start the <code>sysstat-collect</code> timer, and let it run for a while, collecting performance data.
+When ready, use the <code>sar</code> command to generate performance reports.
+Or copy the performance data from the <code>/var/log/sa/</code> directory to another system and generate the reports there.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_toolbx_containers"><a class="anchor" href="#_using_toolbx_containers"></a>Using toolbx containers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Toolbx utility was designed to enable developers to run containers that provide sets of development tools seamlessly from their shell.
+It does so by running a regular application container, without elevated privileges, but without dropping capabilities which container engines would drop by default.
+Toolbx also mounts a series of directories, such as the user home directory and the <code>/dev</code> directory, so most tools behave as if they were running directly on the host system instead of in a container.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The official name of the project is really <em>toolbx</em> without the "o" of "box".
+It was not a typo!
+The strange name exists to differentiate from another <em>toolbox</em> open source project, which used to be part of CoreOS and was replaced by the more capable <code>toolbx</code> from the Fedora community.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Because toolbx containers do not have complete visibility (and write access) to the host filesystem, there are tasks you cannot run from a toolbx container, such as managing Systemd services.
+But for a large number of tools, including tools which require escalating privileges with the <code>sudo</code> command, toolbx just works.</p>
+</div>
+<div class="paragraph">
+<p>You can run the standard toolbx container from your distribution, which in the case of RHEL is an Universal Base Image (UBI) container, and install inside the container any addtional package you need.
+That container is not discarded on reboot, but it is retained until you explicitly remove it using Podman.</p>
+</div>
+<div class="paragraph">
+<p>You can manage multiple toolbx containers, and start or stop each of then at will.
+This capability becomes handy once you start creating your own toolbx container images, preconfigured with your preferred troubeshooting tools, and also configuration data for your organization CA root, private package repositories, and private container registries.</p>
+</div>
+<div class="paragraph">
+<p>For example, your custom toolbx image could specialize in networking troubleshooting tools, including the OpenSSL client utilities, Netstat, and TCPdump.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_side_effects_of_transient_overlays_and_toolbox_containers"><a class="anchor" href="#_side_effects_of_transient_overlays_and_toolbox_containers"></a>Side effects of transient overlays and toolbox containers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After reboot, all packages installed using a transient overay are gone, but any files such packages left in the <code>/etc</code> and <code>/var</code> directories will still be there.
+It is the user responsibility to clean up those files.</p>
+</div>
+<div class="paragraph">
+<p>Toolbx containers also affect the system&#8217;s <code>/var</code> directory, which in image mode systems include user&#8217;s home directories in <code>/var/home</code>.
+Such changes persist after you remove a toolbx container.
+But toolbx containers do not affect the system&#8217;s <code>/etc</code> directory.
+Selected files from <code>/etc</code> are made available in a toolbx container to ensure it matches its host system users and groups, among other things.</p>
 </div>
 </div>
 </div>
@@ -245,7 +337,7 @@ Not started yet
 <h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lorem ipsum</p>
+<p>The next two activities demonstrate the of transient containers and toolbx containers to run commands not available in a bootc container image, and also demonstrates the side-effects of running those commands on the mutable state of an image mode system.</p>
 </div>
 </div>
 </div>

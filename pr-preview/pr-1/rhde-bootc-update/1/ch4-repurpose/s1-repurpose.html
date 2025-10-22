@@ -229,9 +229,9 @@ Work in progress
 <h2 id="_repurpose_vs_update_image_mode_systems"><a class="anchor" href="#_repurpose_vs_update_image_mode_systems"></a>Repurpose vs. update image mode systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As explained during the previous section, about image updates, the <code>bootc update</code> and <code>bootc switch</code> commands perform the same actions, except that the first uses the current system image reference and the second changes the system image reference.
+<p>As explained during a <a href="#ch2-online:s1-update-lab">previous section</a> about image updates, the <code>bootc update</code> and <code>bootc switch</code> commands perform the same actions, except that the first uses the current system image reference and the second changes the system image reference.
 From the perspective of the bootc utility, the new and old images could be completely unrelated.
-Alternatively, the new reference could point to a copy of the same image, just in a different container registry, or assigned to a differen tag.</p>
+Alternatively, the new reference could point to a copy of the same image, just in a different container registry, or assigned to a different tag.</p>
 </div>
 <div class="paragraph">
 <p>If your organization uses floating tags, then <code>bootc upgrade</code> can be used to update an image mode system to a newer bootc container image assigned to the same tag.
@@ -249,7 +249,7 @@ But it still requires dealing with left overs from the packages on the old image
 <p>For example, if an RPM package includes an empty directory to store application logs, named <code>/var/app/logs</code>, that directory is incorporated into a bootc container image and created during initial system provsioning, but it is NOT created by a <code>bootc switch</code> command.</p>
 </div>
 <div class="paragraph">
-<p>As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot.</p>
+<p>As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot into the new image.</p>
 </div>
 </div>
 </div>
@@ -258,10 +258,10 @@ But it still requires dealing with left overs from the packages on the old image
 <div class="sectionbody">
 <div class="paragraph">
 <p>Because switch and update operations are the same, repurposing an image mode system retains all its day-2 changes to system configurations.
-Nothing guarantees that the contents of its <code>/etc</code> directory are compatible with the new image, and any necessary changes must be performed by the image, a user, or by automation.</p>
+Nothing guarantees that the contents of its <code>/etc</code> directory are compatible with the new image, and any necessary changes must be performed by the image, by a user, or by automation.</p>
 </div>
 <div class="paragraph">
-<p>By the same reason, the <code>/var</code> directory may retain data from applications which are not present in the new system image, and could be removed to clean up the system, or may retain data which is incompatible with the versions of software in the new system image, and require manual or automated conversion after the switch.</p>
+<p>By the same reason, the <code>/var</code> directory may retain data from applications which are not present in the new system image, and could be removed to clean up the system; or it may retain data which is incompatible with the versions of software in the new system image, and require manual or automated conversion after the switch.</p>
 </div>
 </div>
 </div>
