@@ -10,7 +10,11 @@ Update edge devices by using the bootc utility.
 
 WARNING: Not started yet
 
-== How the booc utility applies updates to image mode systems.
+//== How the booc utility applies updates to image mode systems.
+
+== Bootc update and switch operations
+
+
 
 Lorem ipsum
 
