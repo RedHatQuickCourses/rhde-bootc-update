@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>12 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -498,9 +498,9 @@ If you are continuing from the <a href="../ch3-rollback/s2-rollback-lab.html" cl
 </div>
 </li>
 <li>
-<p>If you skipped the previous two activities of this course, the <code>bootc upgrade</code> command will fail because your <em>test machine</em> does not have TLS certificates and credentails for acessing the private registry.</p>
+<p>If you skipped the previous two activities of this course, the <code>bootc upgrade</code> command will fail because your <em>test machine</em> does not have TLS certificates and credentials for accessing the private registry.</p>
 <div class="paragraph">
-<p>In that case, configure your <em>test machine</em> for acessing the private registry.</p>
+<p>In that case, configure your <em>test machine</em> for accessing the private registry.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -516,18 +516,6 @@ $ <strong>sudo cp /run/containers/0/auth.json /etc/ostree/auth.json</strong>
 $ <strong>sudo bootc upgrade --check</strong>
 No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0</code></pre>
 </div>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-TODO Move this config to the first lab, so it doesn&#8217;t need to be repeated here and in the update lab.
-</td>
-</tr>
-</table>
 </div>
 </li>
 <li>
@@ -654,7 +642,7 @@ $ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
 <li>
 <p>Verify the status of the FastCGI module for PHP.</p>
 <div class="paragraph">
-<p>You will see an error related to a non-existant directory inside the <code>/var</code> directory, which is application data.</p>
+<p>You will see an error related to a missing directory inside the <code>/var</code> directory, which is application data.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -865,7 +853,7 @@ Connection to 127.0.0.1 closed.</code></pre>
 </div>
 </li>
 <li>
-<p>Give your <em>test machine</em> a few moments to reboot (again!) and verify that it now runs the updated system image succesfully.</p>
+<p>Give your <em>test machine</em> a few moments to reboot (again!) and verify that it now runs the updated system image successfully.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl 127.0.0.1:8080</strong>

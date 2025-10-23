@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>7 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -241,13 +241,13 @@ Work in progress
 <ul>
 <li>
 <p>You start by building a new bootc container image embedding the updated systems software, application, and configurations.
-This is no different than building a bootc container image for intial provisioning of an image mode system.</p>
+This is no different than building a bootc container image for initial provisioning of an image mode system.</p>
 </li>
 <li>
-<p>Then you publish the new bootc container image in an OCI container registry, which can be directly acessed by image mode systems, such as edge devices, for network updates.</p>
+<p>Then you publish the new bootc container image in an OCI container registry, which can be directly accessed by image mode systems, such as edge devices, for network updates.</p>
 </li>
 <li>
-<p>Alternatively, you store the new bootc container in a removable media, such as an USB thumbdrive, which you can plug in image mode systems for disconnected updates.
+<p>Alternatively, you store the new bootc container in a removable media, such as an USB thumb drive, which you can plug in image mode systems for disconnected updates.
 You can produce the media by using the bootc image builder utility or other means.</p>
 </li>
 <li>
@@ -266,7 +266,7 @@ You could just build a new image from the same Containerfile, to incorporate upd
 </div>
 <div class="paragraph">
 <p>When applying updates to image mode systems, the bootc utility downloads (stages) the new system image, deploys it, and sets it to be the target of the next boot.
-The bootc utility keeps the currently running image untouched, so you can roolback to it if the need arises.</p>
+The bootc utility keeps the currently running image untouched, so you can rollback to it if the need arises.</p>
 </div>
 </div>
 </div>
@@ -284,14 +284,14 @@ Package mode updates, on the other hand, can end up being applied only partially
 Unlike package mode systems, image mode systems are always in a well-defined state regarding all the system software and dependencies running on them.</p>
 </div>
 <div class="paragraph">
-<p>The bootc utilitiy does not provide for any special hooks for you to insert code which runs only during updates.
+<p>The bootc utility does not provide for any special hooks for you to insert code which runs only during updates.
 You can incorporate code as Systemd units to handle update concerns such as database schema migration, but you must write that code to be able to distinguish between provisioning and updates by itself.
 This is different from RPM packages, which can run different scriptlets during installation and upgrades.</p>
 </div>
 <div class="paragraph">
 <p>From the perspective of RPM packages, image mode systems are "never" updated, because their scriptlets run at image build time.
 They do NOT run in the live systems being installed or updated.
-That means you may need to add code to a bootc container image, to support updates, which would be unecessary with package mode systems.</p>
+That means you may need to add code to a bootc container image, to support updates, which would be unnecessary with package mode systems.</p>
 </div>
 <div class="paragraph">
 <p>It is possible to apply individual RPM package updates to an image mode system, but these updates happen in an ephemeral storage layer which is discarded at reboot.
@@ -299,8 +299,8 @@ This is useful to perform troubleshooting, for example to validate that a newer 
 </div>
 <div class="paragraph">
 <p>Bootc also integrates with the <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html-single/composing_installing_and_managing_rhel_for_edge_images/composing_installing_and_managing_rhel_for_edge_images#installing-packages-to-use-image-mode-for-rhel-on-rhel-for-edge-images" target="_blank" rel="noopener">greenboot technology from RHEL for edge</a>, so if an image update is so bad that it cannot finish boot, greenboot rollbacks to the previous bootc container image.
-Notice that, by default, rollback would trigger only for "catastrofic" failures such as kernel panics.
-If your new image boots but some services and applications fail to start, greenboot will NOT rollback, unless your your bootc container image provides configurations and scripts to detect those failures and trigger a roolback.</p>
+Notice that, by default, rollback would trigger only for "catastrophic" failures such as kernel panics.
+If your new image boots but some services and applications fail to start, greenboot will NOT rollback, unless your your bootc container image provides configurations and scripts to detect those failures and trigger a rollback.</p>
 </div>
 <div class="paragraph">
 <p>Unlike package mode, where a greenboot by itself can only revert to an older kernel, but cannot undo other package updates, and consequently attempt to reboot into an unworkable system, automatic rollback from image mode is likely to restore system availability.</p>
@@ -311,7 +311,7 @@ If your new image boots but some services and applications fail to start, greenb
 <h2 id="_state_of_application_data_and_system_configurations_after_an_image_mode_update"><a class="anchor" href="#_state_of_application_data_and_system_configurations_after_an_image_mode_update"></a>State of application data and system configurations after an image mode update</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When the bootc utility downloads and applies (or deploys) a new bootc container image it does not touch the previous image and its deployment, so you can roolback to it if the need arises.
+<p>When the bootc utility downloads and applies (or deploys) a new bootc container image it does not touch the previous image and its deployment, so you can rollback to it if the need arises.
 Notice that bootc preserves more than the system image, but also the state of its configuration data, that is, all of its <code>/etc</code> directory tree, as it was at the time the update was initiated.</p>
 </div>
 <div class="paragraph">
@@ -319,12 +319,12 @@ Notice that bootc preserves more than the system image, but also the state of it
 When you rollback to the previous images, it might not be compatible with the current state of <code>/etc</code>, as set by the new image, so bootc also rollbacks to the previous set of configuration files.</p>
 </div>
 <div class="paragraph">
-<p>Application data, that is, the <code>/var</code> directory, is not touched by either updates or roolback operations from bootc.
+<p>Application data, that is, the <code>/var</code> directory, is not touched by either updates or rollback operations from bootc.
 If your update requires changes to application data formats, it must perform any conversion using an approach such as custom application code, a first-boot Systemd unit, or by means some day-2 automation technology such as Ansible.</p>
 </div>
 <div class="paragraph">
 <p>In a similar way, if your rollback operation requires undoing data conversions, it must be done by custom code inside your bootc container image or by day-2 automation technologies.
-Botton line is: the bootc utility provides no features to handle changes to application data during either updates or rollbacks.</p>
+Bottom line is: the bootc utility provides no features to handle changes to application data during either updates or rollbacks.</p>
 </div>
 </div>
 </div>

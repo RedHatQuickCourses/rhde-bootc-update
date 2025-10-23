@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>4 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Not started yet
+Pending review
 </td>
 </tr>
 </table>
@@ -229,7 +229,7 @@ Not started yet
 <h2 id="_using_alternate_transports_with_the_bootc_utility"><a class="anchor" href="#_using_alternate_transports_with_the_bootc_utility"></a>Using alternate transports with the bootc utility</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The bootc ecosystem, which includes the bootc image builder tool, does not provide explicit support for performing disconnected or air-gapped updates of image mode systems, but you can implement such workflows easily by relying on just foundational skills about Linux container tools.</p>
+<p>The bootc ecosystem, which includes the bootc image builder tool, does not provide explicit support for performing disconnected or air-gaped updates of image mode systems, but you can implement such workflows easily by relying on just foundational skills about Linux container tools.</p>
 </div>
 <div class="paragraph">
 <p>The bootc utility is configured, by default, to work independently of the Linux container tools, so it doesn&#8217;t share registry configurations, credentials, and container image layers with Podman and Skopeo.
@@ -261,7 +261,7 @@ It requires using newer versions of the OCI specifications, which brings benefit
 </div>
 <div class="paragraph">
 <p>The <code>oci</code> transport is usually preferred (and the one used by bootc image builder in custom installation ISOs) but your container registry software may not support recent OCI specifications.
-If your container registry stores its image manifest using formats from older specifications, using the <code>oci</code> transport converts the manifests to a newer format, which chages the image digest and invalidates its image signatures, if any.</p>
+If your container registry stores its image manifest using formats from older specifications, using the <code>oci</code> transport converts the manifests to a newer format, which changes the image digest and invalidates its image signatures, if any.</p>
 </div>
 <div class="paragraph">
 <p>Please review the documentation of <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/building_running_and_managing_containers/working-with-container-images#copying-image-layers-to-a-local-directory">Skopeo</a>, from its manual page, RHEL product docs, or its <a href="https://github.com/containers/skopeo">upstream</a> community docs for more information about how to use Skopeo and the Linux container tools in <a href="https://developers.redhat.com/articles/2025/09/24/skopeo-unsung-hero-linux-container-tools" target="_blank" rel="noopener">disconnected workflows</a>.</p>
@@ -273,7 +273,7 @@ If your container registry stores its image manifest using formats from older sp
 <div class="sectionbody">
 <div class="paragraph">
 <p>You can use a custom installation ISO, produced by bootc image builder, to perform offline updates.
-You just need to find the location of the bootc continer image inside that media, in the <code>container</code> directory, and refer to it from a <code>bootc switch</code> command.</p>
+You just need to find the location of the bootc container image inside that media, in the <code>container</code> directory, and refer to it from a <code>bootc switch</code> command.</p>
 </div>
 <div class="paragraph">
 <p>That approach enables operational technology (OT) teams to carry a single media for both provisioning new devices and updating existing devices, but it creates a media which supports only one system image.
@@ -286,9 +286,9 @@ If OT teams must support devices with different purposes, which require differen
 <p>It is possible, but outside the scope of this course, to create a custom installation media which contains multiple bootc container images, and equip it with a custom grub menu to select the desired image for installation, and then use the same media to perform updates using any of its contained images.</p>
 </div>
 <div class="paragraph">
-<p>Some teams prefer a quickier workflow, which creates a smaller update-only media.
+<p>Some teams prefer a quicker workflow, which creates a smaller update-only media.
 It is easy to add multiple additional bootc container images to the same media, as the need arises.
-You can review an example of such a worklow in a Red Hat Developer <a href="https://developers.redhat.com/articles/2025/08/13/deploy-image-mode-update-offline-and-air-gapped-environments" target="_blank" rel="noopener">blog post</a>.</p>
+You can review an example of such a workflow in a Red Hat Developer <a href="https://developers.redhat.com/articles/2025/08/13/deploy-image-mode-update-offline-and-air-gapped-environments" target="_blank" rel="noopener">blog post</a>.</p>
 </div>
 </div>
 </div>
@@ -299,7 +299,7 @@ You can review an example of such a worklow in a Red Hat Developer <a href="http
 <p>Consider that all of the caveats of networked image mode updates also apply to offline updates: the mutable state stored in the <code>/etc</code> and <code>/var</code> directories of the system may not be compatible with the packages and software included with the new bootc container image.</p>
 </div>
 <div class="paragraph">
-<p>A new bootc container image iself may provide Systemd uints which handle these issues, or it may require that additional day-2 tasks are performed after applying the update, either manually, or through some automation technology.</p>
+<p>A new bootc container image istelf may provide Systemd units which handle these issues, or it may require that additional day-2 tasks are performed after applying the update, either manually, or through some automation technology.</p>
 </div>
 </div>
 </div>

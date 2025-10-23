@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>7 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>3 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -229,10 +229,10 @@ Work in progress
 <h2 id="_about_transactional_rolling_back_updates_of_image_mode_systems"><a class="anchor" href="#_about_transactional_rolling_back_updates_of_image_mode_systems"></a>About transactional rolling back updates of image mode systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As explained during the previous section, bootc updates are atomic and transactional regarding the state of the read-only system image, but not regarding the state of mutable sytem configurations and application data.</p>
+<p>As explained during the previous section, bootc updates are atomic and transactional regarding the state of the read-only system image, but not regarding the state of mutable ssytem configurations and application data.</p>
 </div>
 <div class="paragraph">
-<p>Consequently, roll backs may require aditional actions to be performed at runtime, by Systemd units embedded into a bootc image, or manually, as a day-2 activity, or even by day-2 automation.
+<p>Consequently, roll backs may require additional actions to be performed at runtime, by Systemd units embedded into a bootc image, or manually, as a day-2 activity, or even by day-2 automation.
 Else, the system configuration and application data may be left in a state that is not compatible with the system image it rolled back to.</p>
 </div>
 </div>
@@ -241,7 +241,7 @@ Else, the system configuration and application data may be left in a state that 
 <h2 id="_bootc_rollback_operation_and_system_configurations"><a class="anchor" href="#_bootc_rollback_operation_and_system_configurations"></a>Bootc rollback operation and system configurations</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A <code>bootc rollback</code> operation is comparativelly simpler than <code>bootc update</code> or <code>bootc switch</code> operations.
+<p>A <code>bootc rollback</code> operation is comparatively simpler than <code>bootc update</code> or <code>bootc switch</code> operations.
 The rollback operation just changes the boot order of the existing bootc deployments, so the previous one boots instead of the current one.</p>
 </div>
 <div class="paragraph">
@@ -249,7 +249,7 @@ The rollback operation just changes the boot order of the existing bootc deploym
 That means it will boot from not just the Linux kernel from the previous bootc container image, but it also uses the root file system from the previous image, and it also uses the copy of <code>/etc</code> that was created at the time that image was originally deployed.</p>
 </div>
 <div class="paragraph">
-<p>The rollback operation does NOT perform a new tree-way merge of the <code>/etc</code> directory, but uses whatever was the content of that directory in that deployment, which effectlively means system configurations are rolled back also.
+<p>The rollback operation does NOT perform a new tree-way merge of the <code>/etc</code> directory, but uses whatever was the content of that directory in that deployment, which effectively means system configurations are rolled back also.
 Local day-2 changes performed while that deployment were active are retained, but other day-2 changes performed after the update are lost.</p>
 </div>
 <div class="paragraph">
@@ -265,7 +265,7 @@ Local day-2 changes performed while that deployment were active are retained, bu
 </div>
 <div class="paragraph">
 <p>So, if a <code>bootc update</code> resulted in changes to application data, for example migrating a relational database to a new schema, those changes may be incompatible with the system image booted after a rollback.
-It is the responsability of the bootc image itself, or if its administrator, to revert those changes, for example by restoring a database backup.</p>
+It is the responsibility of the bootc image itself, or if its administrator, to revert those changes, for example by restoring a database backup.</p>
 </div>
 </div>
 </div>
@@ -273,7 +273,7 @@ It is the responsability of the bootc image itself, or if its administrator, to 
 <h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The next lab configures an image mode roolbacks the system that was updates to the previous lab, so it is back to the image from before the update, as it started this course, and demonstrate that system settings also roll backs but not application data.</p>
+<p>The next lab configures an image mode rollbacks the system that was updates to the previous lab, so it is back to the image from before the update, as it started this course, and demonstrate that system settings also roll backs but not application data.</p>
 </div>
 </div>
 </div>

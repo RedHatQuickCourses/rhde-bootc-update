@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>6 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -302,16 +302,16 @@ The strange name exists to differentiate from another <em>toolbox</em> open sour
 </table>
 </div>
 <div class="paragraph">
-<p>Because toolbx containers do not have complete visibility (and write access) to the host filesystem, there are tasks you cannot run from a toolbx container, such as managing Systemd services.
+<p>Because toolbx containers do not have complete visibility (and write access) to the host file system, there are tasks you cannot run from a toolbx container, such as managing Systemd services.
 But for a large number of tools, including tools which require escalating privileges with the <code>sudo</code> command, toolbx just works.</p>
 </div>
 <div class="paragraph">
-<p>You can run the standard toolbx container from your distribution, which in the case of RHEL is a Universal Base Image (UBI) container, and install inside the container any addtional packages you need.
+<p>You can run the standard toolbx container from your distribution, which in the case of RHEL is a Universal Base Image (UBI) container, and install inside the container any additional packages you need.
 That container is not discarded on reboot, but it is retained until you explicitly remove it using Podman.</p>
 </div>
 <div class="paragraph">
 <p>You can manage multiple toolbx containers, and start or stop each of then at will.
-This capability becomes handy once you start creating your own toolbx container images, preconfigured with your preferred troubeshooting tools, and also configuration data for your organization CA root, private package repositories, and private container registries.</p>
+This capability becomes handy once you start creating your own toolbx container images, preconfigured with your preferred troubleshooting tools, and also configuration data for your organization CA root, private package repositories, and private container registries.</p>
 </div>
 <div class="paragraph">
 <p>For example, your custom toolbx image could specialize in networking troubleshooting tools, including the OpenSSL client utilities, Netstat, and TCPdump.</p>
@@ -322,7 +322,7 @@ This capability becomes handy once you start creating your own toolbx container 
 <h2 id="_side_effects_of_transient_overlays_and_toolbox_containers"><a class="anchor" href="#_side_effects_of_transient_overlays_and_toolbox_containers"></a>Side effects of transient overlays and toolbox containers</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After reboot, all packages installed using a transient overay are gone, but any files such packages left in the <code>/etc</code> and <code>/var</code> directories will still be there.
+<p>After reboot, all packages installed using a transient overlay are gone, but any files such packages left in the <code>/etc</code> and <code>/var</code> directories will still be there.
 It is the user responsibility to clean up those files.</p>
 </div>
 <div class="paragraph">

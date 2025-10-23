@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>13 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -446,7 +446,7 @@ Open a new terminal on your <em>development machine</em> to proceed with the nex
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Create a new working directory, copy sample files from git repo, and copy the SSH key from the previous working directory ,</p>
+<p>Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory ,</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
@@ -550,7 +550,7 @@ Error: authenticating creds for "registry.lab.example.com:5000": pinging contain
 </div>
 </li>
 <li>
-<p>Copy the CA root from the privage registry, add it to the system&#8217;s trusted CAs, and try again to log in to the private registry using Podman.</p>
+<p>Copy the CA root from the private registry, add it to the system&#8217;s trusted CAs, and try again to log in to the private registry using Podman.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>scp student@utility:/opt/registry/certs/domain.crt</strong>
@@ -717,7 +717,7 @@ bash: line 1: /webapp/html/index.html: Read-only file system</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Verify that you can still check for the availability of bootc image updates, because the system retained the certificate and credentails for acessing the private registry.</p>
+<p>Verify that you can still check for the availability of bootc image updates, because the system retained the certificate and credentials for accessing the private registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc upgrade --check</strong>
@@ -848,7 +848,7 @@ Domain 'bootc-iso' started</code></pre>
 </li>
 <li>
 <p>Wait a few moments to give your test VM, that is, your <em>test machine</em>, time to reboot.
-Then open a web brower on your <em>development machine</em> and use the URL <code>https://127.0.0.1:8090</code> to access Cockpit on your <em>test machine</em>.</p>
+Then open a web browser on your <em>development machine</em> and use the URL <code>https://127.0.0.1:8090</code> to access Cockpit on your <em>test machine</em>.</p>
 </li>
 </ol>
 </div>
@@ -856,9 +856,9 @@ Then open a web brower on your <em>development machine</em> and use the URL <cod
 </ol>
 </div>
 <div class="paragraph">
-<p>You sucessfully updated your <em>test machine</em> with a new bootc container image and demonstrated that configuration changes and applicaiton data are preserved.
+<p>You successfully updated your <em>test machine</em> with a new bootc container image and demonstrated that configuration changes and application data are preserved.
 You also demonstrated that new configurations from the updated image are applied, but new application data is not.
-if you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to intialize data at first boot instead of just having data files on the image.</p>
+if you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to initialize data at first boot instead of just having data files on the image.</p>
 </div>
 </div>
 </div>

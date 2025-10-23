@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>7 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -370,7 +370,7 @@ Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hos
 <li>
 <p>Now suppose you want to find out if the <code>bootc status</code> command can provide additional details.</p>
 <div class="paragraph">
-<p>The usual way would be acessing its online documentation, but the <code>man</code> command is missing in the standard base bootc container image for RHEL.</p>
+<p>The usual way would be accessing its online documentation, but the <code>man</code> command is missing in the standard base bootc container image for RHEL.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -394,7 +394,7 @@ It is missing just the <code>man</code> command.</p>
 <ol class="loweralpha" type="a">
 <li>
 <p>First, review the mounted file systems.
-The complete list of mounted file is very long, because of the many virtual filesystems and ramdisks such as <code>/proc</code> and <code>/run</code>, so filter the list to display only on-disk file system using XFS.</p>
+The complete list of mounted file is very long, because of the many virtual file systems and ram disks such as <code>/proc</code> and <code>/run</code>, so filter the list to display only on-disk file system using XFS.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t xfs</strong>
@@ -407,7 +407,7 @@ The complete list of mounted file is very long, because of the many virtual file
 </div>
 </li>
 <li>
-<p>Also notice that the root file system is actually an overlay file system, backed by the currently deployed ostree image.</p>
+<p>Also notice that the root file system is actually an overlay file system, backed by the currently deployed bootc container image.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t overlay</strong>

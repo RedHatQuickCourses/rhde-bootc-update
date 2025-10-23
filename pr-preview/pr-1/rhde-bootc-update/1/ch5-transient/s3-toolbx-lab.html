@@ -201,7 +201,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>11 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -436,7 +436,7 @@ Remember that the <code>podman search</code> command and its equivalents with ot
 </div>
 </li>
 <li>
-<p>If the copy is not available, create it so you can keep with the scenario of air-gapped deployments.</p>
+<p>If the copy is not available, create it so you can keep with the scenario of disconnected deployments.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>skopeo copy --remove-signatures docker://registry.access.redhat.com/ubi10/toolbox:10.0 docker://registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
@@ -469,7 +469,7 @@ Enter with: toolbox enter</code></pre>
 <li>
 <p>Enter the toolbox container you just created.</p>
 <div class="paragraph">
-<p>Notice the change of the system prompt, which doesn&#8217;t display the current directory anymore, but includes an hexxagonal bullet.</p>
+<p>Notice the change of the system prompt, which doesn&#8217;t display the current directory anymore, but includes an hexagonal bullet.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -481,7 +481,7 @@ Enter with: toolbox enter</code></pre>
 </li>
 <li>
 <p>View the file systems which are backed by actual disk contents and which are overlays.
-Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same comands from the previous lab.</p>
+Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same commands from the previous lab.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t xfs</strong>
@@ -669,7 +669,7 @@ $ <strong>echo '1,2,3 testing' &gt; $HOME/test.txt</strong></code></pre>
 </div>
 </li>
 <li>
-<p>Attempt to change the timezone of your toolbx container.</p>
+<p>Attempt to change the time zone of your toolbx container.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>timedatectl show -p Timezone</strong>

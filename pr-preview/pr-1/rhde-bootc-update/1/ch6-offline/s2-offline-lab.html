@@ -200,7 +200,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>13 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
@@ -217,7 +217,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -372,7 +372,7 @@ Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hos
 </td>
 <td class="content">
 The previous output assumes you did not perform any of the previous labs, except for the first one, and you would get a different output if you did.
-Those differentes are inconsequential for the current lab.
+Those differences are inconsequential for the current lab.
 </td>
 </tr>
 </table>
@@ -420,7 +420,7 @@ Before a disconnected update</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Once more, the current state of your <em>test machine</em> depends on which of the previous labs you performed, and differentes are inconsequential for the current lab.
+Once more, the current state of your <em>test machine</em> depends on which of the previous labs you performed, and differences are inconsequential for the current lab.
 </td>
 </tr>
 </table>
@@ -447,7 +447,7 @@ Open a new terminal on your <em>development machine</em> to proceed with the nex
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Create a new working directory, copy sample files from git repo, and copy the SSH key from the previous working directory.</p>
+<p>Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
@@ -641,7 +641,7 @@ blobs  index.json  oci-layout</code></pre>
 </div>
 </li>
 <li>
-<p>Unfortunately, bootc image builder does not store the human-friendly name and tag of the bootc container image when creating a custom installation iso.</p>
+<p>Unfortunately, bootc image builder does not store the human-friendly name and tag of the bootc container image when creating a custom installation ISO.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cat /var/mnt/container/index.json | jq</strong>
@@ -659,7 +659,7 @@ blobs  index.json  oci-layout</code></pre>
 </div>
 </li>
 <li>
-<p>You can verify, on your <em>development machine</em>, that the digest in the installation ISO matches the image in the privage container registry.</p>
+<p>You can verify, on your <em>development machine</em>, that the digest in the installation ISO matches the image in the private container registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ skopeo inspect --format '{{.Digest}}' docker://registry.lab.example.com:5000/nginx-bootc:v1.0
@@ -828,7 +828,7 @@ This is the closest we can get to the workflow for an actual physical device, us
 <div class="sectionbody">
 <div class="paragraph">
 <p>This was the latest activity of this course.
-Stay tuned for new enablement courses for Red Hat Device Edge in the future!</p>
+Stay tuned for new enablement courses for Red Hat Device Edge and image mode in the future!</p>
 </div>
 </div>
 </div>

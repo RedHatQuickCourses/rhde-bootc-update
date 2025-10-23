@@ -201,13 +201,13 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>7 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>3 minutes</strong>.</em></p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Repurpose edge devices by using the bootc utility to switch to a different, and possibly unrelated, bootc container iamge.</p>
+<p>Repurpose edge devices by using the bootc utility to switch to a different, and possibly unrelated, bootc container image.</p>
 </dd>
 </dl>
 </div>
@@ -218,7 +218,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Work in progress
+Pending review
 </td>
 </tr>
 </table>
@@ -243,10 +243,10 @@ Repurposing an image mode system is conceptually simpler, because it means just 
 But it still requires dealing with left overs from the packages on the old image in system configurations and application data directories.</p>
 </div>
 <div class="paragraph">
-<p>If you use the <code>bootc switch</code> command to repurpose an image mode system, there&#8217;s also a higher risk that you will encounter issues caused by RPM package scriplets desgined to work only with package mode.</p>
+<p>If you use the <code>bootc switch</code> command to repurpose an image mode system, there&#8217;s also a higher risk that you will encounter issues caused by RPM package scriptlets designed to work only with package mode.</p>
 </div>
 <div class="paragraph">
-<p>For example, if an RPM package includes an empty directory to store application logs, named <code>/var/app/logs</code>, that directory is incorporated into a bootc container image and created during initial system provsioning, but it is NOT created by a <code>bootc switch</code> command.</p>
+<p>For example, if an RPM package includes an empty directory to store application logs, named <code>/var/app/logs</code>, that directory is incorporated into a bootc container image and created during initial system provisioning, but it is NOT created by a <code>bootc switch</code> command.</p>
 </div>
 <div class="paragraph">
 <p>As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot into the new image.</p>
