@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 13
 :nginx-bootc-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: c1832c2dafbb1e1908e422dbaf6f9c7165a8399b24b90db3da2eb120b4977d8f
 
 = Lab: Update Edge Devices from Removable Media
@@ -8,7 +8,7 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Update edge devices manually from new bootc container images stored in removable media.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == Before you Begin
 
@@ -105,7 +105,7 @@ $ *sudo bootc status*
 --
 +
 NOTE: The previous output assumes you did not perform any of the previous labs, except for the first one, and you would get a different output if you did.
-Those differentes are inconsequential for the current lab.
+Those differences are inconsequential for the current lab.
 
 .. Change the system time zone.
 +
@@ -120,7 +120,6 @@ Timezone=Asia/Tokyo
 +
 NOTE: Again, your output may differ if you performed or skipped any of the previous labs, and it is inconsequential for the current lab.
 
-
 .. Change the HTML files which mock a single-page web application.
 +
 [source,subs="verbatim,quotes"]
@@ -132,8 +131,7 @@ $ *curl 127.0.0.1*
 Before a disconnected update
 --
 +
-NOTE: Once more, the current state of your _test machine_ depends on which of the previous labs you performed, and differentes are inconsequential for the current lab.
-
+NOTE: Once more, the current state of your _test machine_ depends on which of the previous labs you performed, and differences are inconsequential for the current lab.
 
 .. Disable the bootc update timer to ensure you have control of when the system will apply updates.
 +
@@ -170,7 +168,7 @@ drwxrwx---. 7 nginx root system_u:object_r:httpd_var_lib_t:s0 78 Oct 15 15:10 /v
 It seems these directories, if missing, are created at service start, because I had no issues during the switch, unlike with the PHP-FPM image
 ////
 
-.. Create a new working directory, copy sample files from git repo, and copy the SSH key from the previous working directory.
+.. Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -304,7 +302,7 @@ $ *ls /var/mnt/container/*
 blobs  index.json  oci-layout
 --
 
-.. Unfortunately, bootc image builder does not store the human-friendly name and tag of the bootc container image when creating a custom installation iso.
+.. Unfortunately, bootc image builder does not store the human-friendly name and tag of the bootc container image when creating a custom installation ISO.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -321,7 +319,7 @@ $ *cat /var/mnt/container/index.json | jq*
 }
 --
 
-.. You can verify, on your _development machine_, that the digest in the installation ISO matches the image in the privage container registry.
+.. You can verify, on your _development machine_, that the digest in the installation ISO matches the image in the private container registry.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -457,4 +455,4 @@ This is the closest we can get to the workflow for an actual physical device, us
 == What's Next
 
 This was the latest activity of this course.
-Stay tuned for new enablement courses for Red Hat Device Edge in the future!
+Stay tuned for new enablement courses for Red Hat Device Edge and image mode in the future!
