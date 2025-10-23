@@ -257,7 +257,7 @@ In both cases, the troubleshooting tool will be gone when you do not need it any
 <h2 id="_using_transient_overlays"><a class="anchor" href="#_using_transient_overlays"></a>Using transient overlays</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>DNF in RHEL 9.6 and 10 is able to install transient packages by creating a read-write overlay over the <code>/usr</code> directory.
+<p>DNF in RHEL 9.6 and 10 is able to install <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/considerations_in_adopting_rhel_9/assembly_software-management_considerations-in-adopting-rhel-9" target="_blank" rel="noopener">transient packages</a> by creating a read-write overlay over the <code>/usr</code> directory.
 You just add the <code>--transient</code> option to the <code>dnf install</code> command.
 It works with packages downloads which come from any Yum repository (including Satellite) and also with packages available from local directories.</p>
 </div>
@@ -283,7 +283,7 @@ Or copy the performance data from the <code>/var/log/sa/</code> directory to ano
 <h2 id="_using_toolbx_containers"><a class="anchor" href="#_using_toolbx_containers"></a>Using toolbx containers</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Toolbx utility was designed to enable developers to run containers that provide sets of development tools seamlessly from their shell.
+<p>The <a href="https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/building_running_and_managing_containers/using-toolbx-for-development-and-troubleshooting" target="_blank" rel="noopener">Toolbx utility</a> was designed to enable developers to run containers that provide sets of development tools seamlessly from their shell.
 It does so by running a regular application container, without elevated privileges, but without dropping capabilities which container engines would drop by default.
 Toolbx also mounts a series of directories, such as the user home directory and the <code>/dev</code> directory, so most tools behave as if they were running directly on the host system instead of in a container.</p>
 </div>
@@ -306,7 +306,7 @@ The strange name exists to differentiate from another <em>toolbox</em> open sour
 But for a large number of tools, including tools which require escalating privileges with the <code>sudo</code> command, toolbx just works.</p>
 </div>
 <div class="paragraph">
-<p>You can run the standard toolbx container from your distribution, which in the case of RHEL is an Universal Base Image (UBI) container, and install inside the container any addtional package you need.
+<p>You can run the standard toolbx container from your distribution, which in the case of RHEL is a Universal Base Image (UBI) container, and install inside the container any addtional packages you need.
 That container is not discarded on reboot, but it is retained until you explicitly remove it using Podman.</p>
 </div>
 <div class="paragraph">
