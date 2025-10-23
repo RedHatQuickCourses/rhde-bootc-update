@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 9
 
 = Lab: Prepare to Update Edge Devices Using Bootc Container Images
 
@@ -9,7 +9,7 @@ Prepare a test environment for performing connected and disconnected updates to 
 
 == Before you Begin
 
-You need a _development machine_ running Red Hat Enterprise Liunux (RHEL), to which you have unrestricted sudo rights, and access to RHEL package repositories.
+You need a _development machine_ running Red Hat Enterprise Linux (RHEL), to which you have unrestricted sudo rights, and access to RHEL package repositories.
 That machine must have plenty of disk space to store multiple container images and multiple virtual machine (VM) images.
 
 These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
@@ -343,4 +343,4 @@ If you need more context and explanation about the `bootc-iso` VM, please refer 
 == What's next
 
 The next chapter demonstrates how to update an image mode system to a new bootc container image from an OCI container registry.
-Later in this course we will also demonstrate how to update an image mode system to a new bootc container iamge from removable media, for scenarios that network access to an OCI container registry is not practical.
+Later in this course we will also demonstrate how to update an image mode system to a new bootc container image from removable media, for scenarios that network access to an OCI container registry is not practical.

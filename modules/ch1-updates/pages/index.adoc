@@ -4,7 +4,7 @@ Goal::
 
 Describe how updates of image mode systems differ from updates to package mode systems.
 
-WARNING: Not started yet
+WARNING: Pending review
 
 == Introduction
 
