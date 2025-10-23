@@ -7,6 +7,8 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Prepare a test environment for performing connected and disconnected updates to image mode systems.
 
+WARNING: Pending review
+
 == Before you Begin
 
 You need a _development machine_ running Red Hat Enterprise Linux (RHEL), to which you have unrestricted sudo rights, and access to RHEL package repositories.

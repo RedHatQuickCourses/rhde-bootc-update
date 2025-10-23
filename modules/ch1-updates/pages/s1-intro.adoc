@@ -7,8 +7,7 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Compare the processes for updating systems by switching bootc container images with the process of updating systems by updating individual RPM packages.
 
-
-WARNING: Work in progress
+WARNING: Pending review
 
 == Review of the image mode system installation and update workflows
 
