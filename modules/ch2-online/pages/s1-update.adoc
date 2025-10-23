@@ -1,4 +1,4 @@
-:time_estimate: 7
+:time_estimate: 8
 
 = Updates to Image Mode Systems
 
@@ -8,7 +8,7 @@ Objective::
 Update edge devices by using the bootc utility.
 
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == About transactional updates of image mode systems
 
@@ -28,7 +28,7 @@ It may be necessary to provide additional code or processes around bootc updates
 
 == Bootc update and switch operations
 
-The bootc utility provides two commands related to bootc image updates:
+The bootc utility provides two commands related to image mode updates:
 
 Upgrade::
 Checks if the current image reference points to a newer bootc container image than the one currently running image.
@@ -40,7 +40,7 @@ Changes the image reference and then downloads, stages, and deploys the new boot
 Both commands accept the `--apply` option, which immediately reboot after downloading and deploying the new bootc container image.
 If you do not specify the `--apply` option, you must reboot manually for the update to take effect.
 
-The concept of "updates" with image mode systems is loosely defined, because there is no constraint that the new bootc continer image actually be an update of the currently running image.
+The concept of "updates" with image mode systems is loosely defined, because there is no constraint that the new bootc container image actually be an update of the currently running image.
 It could be a totally unrelated image, which creates interesting possibilities but also some concerns.
 
 Intuitively, you could associate the `bootc upgrade` command with an actual update, because it does not change the image reference, and `bootc switch` with reimaging or repurposing a system, because it changes the image reference.
@@ -67,15 +67,15 @@ That means being able to pull a bootc container image with Podman or inspecting 
 
 Bootc honors the system-wide certificate authority (CA) trust chain, so you do not require configuring bootc with a TLS certificate, and though you can instruct bootc to ignore TLS validation, we strongly recommend that you configure your image mode systems with your internal CA roots.
 
-Bootc stores its registry credentials in the `/etc/ostree/auth.json` file, using the same format as the continer tools.
-So you can login using Podman or Skopeo and copy the user's registry authentitication file to the Bootc registry credentials file.
+Bootc stores its registry credentials in the `/etc/ostree/auth.json` file, using the same format as the container tools.
+So you can login using Podman or Skopeo and copy the user's registry authentication file to the bootc registry credentials file.
 
 == The bootc update timer service
 
 For the common scenario that organizations use a floating tag to refer to a stream of updates to a bootc container image, image mode systems run an update timer service named `bootc-fetch-apply-updates`.
 
 That timer, managed by Systemd, performs a periodic `bootc upgrade --apply` command.
-It enables edge devices, in locations with intermitent network connectivity, to pick updates on their own time.
+It enables edge devices, in locations with intermittent network connectivity, to pick updates on their own time.
 
 You may wish to disable the timer, to avoid such automatic updates entirely, or to change it to not reboot immediately, but reboot manually or using a different timer service.
 For example, to stage updates during the day, whenever network connectivity is available, but reboot only during a maintenance window.
@@ -85,7 +85,7 @@ For example, to stage updates during the day, whenever network connectivity is a
 When the bootc utility downloads and applies a new bootc container image, it also performs the deployment process of the bootc container image.
 The deployment process extracts the image contents, so it can run in a live system, and builds the overlay file system which becomes the read-only system root directory (`/`). 
 
-The deployment process also intializes a new read-write `/etc` directory, by performing a three-way merge between the contents of the currenty running `/etc` directory, the new container image, and the currently running container image.
+The deployment process also initializes a new read-write `/etc` directory, by performing a three-way merge between the contents of the currently running `/etc` directory, the new container image, and the currently running container image.
 
 The tree-way merge process acts on a file-by-file basis, so that new and changed files in the new container image, which didn't exist or changed in the currently running system, are applied to it.
 Oh the other hand, any file that changed in the running system is kept as-is, to not override any day-2 configurations already performed to the system.
@@ -94,7 +94,7 @@ As the system reboots into the new image, it also switches to the new read-write
 If any Systemd unit changes files in the `/etc` directory, those changes affect the new read-write copy, which starts to diverge from its bootc container image during its first boot.
 
 Because of the way the three-way merge works, it is recommended that any system configuration which is embedded into a bootc container image, and that is not supposed to be changed at day-2, be performed in the `/usr/lib` directory instead of the `/etc` directory.
-Some legacy system services and demons may not support configurations in the `/usr` directory and may require special care diring boot updates.
+Some legacy system services and demons may not support configurations in the `/usr` directory and may require special care during boot updates.
 
 == Application data during image updates.
 
@@ -103,14 +103,14 @@ Bootc updates do NOT change the `/var` directory in anyway.
 So, if a new bootc container image includes new content in `/var`, it will NOT be applied by an update.
 
 This means that bootc container images may require Systemd units to run at boot time to initialize data directories, including locations of their temporary and log files.
-Applications that abide by currently recommended practices create such directories at run time, instead of assuming they are pre-created during package installation, or defers their initialization to Systemd units.
+Applications that abide by currently recommended practices create such directories at run time, instead of assuming they are precreated during package installation, or defers their initialization to Systemd units.
 
-If an update requires migration or conversion of application data to different formats and locations, it also must be perfomed either manually, after the bootc update operation, or by a Systemd unit embedded in the bootc container image.
+If an update requires migration or conversion of application data to different formats and locations, it also must be performed either manually, after the bootc update operation, or by a Systemd unit embedded in the bootc container image.
 
-IMPORTANT: Scriplets of RPM packages run during bootc container image build time.
+IMPORTANT: Scriptlets of RPM packages run during bootc container image build time.
 They do NOT run during actual image mode system updates.
 Consequently, package updates which work with no further action in package mode may require workarounds to work in image mode.
 
 == What's next
 
-The next lab configures an image mode system to connect to a private registry to apply bootc container image updates, and also demonstrates the effect of such updates on local system configurations and data from aplications.
+The next lab configures an image mode system to connect to a private registry to apply bootc container image updates, and also demonstrates the effect of such updates on local system configurations and data from applications.

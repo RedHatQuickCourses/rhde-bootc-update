@@ -4,7 +4,7 @@ Goal::
 
 Publish and validate updates of RHEL for edge devices using image mode for RHEL using an OCI container registry.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == Introduction
 
