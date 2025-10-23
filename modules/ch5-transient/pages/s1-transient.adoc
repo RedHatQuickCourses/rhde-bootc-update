@@ -30,7 +30,7 @@ In both cases, the troubleshooting tool will be gone when you do not need it any
 
 == Using transient overlays
 
-DNF in RHEL 9.6 and 10 is able to install transient packages by creating a read-write overlay over the `/usr` directory.
+DNF in RHEL 9.6 and 10 is able to install https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/considerations_in_adopting_rhel_9/assembly_software-management_considerations-in-adopting-rhel-9[transient packages^] by creating a read-write overlay over the `/usr` directory.
 You just add the `--transient` option to the `dnf install` command.
 It works with packages downloads which come from any Yum repository (including Satellite) and also with packages available from local directories.
 
@@ -48,7 +48,7 @@ Or copy the performance data from the `/var/log/sa/` directory to another system
 
 == Using toolbx containers
 
-The Toolbx utility was designed to enable developers to run containers that provide sets of development tools seamlessly from their shell.
+The https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/building_running_and_managing_containers/using-toolbx-for-development-and-troubleshooting[Toolbx utility^] was designed to enable developers to run containers that provide sets of development tools seamlessly from their shell.
 It does so by running a regular application container, without elevated privileges, but without dropping capabilities which container engines would drop by default.
 Toolbx also mounts a series of directories, such as the user home directory and the `/dev` directory, so most tools behave as if they were running directly on the host system instead of in a container.
 
@@ -59,7 +59,7 @@ The strange name exists to differentiate from another _toolbox_ open source proj
 Because toolbx containers do not have complete visibility (and write access) to the host filesystem, there are tasks you cannot run from a toolbx container, such as managing Systemd services.
 But for a large number of tools, including tools which require escalating privileges with the `sudo` command, toolbx just works.
 
-You can run the standard toolbx container from your distribution, which in the case of RHEL is an Universal Base Image (UBI) container, and install inside the container any addtional package you need.
+You can run the standard toolbx container from your distribution, which in the case of RHEL is a Universal Base Image (UBI) container, and install inside the container any addtional packages you need.
 That container is not discarded on reboot, but it is retained until you explicitly remove it using Podman.
 
 You can manage multiple toolbx containers, and start or stop each of then at will.
