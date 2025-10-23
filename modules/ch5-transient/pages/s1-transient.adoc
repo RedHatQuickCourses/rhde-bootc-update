@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 6
 
 = Troubleshoot Image Mode Systems Using Transient Packages and Toolbx Containers
 
@@ -7,7 +7,7 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Troubleshoot RHEL for edge devices with image mode for RHEL by running tools not included in their system image.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == Troubleshooting image mode systems
 
@@ -56,20 +56,20 @@ NOTE: The official name of the project is really _toolbx_ without the "o" of "bo
 It was not a typo!
 The strange name exists to differentiate from another _toolbox_ open source project, which used to be part of CoreOS and was replaced by the more capable `toolbx` from the Fedora community.
 
-Because toolbx containers do not have complete visibility (and write access) to the host filesystem, there are tasks you cannot run from a toolbx container, such as managing Systemd services.
+Because toolbx containers do not have complete visibility (and write access) to the host file system, there are tasks you cannot run from a toolbx container, such as managing Systemd services.
 But for a large number of tools, including tools which require escalating privileges with the `sudo` command, toolbx just works.
 
-You can run the standard toolbx container from your distribution, which in the case of RHEL is a Universal Base Image (UBI) container, and install inside the container any addtional packages you need.
+You can run the standard toolbx container from your distribution, which in the case of RHEL is a Universal Base Image (UBI) container, and install inside the container any additional packages you need.
 That container is not discarded on reboot, but it is retained until you explicitly remove it using Podman.
 
 You can manage multiple toolbx containers, and start or stop each of then at will.
-This capability becomes handy once you start creating your own toolbx container images, preconfigured with your preferred troubeshooting tools, and also configuration data for your organization CA root, private package repositories, and private container registries.
+This capability becomes handy once you start creating your own toolbx container images, preconfigured with your preferred troubleshooting tools, and also configuration data for your organization CA root, private package repositories, and private container registries.
 
 For example, your custom toolbx image could specialize in networking troubleshooting tools, including the OpenSSL client utilities, Netstat, and TCPdump.
 
 == Side effects of transient overlays and toolbox containers
 
-After reboot, all packages installed using a transient overay are gone, but any files such packages left in the `/etc` and `/var` directories will still be there.
+After reboot, all packages installed using a transient overlay are gone, but any files such packages left in the `/etc` and `/var` directories will still be there.
 It is the user responsibility to clean up those files.
 
 Toolbx containers also affect the system's `/var` directory, which in image mode systems include user's home directories in `/var/home`. 

@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 7
 
 = Lab: Troubleshoot Edge Devices Using Transient Packages
 
@@ -7,7 +7,7 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Troubleshoot issues with edge devices by installing transient packages.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == Before you Begin
 
@@ -106,7 +106,7 @@ $ *sudo bootc status*
 
 .. Now suppose you want to find out if the `bootc status` command can provide additional details.
 +
-The usual way would be acessing its online documentation, but the `man` command is missing in the standard base bootc container image for RHEL.
+The usual way would be accessing its online documentation, but the `man` command is missing in the standard base bootc container image for RHEL.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -122,7 +122,7 @@ It is possible to install RHEL excluding documentation from all packages, but th
 It is missing just the `man` command.
 
 .. First, review the mounted file systems.
-The complete list of mounted file is very long, because of the many virtual filesystems and ramdisks such as `/proc` and `/run`, so filter the list to display only on-disk file system using XFS.
+The complete list of mounted file is very long, because of the many virtual file systems and ram disks such as `/proc` and `/run`, so filter the list to display only on-disk file system using XFS.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -134,7 +134,7 @@ $ *mount -t xfs*
 /dev/vda2 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
 --
 
-.. Also notice that the root file system is actually an overlay file system, backed by the currently deployed ostree image.
+.. Also notice that the root file system is actually an overlay file system, backed by the currently deployed bootc container image.
 +
 [source,subs="verbatim,quotes"]
 --

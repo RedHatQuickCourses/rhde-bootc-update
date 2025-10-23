@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 11
 
 = Lab: Troubleshoot Edge Devices Using Toolbx Containers
 
@@ -7,7 +7,7 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Troubleshoot issues with edge devices by running toolbox containers.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == Before you Begin
 
@@ -26,7 +26,7 @@ But you must execute the preparation tasks from the first lab of this course.
 
 == Instructions
 
-// Toolbox (https://github.com/containers/toolbox) is the same as Toolbx (https://containertoolbx.org/) and the later is now the cannonical name (but commands and container images didn't change)
+// Toolbox (https://github.com/containers/toolbox) is the same as Toolbx (https://containertoolbx.org/) and the later is now the official name (but commands and container images didn't change)
 
 You will experiment with another approach to add troubleshooting tools which might be missing in an image mode system: creating toolbx containers, which continue available after reboot, until you explicitly delete them.
 
@@ -156,7 +156,7 @@ FATA[0000] Error parsing image name "docker://registry.lab.example.com:5000/ubi1
 +
 NOTE: Remember that the `podman search` command and its equivalents with other container engines are NOT a reliable way to determine if a container image exists in an OCI container registry, because of limitations inherited from the Docker Distribution API.
 
-.. If the copy is not available, create it so you can keep with the scenario of air-gapped deployments.
+.. If the copy is not available, create it so you can keep with the scenario of disconnected deployments.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -182,7 +182,7 @@ Enter with: toolbox enter
 
 .. Enter the toolbox container you just created.
 +
-Notice the change of the system prompt, which doesn't display the current directory anymore, but includes an hexxagonal bullet.
+Notice the change of the system prompt, which doesn't display the current directory anymore, but includes an hexagonal bullet.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -192,7 +192,7 @@ $ *toolbox enter*
 --
 
 .. View the file systems which are backed by actual disk contents and which are overlays.
-Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same comands from the previous lab.
+Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same commands from the previous lab.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -348,7 +348,7 @@ uid=1000(core) gid=10(wheel) groups=10(wheel)
 $ *echo '1,2,3 testing' > $HOME/test.txt*
 --
 
-.. Attempt to change the timezone of your toolbx container.
+.. Attempt to change the time zone of your toolbx container.
 +
 [source,subs="verbatim,quotes"]
 --

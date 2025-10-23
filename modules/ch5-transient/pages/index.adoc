@@ -4,12 +4,12 @@ Goal::
 
 Troubleshoot RHEL for edge devices with image mode for RHEL by applying transient package updates and using toolbox containers.
 
-WARNING: Not started yet
+WARNING: Pending review
 
 == Introduction
 
-This chapter describes common tricks for troubleshooting image mode systems, among them: transient package updates and toolox containers.
+This chapter describes common tricks for troubleshooting image mode systems, among them: transient packages and toolbx containers.
 The first enables testing of package updates in live systems, before incorporating the update in a bootc container image.
 The second enables the use of troubleshooting tools which you do not want to incorporate in a bootc container image.
 
-While toolbox containers are useful with package mode also, transient package updates are exclusive to image mode.
+While toolbx containers are useful with package mode also, transient packages are exclusive to image mode.
