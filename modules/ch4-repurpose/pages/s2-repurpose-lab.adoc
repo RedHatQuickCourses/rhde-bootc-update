@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 12
 
 = Lab: Switch System Images of Edge Devices
 
@@ -7,7 +7,7 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Repurpose edge devices by switching to a different bootc container image.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 ////
 This lab relies on a bug of the php-fpm package.
@@ -185,9 +185,9 @@ No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
 +
 NOTE: If you are continuing from the xref:ch3-rollback:s2-rollback-lab.adoc[previous lab], which performed a roll back operation, the `bootc update` command will still report "no updates available" because it is smart enough to NOT retry an update which was already rolled back.
 
-.. If you skipped the previous two activities of this course, the `bootc upgrade` command will fail because your _test machine_ does not have TLS certificates and credentails for acessing the private registry.
+.. If you skipped the previous two activities of this course, the `bootc upgrade` command will fail because your _test machine_ does not have TLS certificates and credentials for accessing the private registry.
 +
-In that case, configure your _test machine_ for acessing the private registry.
+In that case, configure your _test machine_ for accessing the private registry.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -203,8 +203,6 @@ $ *sudo cp /run/containers/0/auth.json /etc/ostree/auth.json*
 $ *sudo bootc upgrade --check*
 No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
 --
-+
-IMPORTANT: TODO Move this config to the first lab, so it doesn't need to be repeated here and in the update lab.
 
 .. Switch to the new bootc container image
 +
@@ -297,7 +295,7 @@ $ *sudo bootc status*
 
 .. Verify the status of the FastCGI module for PHP.
 +
-You will see an error related to a non-existant directory inside the `/var` directory, which is application data.
+You will see an error related to a missing directory inside the `/var` directory, which is application data.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -454,7 +452,7 @@ $ *sudo systemctl reboot --now*
 Connection to 127.0.0.1 closed.
 --
 
-.. Give your _test machine_ a few moments to reboot (again!) and verify that it now runs the updated system image succesfully.
+.. Give your _test machine_ a few moments to reboot (again!) and verify that it now runs the updated system image successfully.
 +
 [source,subs="verbatim,quotes"]
 --

@@ -1,13 +1,13 @@
-:time_estimate: 7
+:time_estimate: 3
 
 = Switch Images of Image Mode Systems
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
-Repurpose edge devices by using the bootc utility to switch to a different, and possibly unrelated, bootc container iamge.
+Repurpose edge devices by using the bootc utility to switch to a different, and possibly unrelated, bootc container image.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == Repurpose vs. update image mode systems
 
@@ -22,9 +22,9 @@ It was already possible to repurpose a system running package mode, but it was p
 Repurposing an image mode system is conceptually simpler, because it means just switching to a different system image.
 But it still requires dealing with left overs from the packages on the old image in system configurations and application data directories.
 
-If you use the `bootc switch` command to repurpose an image mode system, there's also a higher risk that you will encounter issues caused by RPM package scriplets desgined to work only with package mode.
+If you use the `bootc switch` command to repurpose an image mode system, there's also a higher risk that you will encounter issues caused by RPM package scriptlets designed to work only with package mode.
 
-For example, if an RPM package includes an empty directory to store application logs, named `/var/app/logs`, that directory is incorporated into a bootc container image and created during initial system provsioning, but it is NOT created by a `bootc switch` command.
+For example, if an RPM package includes an empty directory to store application logs, named `/var/app/logs`, that directory is incorporated into a bootc container image and created during initial system provisioning, but it is NOT created by a `bootc switch` command.
 
 As another example, an RPM scriptlet might initialize a database, but that scriptlet would not run during an image switch operation, and the database would still be empty after reboot into the new image.
 
