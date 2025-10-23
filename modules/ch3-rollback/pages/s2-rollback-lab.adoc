@@ -1,4 +1,4 @@
-:time_estimate: 5
+:time_estimate: 7
 
 = Lab: Rollback Updates to Edge Devices
 
@@ -7,7 +7,7 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Revert edge devices to a previous known good bootc container image which available in the device itself.
 
-WARNING: Work in progress
+WARNING: Pending review
 
 == Before you Begin
 
@@ -24,7 +24,7 @@ You must perform the two activities in sequence, without destroying your classro
 
 == Instructions
 
-You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and them roll back that system to a previouly installed bootc container image.
+You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and them roll back that system to a previously installed bootc container image.
 After rolling back, you will verify that system configurations were also rolled back to the state from before the update, but application data retains changes performed after the update.
 
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
@@ -99,7 +99,7 @@ $ *sudo bootc status*
          Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
 --
 
-.. Verify that the system is configured with a non-UTC timezone and change it to a different non-UTC time zone.
+.. Verify that the system is configured with a non-UTC time zone and change it to a different non-UTC time zone.
 +
 [source,subs="verbatim,quotes"]
 --

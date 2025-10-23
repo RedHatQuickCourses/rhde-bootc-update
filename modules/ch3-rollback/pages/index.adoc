@@ -4,10 +4,10 @@ Goal::
 
 Undo updates of RHEL for edge devices with image mode for RHEL.
 
-WARNING: Not started yet
+WARNING: Pending review
 
 == Introduction
 
 This chapter describes the usage of the bootc utility to rollback the active system image to a previous bootc container image, as in returning a system to a previously known good configuration.
 
-Image mode systems never discard the last sucesfully booted system image. It stays in the root disk, and you can make it again the active image.
+Image mode systems never discard the last succesfully booted system image. It stays in the root disk, and you can make it again the active image.
