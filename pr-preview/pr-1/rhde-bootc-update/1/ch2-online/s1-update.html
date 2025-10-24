@@ -229,7 +229,7 @@ Pending review
 <h2 id="_about_transactional_updates_of_image_mode_systems"><a class="anchor" href="#_about_transactional_updates_of_image_mode_systems"></a>About transactional updates of image mode systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Image mode systems are said to apply updates in am atomic and transactional way.
+<p>Image mode systems are said to apply updates in an atomic and transactional way.
 If you are familiar with other transactional systems, such as relational databases, you would expect that image mode systems possess two properties:</p>
 </div>
 <div class="olist arabic">
@@ -248,7 +248,7 @@ You can revert a system completely to the state it was before the update was app
 <p>These two properties hold true regarding the read-only system image, that is, the contents of its root partition, especially its <code>/usr</code> directory, which contains all installed system software, and also regarding its kernel and boot loader.</p>
 </div>
 <div class="paragraph">
-<p>But they to not apply to mutable system state, that is, to system configurations stored in the <code>/etc</code> directory and to application data stored in the <code>/var</code> directory.
+<p>But they do not apply to mutable system state, that is, to system configurations stored in the <code>/etc</code> directory and to application data stored in the <code>/var</code> directory.
 It may be necessary to provide additional code or processes around bootc updates to ensure the mutable system state ends up in a consistent and working state.</p>
 </div>
 </div>
@@ -304,8 +304,8 @@ For example, if your organization uses different tags for minor updates, and avo
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the remaining of this course, any topic that references the <code>bootc upgrade</code> command or an "update" operation also applies to the <code>bootc switch</code> command, because they are equivalent for most practical purposes.
-Any exceptions will stated be explicitly.
+For the remainder of this course, any topic that references the <code>bootc upgrade</code> command or an "update" operation also applies to the <code>bootc switch</code> command, because they are equivalent for most practical purposes.
+Any exceptions will be stated explicitly.
 </td>
 </tr>
 </table>
@@ -325,7 +325,7 @@ That means being able to pull a bootc container image with Podman or inspecting 
 </div>
 <div class="paragraph">
 <p>Bootc stores its registry credentials in the <code>/etc/ostree/auth.json</code> file, using the same format as the container tools.
-So you can login using Podman or Skopeo and copy the user&#8217;s registry authentication file to the bootc registry credentials file.</p>
+So you can log in using Podman or Skopeo and copy the user&#8217;s registry authentication file to the bootc registry credentials file.</p>
 </div>
 </div>
 </div>
@@ -346,7 +346,7 @@ For example, to stage updates during the day, whenever network connectivity is a
 </div>
 </div>
 <div class="sect1">
-<h2 id="_system_configurations_during_image_updates"><a class="anchor" href="#_system_configurations_during_image_updates"></a>System configurations during image updates.</h2>
+<h2 id="_system_configurations_during_image_updates"><a class="anchor" href="#_system_configurations_during_image_updates"></a>System configurations during image updates</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>When the bootc utility downloads and applies a new bootc container image, it also performs the deployment process of the bootc container image.
@@ -356,8 +356,8 @@ The deployment process extracts the image contents, so it can run in a live syst
 <p>The deployment process also initializes a new read-write <code>/etc</code> directory, by performing a three-way merge between the contents of the currently running <code>/etc</code> directory, the new container image, and the currently running container image.</p>
 </div>
 <div class="paragraph">
-<p>The tree-way merge process acts on a file-by-file basis, so that new and changed files in the new container image, which didn&#8217;t exist or changed in the currently running system, are applied to it.
-Oh the other hand, any file that changed in the running system is kept as-is, to not override any day-2 configurations already performed to the system.</p>
+<p>The three-way merge process acts on a file-by-file basis, so that new and changed files in the new container image, which didn&#8217;t exist or changed in the currently running system, are applied to it.
+On the other hand, any file that changed in the running system is kept as-is, to not override any day-2 configurations already performed to the system.</p>
 </div>
 <div class="paragraph">
 <p>As the system reboots into the new image, it also switches to the new read-write copy of the <code>/etc</code> directory, while the previous copy is retained as part of the old bootc container image deployment.
@@ -365,16 +365,16 @@ If any Systemd unit changes files in the <code>/etc</code> directory, those chan
 </div>
 <div class="paragraph">
 <p>Because of the way the three-way merge works, it is recommended that any system configuration which is embedded into a bootc container image, and that is not supposed to be changed at day-2, be performed in the <code>/usr/lib</code> directory instead of the <code>/etc</code> directory.
-Some legacy system services and demons may not support configurations in the <code>/usr</code> directory and may require special care during boot updates.</p>
+Some legacy system services and daemons may not support configurations in the <code>/usr</code> directory and may require special care during boot updates.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_application_data_during_image_updates"><a class="anchor" href="#_application_data_during_image_updates"></a>Application data during image updates.</h2>
+<h2 id="_application_data_during_image_updates"><a class="anchor" href="#_application_data_during_image_updates"></a>Application data during image updates</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A bootc update remains using the same copy of the <code>/var</code> directory that was already in use by the currently running system.
-Bootc updates do NOT change the <code>/var</code> directory in anyway.
+Bootc updates do NOT change the <code>/var</code> directory in any way.
 So, if a new bootc container image includes new content in <code>/var</code>, it will NOT be applied by an update.</p>
 </div>
 <div class="paragraph">

@@ -226,7 +226,7 @@ Pending review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
@@ -248,7 +248,7 @@ If not, please adapt the instructions to your test environment.</p>
 <h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and them update that system to a new version of its bootc container image.
+<p>You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and then update that system to a new version of its bootc container image.
 After performing the update, you will verify that configuration and application data are preserved by the update.</p>
 </div>
 <div class="olist arabic">
@@ -268,7 +268,7 @@ LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
 </div>
 </li>
 <li>
-<p>If needed, login to your private registry.</p>
+<p>If needed, log in to your private registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
@@ -287,8 +287,7 @@ If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="
 </div>
 </li>
 <li>
-<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
-That VM will be your <em>test machine</em>.</p>
+<p>Verify that you have access to the local VM which, is your <em>test machine</em>, by using libvirt&#8217;s session interface.</p>
 <div class="paragraph">
 <p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
 </div>
@@ -428,7 +427,7 @@ failed</code></pre>
 </td>
 <td class="content">
 If you notice that the timer, or its associated service, failed, ignore that for now.
-As you will see later in this lab, the <em>test machine</em> is not properly configured to access the private registry which would provide bootc container image updates.
+As you will see later in this lab, the <em>test machine</em> is not properly configured to access the private registry, which would provide bootc container image updates.
 </td>
 </tr>
 </table>
@@ -446,7 +445,7 @@ Open a new terminal on your <em>development machine</em> to proceed with the nex
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory ,</p>
+<p>Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
@@ -465,13 +464,13 @@ It makes the following changes:</p>
 <div class="olist lowerroman">
 <ol class="lowerroman" type="i">
 <li>
-<p>Install and enable the Cockpit service.</p>
+<p>Installs and enables the Cockpit service.</p>
 </li>
 <li>
-<p>Move the updated single-page web application files to the <code>/webapp/html</code> directory, which is read-only, and changed the Apache Web Server configuration to match.</p>
+<p>Moves the updated single-page web application files to the <code>/webapp/html</code> directory, which is read-only, and changes the Apache Web Server configuration to match.</p>
 </li>
 <li>
-<p>Put a placeholder file in the old location for the web application files, the <code>/var/www/html</code> directory, which is actually an application data directory.</p>
+<p>Puts a placeholder file in the old location for the web application files, the <code>/var/www/html</code> directory, which is actually an application data directory.</p>
 </li>
 </ol>
 </div>
@@ -539,7 +538,7 @@ Writing manifest to image destination</code></pre>
 </li>
 <li>
 <p>It is expected to fail, because the <em>test machine</em> was never configured with credentials and a CA root for the private registry.
-You can confirm it by attempting to log in using Podman.</p>
+You can confirm it by attempting to log in by using Podman.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc upgrade --check</strong>
@@ -550,7 +549,7 @@ Error: authenticating creds for "registry.lab.example.com:5000": pinging contain
 </div>
 </li>
 <li>
-<p>Copy the CA root from the private registry, add it to the system&#8217;s trusted CAs, and try again to log in to the private registry using Podman.</p>
+<p>Copy the CA root from the private registry, add it to the system&#8217;s trusted CAs, and try again to log in to the private registry by using Podman.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>scp student@utility:/opt/registry/certs/domain.crt</strong>
@@ -638,7 +637,7 @@ Misc tests of bootc images and firewalld, v1.1</code></pre>
 </div>
 </li>
 <li>
-<p>Verify which of the changes, from the new image, were actually applied to your <em>test machine</em>.</p>
+<p>Verify which of the changes from the new image were actually applied to your <em>test machine</em>.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
@@ -688,7 +687,7 @@ Misc tests of bootc images and firewalld, v1.1</code></pre>
 <li>
 <p>Verify that the placeholder file, added to the new bootc image, is NOT present in the system.</p>
 <div class="paragraph">
-<p>Also notice that the changed web application are still in the system, because application data is NOT affected by bootc image upgrades.</p>
+<p>Also notice that the changed web application files are still in the system, because application data is NOT affected by bootc image upgrades.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -700,7 +699,7 @@ Hacked the webapp</code></pre>
 </div>
 </li>
 <li>
-<p>Attempt to make changes to the current the web application files.
+<p>Attempt to make changes to the current web application files.
 It will fail because now application files are in a read-only directory.</p>
 <div class="listingblock">
 <div class="content">
@@ -745,7 +744,7 @@ Timezone=America/Cancun</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Still on your <em>test machine</em>, show that cockpit is available, but cannot access it because there is no port-forward setting for TCP port 9090 of your local VM.</p>
+<p>Still on your <em>test machine</em>, show that Cockpit is available, but cannot access it because there is no port-forward setting for TCP port 9090 of your local VM.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl -s 127.0.0.1:9090 | head</strong>
@@ -763,7 +762,7 @@ Timezone=America/Cancun</code></pre>
 </div>
 </li>
 <li>
-<p>Stop your test VM</p>
+<p>Stop your test VM.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh destroy bootc-iso</strong>
@@ -816,7 +815,7 @@ You could make edits to the XML file and apply them back to libvirt by using the
 </div>
 </li>
 <li>
-<p>Add a third <code>portForward</code> element to your the libvirt domain of your test VM.</p>
+<p>Add a third <code>portForward</code> element to the libvirt domain of your test VM.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virt-xml bootc-iso --print-diff --define --edit --network portForward2.proto=tcp,portForward2.range0.start=8090,portForward2.range0.to=9090</strong>
@@ -858,7 +857,7 @@ Then open a web browser on your <em>development machine</em> and use the URL <co
 <div class="paragraph">
 <p>You successfully updated your <em>test machine</em> with a new bootc container image and demonstrated that configuration changes and application data are preserved.
 You also demonstrated that new configurations from the updated image are applied, but new application data is not.
-if you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to initialize data at first boot instead of just having data files on the image.</p>
+If you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to initialize data at first boot instead of just having data files on the image.</p>
 </div>
 </div>
 </div>
