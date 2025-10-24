@@ -12,7 +12,7 @@ WARNING: Pending review
 
 == About transactional updates of image mode systems
 
-Image mode systems are said to apply updates in am atomic and transactional way.
+Image mode systems are said to apply updates in an atomic and transactional way.
 If you are familiar with other transactional systems, such as relational databases, you would expect that image mode systems possess two properties:
 
 1. _Atomicity_: updates are either applied entirely, or not at all.
@@ -23,7 +23,7 @@ You can revert a system completely to the state it was before the update was app
 
 These two properties hold true regarding the read-only system image, that is, the contents of its root partition, especially its `/usr` directory, which contains all installed system software, and also regarding its kernel and boot loader.
 
-But they to not apply to mutable system state, that is, to system configurations stored in the `/etc` directory and to application data stored in the `/var` directory.
+But they do not apply to mutable system state, that is, to system configurations stored in the `/etc` directory and to application data stored in the `/var` directory.
 It may be necessary to provide additional code or processes around bootc updates to ensure the mutable system state ends up in a consistent and working state.
 
 == Bootc update and switch operations
@@ -56,8 +56,8 @@ This is the concept of a _floating tag_.
 So your choice of the `bootc upgrade` or `bootc switch` commands is only dependent on how you organize your container image repositories and how you tag your bootc container images. 
 For example, if your organization uses different tags for minor updates, and avoids the use of floating tags, then you must use `bootc switch` to perform all updates.
 
-NOTE: For the remaining of this course, any topic that references the `bootc upgrade` command or an "update" operation also applies to the `bootc switch` command, because they are equivalent for most practical purposes.
-Any exceptions will stated be explicitly.
+NOTE: For the remainder of this course, any topic that references the `bootc upgrade` command or an "update" operation also applies to the `bootc switch` command, because they are equivalent for most practical purposes.
+Any exceptions will be stated explicitly.
 
 == Updates with private container registries
 
@@ -68,7 +68,7 @@ That means being able to pull a bootc container image with Podman or inspecting 
 Bootc honors the system-wide certificate authority (CA) trust chain, so you do not require configuring bootc with a TLS certificate, and though you can instruct bootc to ignore TLS validation, we strongly recommend that you configure your image mode systems with your internal CA roots.
 
 Bootc stores its registry credentials in the `/etc/ostree/auth.json` file, using the same format as the container tools.
-So you can login using Podman or Skopeo and copy the user's registry authentication file to the bootc registry credentials file.
+So you can log in using Podman or Skopeo and copy the user's registry authentication file to the bootc registry credentials file.
 
 == The bootc update timer service
 
@@ -80,26 +80,26 @@ It enables edge devices, in locations with intermittent network connectivity, to
 You may wish to disable the timer, to avoid such automatic updates entirely, or to change it to not reboot immediately, but reboot manually or using a different timer service.
 For example, to stage updates during the day, whenever network connectivity is available, but reboot only during a maintenance window.
 
-== System configurations during image updates.
+== System configurations during image updates
 
 When the bootc utility downloads and applies a new bootc container image, it also performs the deployment process of the bootc container image.
 The deployment process extracts the image contents, so it can run in a live system, and builds the overlay file system which becomes the read-only system root directory (`/`). 
 
 The deployment process also initializes a new read-write `/etc` directory, by performing a three-way merge between the contents of the currently running `/etc` directory, the new container image, and the currently running container image.
 
-The tree-way merge process acts on a file-by-file basis, so that new and changed files in the new container image, which didn't exist or changed in the currently running system, are applied to it.
-Oh the other hand, any file that changed in the running system is kept as-is, to not override any day-2 configurations already performed to the system.
+The three-way merge process acts on a file-by-file basis, so that new and changed files in the new container image, which didn't exist or changed in the currently running system, are applied to it.
+On the other hand, any file that changed in the running system is kept as-is, to not override any day-2 configurations already performed to the system.
 
 As the system reboots into the new image, it also switches to the new read-write copy of the `/etc` directory, while the previous copy is retained as part of the old bootc container image deployment.
 If any Systemd unit changes files in the `/etc` directory, those changes affect the new read-write copy, which starts to diverge from its bootc container image during its first boot.
 
 Because of the way the three-way merge works, it is recommended that any system configuration which is embedded into a bootc container image, and that is not supposed to be changed at day-2, be performed in the `/usr/lib` directory instead of the `/etc` directory.
-Some legacy system services and demons may not support configurations in the `/usr` directory and may require special care during boot updates.
+Some legacy system services and daemons may not support configurations in the `/usr` directory and may require special care during boot updates.
 
-== Application data during image updates.
+== Application data during image updates
 
 A bootc update remains using the same copy of the `/var` directory that was already in use by the currently running system.
-Bootc updates do NOT change the `/var` directory in anyway.
+Bootc updates do NOT change the `/var` directory in any way.
 So, if a new bootc container image includes new content in `/var`, it will NOT be applied by an update.
 
 This means that bootc container images may require Systemd units to run at boot time to initialize data directories, including locations of their temporary and log files.

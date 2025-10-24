@@ -9,7 +9,7 @@ Update edge devices manually from new bootc container images published in an OCI
 
 WARNING: Pending review
 
-== Before you Begin
+== Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
 The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
@@ -23,7 +23,7 @@ Make sure you verified your test environment by following the xref:ch1-updates:s
 
 == Instructions
 
-You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and them update that system to a new version of its bootc container image.
+You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and then update that system to a new version of its bootc container image.
 After performing the update, you will verify that configuration and application data are preserved by the update.
 
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
@@ -37,7 +37,7 @@ $ *ls rhde-bootc-samples/*
 LICENSE     bib-cloud-init  bib-qcow2 ...
 --
 
-.. If needed, login to your private registry.
+.. If needed, log in to your private registry.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -54,8 +54,7 @@ $ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.
 ["v1.0"]
 --
 
-.. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
-That VM will be your _test machine_.
+.. Verify that you have access to the local VM which, is your _test machine_, by using libvirt's session interface.
 +
 If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
 +
@@ -161,14 +160,14 @@ failed
 --
 +
 NOTE: If you notice that the timer, or its associated service, failed, ignore that for now.
-As you will see later in this lab, the _test machine_ is not properly configured to access the private registry which would provide bootc container image updates.
+As you will see later in this lab, the _test machine_ is not properly configured to access the private registry, which would provide bootc container image updates.
 
 .. Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
 Open a new terminal on your _development machine_ to proceed with the next step.
 
 3. Build and publish an updated bootc container image.
 
-.. Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory ,
+.. Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -183,11 +182,11 @@ $ *cd temp-test-update*
 It makes the following changes:
 +
 --
-... Install and enable the Cockpit service.
+... Installs and enables the Cockpit service.
 
-... Move the updated single-page web application files to the `/webapp/html` directory, which is read-only, and changed the Apache Web Server configuration to match.
+... Moves the updated single-page web application files to the `/webapp/html` directory, which is read-only, and changes the Apache Web Server configuration to match.
 
-... Put a placeholder file in the old location for the web application files, the `/var/www/html` directory, which is actually an application data directory.
+... Puts a placeholder file in the old location for the web application files, the `/var/www/html` directory, which is actually an application data directory.
 --
 +
 [source,subs="verbatim,quotes"]
@@ -226,7 +225,7 @@ Writing manifest to image destination
 .. Return to the terminal running an SSH session to your _test machine_ and attempt to check for the availability of updates.
 +
 .. It is expected to fail, because the _test machine_ was never configured with credentials and a CA root for the private registry.
-You can confirm it by attempting to log in using Podman.
+You can confirm it by attempting to log in by using Podman.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -236,7 +235,7 @@ $ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
 Error: authenticating creds for "registry.lab.example.com:5000": pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
 --
 
-.. Copy the CA root from the private registry, add it to the system's trusted CAs, and try again to log in to the private registry using Podman.
+.. Copy the CA root from the private registry, add it to the system's trusted CAs, and try again to log in to the private registry by using Podman.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -304,7 +303,7 @@ $ *ssh -i edge-key -p 8022 core@127.0.0.1*
 [core@bootc-iso ~]$ 
 --
 
-5. Verify which of the changes, from the new image, were actually applied to your _test machine_.
+5. Verify which of the changes from the new image were actually applied to your _test machine_.
 
 .. Verify that the new image is the current booted image, and the previous image is still available for rolling back.
 +
@@ -348,7 +347,7 @@ Misc tests of bootc images and firewalld, v1.1
 
 .. Verify that the placeholder file, added to the new bootc image, is NOT present in the system.
 +
-Also notice that the changed web application are still in the system, because application data is NOT affected by bootc image upgrades.
+Also notice that the changed web application files are still in the system, because application data is NOT affected by bootc image upgrades.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -358,7 +357,7 @@ $ *cat /var/www/html/index.html*
 Hacked the webapp
 --
 
-.. Attempt to make changes to the current the web application files.
+.. Attempt to make changes to the current web application files.
 It will fail because now application files are in a read-only directory.
 +
 [source,subs="verbatim,quotes"]
@@ -389,7 +388,7 @@ Timezone=America/Cancun
 
 7. *Optional:* Change settings of the local test VM, to enable access to Cockpit.
 
-.. Still on your _test machine_, show that cockpit is available, but cannot access it because there is no port-forward setting for TCP port 9090 of your local VM.
+.. Still on your _test machine_, show that Cockpit is available, but cannot access it because there is no port-forward setting for TCP port 9090 of your local VM.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -406,7 +405,7 @@ $ *curl -s 127.0.0.1:9090 | head*
     <script>
 --
 
-.. Stop your test VM
+.. Stop your test VM.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -446,7 +445,7 @@ $ *virsh dumpxml bootc-iso | less*
 +
 NOTE: You could make edits to the XML file and apply them back to libvirt by using the `virsh edit bootc-iso` command, but the next steps show a scriptable approach for making the change.
 
-.. Add a third `portForward` element to your the libvirt domain of your test VM.
+.. Add a third `portForward` element to the libvirt domain of your test VM.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -480,7 +479,7 @@ Then open a web browser on your _development machine_ and use the URL `\https://
 
 You successfully updated your _test machine_ with a new bootc container image and demonstrated that configuration changes and application data are preserved.
 You also demonstrated that new configurations from the updated image are applied, but new application data is not.
-if you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to initialize data at first boot instead of just having data files on the image.
+If you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to initialize data at first boot instead of just having data files on the image.
 
 == What's Next
 
