@@ -10,7 +10,7 @@ Update edge devices manually from new bootc container images stored in removable
 
 WARNING: Pending review
 
-== Before you Begin
+== Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
 The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
@@ -21,8 +21,6 @@ If you are using the course classroom, log in on the `workstation` VM as the use
 If not, please adapt the instructions to your test environment.
 
 Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
-
-IMPORTANT: This lab applies the same update as in a ch2-online:s2-update-lab.adoc[previous lab] but using a different method (disconnected vs. connected). If you performed the previous lab, which performs a connected update, it is expected that you also performed its  ch3-rollback-lab.adoc[following lab], which rollbacks that update, so your _test machine_ should be the state it was be before the update, which is the same state as in the end of the first lab.
 
 == Instructions
 
@@ -39,7 +37,7 @@ $ *ls rhde-bootc-samples/*
 LICENSE     bib-cloud-init  bib-qcow2 ...
 --
 
-.. If needed, login to your private registry.
+.. If necessary, login to your private registry.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -57,7 +55,6 @@ $ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.
 --
 
 .. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
-That VM will be your _test machine_.
 +
 If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
 +
@@ -120,7 +117,7 @@ Timezone=Asia/Tokyo
 +
 NOTE: Again, your output may differ if you performed or skipped any of the previous labs, and it is inconsequential for the current lab.
 
-.. Change the HTML files which mock a single-page web application.
+.. Change the HTML files, which mock a single-page web application.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -144,7 +141,7 @@ Created symlink '/etc/systemd/system/bootc-fetch-apply-updates.timer' → '/dev/
 .. Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
 Open a new terminal on your _development machine_ to proceed with the next step.
 
-3. On your _development machine_, build and publish a bootc container image which you will use to update (actually, to repurpose) your _test machine_.
+3. On your _development machine_, build and publish a bootc container image that you will use to update (actually, to repurpose) your _test machine_.
 +
 ////
 From nginx-core package
@@ -168,7 +165,7 @@ drwxrwx---. 7 nginx root system_u:object_r:httpd_var_lib_t:s0 78 Oct 15 15:10 /v
 It seems these directories, if missing, are created at service start, because I had no issues during the switch, unlike with the PHP-FPM image
 ////
 
-.. Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory.
+.. Create a new working directory, copy sample files from the git repository, and copy the SSH key from the previous working directory.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -193,9 +190,9 @@ Copying config e1390a4dc7 done   |
 Writing manifest to image destination
 --
 +
-NOTE: a production workflow would also copy the updated image to a non-floating tag, in the example it could be `1.0.0`.
+NOTE: A production workflow would also copy the updated image to a non-floating tag, in the example, it could be `1.0.0`.
 
-4. Create an custom installation ISO with the new bootc container image.
+4. Create a custom installation ISO embedding the new bootc container image.
 
 .. Log in again on your private registry, but this time as the root user.
 +
@@ -217,7 +214,7 @@ Writing manifest to image destination
 
 .. Invoke the script which runs the bootc image builder utility.
 +
-Be patient, it takes several minutes running.
+Be patient, it takes several minutes to run.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -260,7 +257,7 @@ vda    252:0    0   20G  0 disk
                                 /sysroot
 --
 
-.. On your _development machine_, hot-plug a virtual usb disk in your local VM.
+.. On your _development machine_, hot-plug a virtual USB disk in your local VM.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -268,8 +265,8 @@ $ *virsh attach-disk bootc-iso $PWD/nginx-bootc.iso sdb --targetbus usb --mode r
 Disk attached successfully
 --
 +
-NOTE: You must use the name `sdb` to refer to the USB storage device form libvirt because it already uses the name `sda` for the virtual CD-ROM disk, which the RHEL kernel names as the `sr0` device.
-Also notice that you must provide absolute paths to disk images using the `virsh` command, unlike the `virt-install` command which accepts relative paths.
+NOTE: You must use the name `sdb` to refer to the USB storage device from libvirt because it already uses the name `sda` for the virtual CD-ROM disk, which the RHEL kernel names as the `sr0` device.
+Also notice that you must provide absolute file paths to disk images when using the `virsh` command, unlike the `virt-install` command, which accepts relative file paths.
 
 .. Verify that the kernel on your local VM recognizes that a new USB disk device was attached.
 +
@@ -401,7 +398,7 @@ GRAB OUTPUT
          Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
 --
 
-.. Verify that it is running Nginx, while the previous image were running the Apache HTTP Server.
+.. Verify that it is running Nginx, while the previous image was running the Apache HTTP Server.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -433,7 +430,7 @@ $ *timedatectl show -p Timezone*
 Timezone=Asia/Tokyo
 --
 
-.. Verify that attempts to check for updates will fail, because the mount point of used for the removable USB storage is set as the location for the system's bootc container image.
+.. Verify that attempts to check for updates will fail, because the mount point used for the removable USB storage is set as the location for the system's bootc container image.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -454,5 +451,5 @@ This is the closest we can get to the workflow for an actual physical device, us
 
 == What's Next
 
-This was the latest activity of this course.
+This was the last activity in this course.
 Stay tuned for new enablement courses for Red Hat Device Edge and image mode in the future!
