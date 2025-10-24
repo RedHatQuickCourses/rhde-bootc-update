@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Lab Environment :: Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</title>
+    <title>Roll Back Updates to Image Mode Systems :: Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="s2-rollback-lab.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -45,7 +47,7 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="index.html">Lab Environment</a>
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
   </li>
 </ul>
   </li>
@@ -85,13 +87,13 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
+    <a class="nav-link" href="index.html">Undo Updates on Image Mode Systems</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
+    <a class="nav-link" href="s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
   </li>
 </ul>
   </li>
@@ -185,7 +187,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></li>
-    <li><a href="index-lab-role.html">Lab Environment</a></li>
+    <li><a href="index.html">Undo Updates on Image Mode Systems</a></li>
+    <li><a href="s1-rollback.html">Roll Back Updates to Image Mode Systems</a></li>
   </ul>
 </nav>
 </div>
@@ -194,50 +197,78 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Lab Environment</h1>
-<div class="sect1">
-<h2 id="_instructions_to_launch_your_lab_on_the_red_hat_online_learning_role_platform"><a class="anchor" href="#_instructions_to_launch_your_lab_on_the_red_hat_online_learning_role_platform"></a>Instructions to Launch Your Lab on the Red Hat Online Learning (ROLE) Platform</h2>
+<h1 class="page">Roll Back Updates to Image Mode Systems</h1>
+<div id="preamble">
 <div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Log in</strong> to the <a href="#ROLE-Portal-Links">ROLE platform</a></p>
-</li>
-<li>
-<p><strong>Search</strong> for the catalog entry: <strong>FIXME Lab Catalog Name</strong>.</p>
-</li>
-<li>
-<p><strong>Click</strong> on the <strong>Launch</strong> button for the catalog entry in the search results.</p>
-</li>
-<li>
-<p>On the Course page, <strong>click</strong> the <strong>Lab Environment</strong> tab.</p>
-</li>
-<li>
-<p>Click on the <strong>Create</strong> button on the Lab Environment page to launch the lab.</p>
-</li>
-<li>
-<p>Wait for the lab creation process to complete.</p>
-</li>
-<li>
-<p>When the lab is created, refer to the <strong>SSH Private Key &amp; Instructions</strong> on the page to access your lab.</p>
-</li>
-</ol>
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>3 minutes</strong>.</em></p>
 </div>
-<div class="sect2">
-<h3 id="ROLE-Portal-Links"><a class="anchor" href="#ROLE-Portal-Links"></a>ROLE Portal Links</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>RedHat associates: <a href="https://role.rhu.redhat.com/rol-rhu/app/" target="_blank" rel="noopener">https://role.rhu.redhat.com/rol-rhu/app/</a></p>
-</li>
-<li>
-<p>RedHat partners: <a href="https://rol.redhat.com/rol/app" target="_blank" rel="noopener">https://rol.redhat.com/rol/app</a></p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Roll back updates to edge devices by using the bootc utility.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_about_transactional_rolling_back_updates_of_image_mode_systems"><a class="anchor" href="#_about_transactional_rolling_back_updates_of_image_mode_systems"></a>About transactional rolling back updates of image mode systems</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As explained during the previous section, bootc updates are atomic and transactional regarding the state of the read-only system image, but not regarding the state of mutable system configurations and application data.</p>
 </div>
+<div class="paragraph">
+<p>Consequently, roll backs may require additional actions to be performed at runtime, by Systemd units embedded into a bootc image, or manually, as a day-2 activity, or even by day-2 automation.
+Else, the system configuration and application data may be left in a state that is not compatible with the system image it rolled back to.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bootc_roll_back_operation_and_system_configurations"><a class="anchor" href="#_bootc_roll_back_operation_and_system_configurations"></a>Bootc roll back operation and system configurations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <code>bootc rollback</code> operation is comparatively simpler than a <code>bootc update</code> or <code>bootc switch</code> operations.
+The roll back operation basically changes the boot order of the existing bootc deployments, so the previous one boots instead of the current one.</p>
+</div>
+<div class="paragraph">
+<p>The <code>bootc rollback</code> changes the system boot loader configuration to boot from the previous bootc container image deployment.
+That means it will boot from not just the Linux kernel from the previous bootc container image, but it also uses the root file system from the previous image, and it also uses the copy of <code>/etc</code> that was created at the time that image was originally deployed.</p>
+</div>
+<div class="paragraph">
+<p>The roll back operation does NOT perform a new three-way merge of the <code>/etc</code> directory, but uses whatever was the content of that directory in that deployment, which effectively means system configurations are rolled back also.
+Local day-2 changes performed while that deployment was active are retained, but other day-2 changes performed after the update are lost.</p>
+</div>
+<div class="paragraph">
+<p>Notice it is not a "reset" to the <code>/etc</code> contents from the previous bootc image: it is a "reset" to the mutable state that was in <code>/etc</code> right before the last update.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_data_during_roll_back"><a class="anchor" href="#_application_data_during_roll_back"></a>Application data during roll back</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After roll back, an image mode system remains using the same copy of the <code>/var</code> directory that was already in use before the operation, which was also the same as before the last update.  Bootc roll backs, like updates and switches do NOT change the <code>/var</code> directory in anyway.</p>
+</div>
+<div class="paragraph">
+<p>So, if a <code>bootc update</code> resulted in changes to application data, for example migrating a relational database to a new schema, those changes may be incompatible with the system image booted after a roll back.
+It is the responsibility of the bootc image itself, or of its administrator, to revert those changes, for example by restoring a database backup.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The next lab roll backs the image mode system that was updated during the previous lab, so it returns to the image from before the update, and is left in the state as it started this course, and demonstrates that system settings also roll backs but not application data.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Undo Updates on Image Mode Systems</a></span>
+  <span class="next"><a href="s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a></span>
+</nav>
 </article>
   </div>
 </main>

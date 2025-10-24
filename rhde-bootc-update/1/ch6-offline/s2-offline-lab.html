@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab: Update Edge Devices from Removable Media :: Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</title>
+    <link rel="prev" href="s1-offline.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/rhde-bootc-update/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="rhde-bootc-update" data-version="1">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-updates/index.html">Introduction to Image Mode Updates</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s1-intro.html">Connected and Disconnected Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-updates/s3-prereqs-lab.html">Lab: Prepare to Update Edge Devices Using Bootc Container Images</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-online/index.html">Apply Updates to Image Mode Systems from the Network</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-online/s1-update.html">Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-online/s2-update-lab.html">Lab: Update Edge Devices from a Container Registry</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-repurpose/index.html">Repurpose Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s1-repurpose.html">Switch Images of Image Mode Systems</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-repurpose/s2-repurpose-lab.html">Lab: Switch System Images of Edge Devices</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-transient/index.html">Troubleshoot Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-transient/s1-transient.html">Troubleshoot Image Mode Systems Using Transient Packages and Toolbx Containers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-transient/s2-transient-lab.html">Lab: Troubleshoot Edge Devices Using Transient Packages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-transient/s3-toolbx-lab.html">Lab: Troubleshoot Edge Devices Using Toolbx Containers</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Apply Updates to Disconnected Image Mode Systems</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-offline.html">Update Image Mode Systems in Disconnected Mode</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-offline-lab.html">Lab: Update Edge Devices from Removable Media</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</span>
+    <span class="version">1</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <a class="title" href="../../../samples/1/index.html">samples</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../samples/1/index.html">1</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <a class="title" href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">1</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL</a></li>
+    <li><a href="index.html">Apply Updates to Disconnected Image Mode Systems</a></li>
+    <li><a href="s2-offline-lab.html">Lab: Update Edge Devices from Removable Media</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab: Update Edge Devices from Removable Media</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>13 minutes</strong>.</em></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Update edge devices manually from new bootc container images stored in removable media.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
+The <em>development machine</em> has access to mirrors of RHEL package repositories and bootc container images.</p>
+</div>
+<div class="paragraph">
+<p>These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.</p>
+</div>
+<div class="paragraph">
+<p>If you are using the course classroom, log in on the <code>workstation</code> VM as the user <code>student</code> with password <code>student</code>.
+If not, please adapt the instructions to your test environment.</p>
+</div>
+<div class="paragraph">
+<p>Make sure you verified your test environment by following the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a> of this course.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will create a custom ISO installation media image which can be used for both provisioning new systems and updating existing systems, and then you will emulate the usage of the image as an USB storage device, to apply the update in a local VM.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Prepare to start this activity by checking that you have the outcomes from previous activities on your <em>development machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that you have a clone of the sample code repository of this course in your home directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
+$ <strong>ls rhde-bootc-samples/</strong>
+LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If necessary, login to your private registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Login Succeeded!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have a bootc container image named <code>httpd-system:v1.0</code> in your private container registry.
+If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="xref unresolved">first lab</a>, which builds and publishes that image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0</strong>
+["v1.0"]</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.</p>
+<div class="paragraph">
+<p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh list --all</strong>
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is fine if you have other local VMs on your system.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>If your <code>bootc-iso</code> VM is not running (like in the output of the previous command), start it.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh start bootc-iso</strong>
+Domain 'bootc-iso' started</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Access your <em>test machine</em> and perform day-2 configurations, which affect system settings and application data, to demonstrate that behavior is the same as with online updates.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Enter the <code>temp-test-iso</code> directory and access your local VM using the SSH key in that directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd temp-test-iso</strong>
+$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Record the hash of the current bootc container image of the test system.</p>
+<div class="paragraph">
+<p>The password for the <code>core</code> user is <code>redhat123</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc status</strong>
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The previous output assumes you did not perform any of the previous labs, except for the first one, and you would get a different output if you did.
+Those differences are inconsequential for the current lab.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Change the system time zone.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>timedatectl show -p Timezone</strong>
+Timezone=UTC
+$ <strong>sudo timedatectl set-timezone 'Asia/Tokyo'</strong>
+$ <strong>timedatectl show -p Timezone</strong>
+Timezone=Asia/Tokyo</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Again, your output may differ if you performed or skipped any of the previous labs, and it is inconsequential for the current lab.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Change the HTML files, which mock a single-page web application.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cat /var/www/html/index.html</strong>
+Misc tests of bootc images and firewalld
+$ <strong>sudo bash -c "echo 'Before a disconnected update' &gt; /var/www/html/index.html"</strong>
+$ <strong>curl 127.0.0.1</strong>
+Before a disconnected update</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Once more, the current state of your <em>test machine</em> depends on which of the previous labs you performed, and differences are inconsequential for the current lab.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Disable the bootc update timer to ensure you have control of when the system will apply updates.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl mask bootc-fetch-apply-updates.timer</strong>
+Created symlink '/etc/systemd/system/bootc-fetch-apply-updates.timer' → '/dev/null'.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
+Open a new terminal on your <em>development machine</em> to proceed with the next step.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>On your <em>development machine</em>, build and publish a bootc container image that you will use to update (actually, to repurpose) your <em>test machine</em>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Create a new working directory, copy sample files from the git repository, and copy the SSH key from the previous working directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
+$ <strong>mkdir temp-test-disconnected</strong>
+$ <strong>cp -r rhde-bootc-samples/nginx-bootc/* temp-test-disconnected</strong>
+$ <strong>cp temp-test-iso/edge-key* temp-test-disconnected</strong>
+$ <strong>cd temp-test-disconnected</strong></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build a new bootc container image and publish it in the private registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman build -t nginx-bootc:v1.0 .</strong>
+...
+Successfully tagged localhost/nginx-bootc:v1.0
+e1390a4dc788a24e36c7ec2da82784ce4d594665eeed9060802e59c0fcfed6c7
+$ <strong>skopeo copy containers-storage:localhost/nginx-bootc:v1.0 docker://registry.lab.example.com:5000/nginx-bootc:v1.0</strong>
+...
+Copying config e1390a4dc7 done   |
+Writing manifest to image destination</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A production workflow would also copy the updated image to a non-floating tag, in the example, it could be <code>1.0.0</code>.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Create a custom installation ISO embedding the new bootc container image.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Log in again on your private registry, but this time as the root user.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo podman login -u student -p redhat registry.lab.example.com:5000</strong>
+Login Succeeded!</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Download the bootc container image to the container storage of the root user.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo podman pull registry.lab.example.com:5000/nginx-bootc:v1.0</strong>
+...
+Writing manifest to image destination
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Invoke the script which runs the bootc image builder utility.</p>
+<div class="paragraph">
+<p>Be patient, it takes several minutes to run.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mkdir output</strong>
+$ <strong>bash bib-nginx.sh</strong>
+...
+Message: Results saved in .</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Copy the installable ISO from the bootc image builder output directory to a more permanent location, and give it an easily identifiable name.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cp output/bootiso/install.iso nginx-bootc.iso</strong></code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Connect the update media to your <em>test machine</em> as a virtual USB storage device.</p>
+<div class="paragraph">
+<p>Pay attention because you will be running commands in two different shells.</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>One, on your <em>development machine</em>, in the <code>temp-test-iso</code> directory, which is the one you used to start the <code>bib-iso</code> local VM and also the one you use to start SSH sessions to your <em>test machine</em>.</p>
+</li>
+<li>
+<p>Another, also on your <em>development machine</em>, in the <code>temp-test-disconnected</code> directory, which is the one you used to create the custom installation ISO.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>On your <em>test machine</em>, list the disk devices recognized by your local VM.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>lsblk</strong>
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0     11:0    1  1.8G  0 rom
+vda    252:0    0   20G  0 disk
+├─vda1 252:1    0    1M  0 part
+├─vda2 252:2    0    1G  0 part /boot
+└─vda3 252:3    0   19G  0 part /var
+                                /sysroot/ostree/deploy/default/var
+                                /etc
+                                /sysroot</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>On your <em>development machine</em>, hot-plug a virtual USB disk in your local VM.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh attach-disk bootc-iso $PWD/nginx-bootc.iso sdb --targetbus usb --mode readonly --live</strong>
+Disk attached successfully</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You must use the name <code>sdb</code> to refer to the USB storage device from libvirt because it already uses the name <code>sda</code> for the virtual CD-ROM disk, which the RHEL kernel names as the <code>sr0</code> device.
+Also notice that you must provide absolute file paths to disk images when using the <code>virsh</code> command, unlike the <code>virt-install</code> command, which accepts relative file paths.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Verify that the kernel on your local VM recognizes that a new USB disk device was attached.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo dmesg | tail</strong>
+[17625.346096] usbcore: registered new interface driver uas
+[17626.375851] scsi 6:0:0:0: Direct-Access     QEMU     QEMU HARDDISK    2.5+ PQ: 0 ANSI: 5
+[17626.376748] scsi 6:0:0:0: Attached scsi generic sg1 type 0
+[17626.389850] sd 6:0:0:0: Power-on or device reset occurred
+[17626.392628] sd 6:0:0:0: [sda] 3846408 512-byte logical blocks: (1.97 GB/1.83 GiB)
+[17626.393591] sd 6:0:0:0: [sda] Write Protect is on
+[17626.393833] sd 6:0:0:0: [sda] Mode Sense: 63 00 80 08
+[17626.394500] sd 6:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[17626.664333]  sda: sda1 sda2 sda3
+[17626.665089] sd 6:0:0:0: [sda] Attached SCSI disk</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The RHEL kernel names the libvirt <code>sdb</code> disk as the <code>sda</code> device.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Mount the first partition, which contains the actual RHEL installer file system, and verify that it contains a bootc container image, using the OCI format, in its <code>container</code> directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo mount -o ro /dev/sda1 /var/mnt/</strong>
+mount: /var/mnt: WARNING: source write-protected, mounted read-only.
+$ <strong>ls /var/mnt/</strong>
+EFI  boot  container  images  osbuild-base.ks  osbuild.ks
+$ <strong>ls /var/mnt/container/</strong>
+blobs  index.json  oci-layout</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Unfortunately, bootc image builder does not store the human-friendly name and tag of the bootc container image when creating a custom installation ISO.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cat /var/mnt/container/index.json | jq</strong>
+{
+  "schemaVersion": 2,
+  "manifests": [
+    {
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "digest": "sha256:c1832c2dafbb1e1908e422dbaf6f9c7165a8399b24b90db3da2eb120b4977d8f
+      "size": 11740
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>You can verify, on your <em>development machine</em>, that the digest in the installation ISO matches the image in the private container registry.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ skopeo inspect --format '{{.Digest}}' docker://registry.lab.example.com:5000/nginx-bootc:v1.0
+sha256:c1832c2dafbb1e1908e422dbaf6f9c7165a8399b24b90db3da2eb120b4977d8f</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Apply the disconnected image update.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Stage the new bootc container image on your <em>test machine</em>.
+Because there is a single container image in the OCI directory of the installation ISO, you do not need to specify any image name, tag, or digest.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc switch --transport oci /var/mnt/container</strong>
+...
+Queued for next boot: ostree-unverified-image:oci:/var/mnt/container
+  Version: 10.0
+  Digest: sha256:c1832c2dafbb1e1908e422dbaf6f9c7165a8399b24b90db3da2eb120b4977d8f</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Umount the virtual USB device.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo umount /var/mnt</strong></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>On your <em>development machine</em>, unplug the virtual USB device.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh detach-disk bootc-iso sdb</strong>
+Disk detached successfully</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Reboot your <em>test machine</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl reboot</strong>
+...
+Connection to 127.0.0.1 closed.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Wait a few moments, to give your <em>test machine</em> time to reboot, and verify, from your <em>development machine</em>, that it now runs the updated web application.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>curl 127.0.0.1:8080</strong>
+Mock web application, now under Nginx.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Reconnect to your <em>test machine</em> so you can verify its status after applying the new bootc container image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
+...
+[core@bootc-iso ~]$</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Verify that changes, from the new image, were applied to your <em>test machine</em>, and day-2 changes to configuration and data were retained.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that the new image is the current booted image, and the previous image is still available for rolling back.</p>
+<div class="paragraph">
+<p>Compare the hashes of each image with your notes from previous steps.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc status</strong>
+GRAB OUTPUT
+● Booted image: oci:/var/mnt/container
+        Digest: sha256:c1832c2dafbb1e1908e422dbaf6f9c7165a8399b24b90db3da2eb120b4977d8f
+       Version: 10.0 (2025-10-15 23:59:15.583009054 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:75391a26d30f30bad03f0741de6c51dff10e7be26199c9b5ceed47019a61b511
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that it is running Nginx, while the previous image was running the Apache HTTP Server.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -q nginx</strong>
+nginx-1.26.3-1.el10.x86_64
+$ <strong>systemctl is-active nginx</strong>
+active
+$ <strong>rpm -q httpd</strong>
+package httpd is not installed
+$ <strong>systemctl is-active httpd</strong>
+inactive</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that changes to the old mock web application are still in the system, because application data is NOT affected by bootc image upgrades.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls /var/www/html</strong>
+index.html
+$ <strong>cat /var/www/html/index.html</strong>
+Before a disconnected update</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that the change to the system locale changes was also preserved.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>timedatectl show -p Timezone</strong>
+Timezone=Asia/Tokyo</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that attempts to check for updates will fail, because the mount point used for the removable USB storage is set as the location for the system&#8217;s bootc container image.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc upgrade --check</strong>
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: open /var/mnt/container/index.json: no such file or directory--</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If you hot-plug the virtual USB device and mount it, the check succeeds, so you could use the <code>bootc update</code> command for the next update, if you wish.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc upgrade --check</strong>
+No changes in: ostree-unverified-image:oci:/var/mnt/container</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You performed a disconnected system image update, by using a virtual USB media.
+This is the closest we can get to the workflow for an actual physical device, using the classroom environment, and enables a developer to test any automation which requires removable USB media and that would behave differently with other kinds of storage devices.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This was the last activity in this course.
+Stay tuned for new enablement courses for Red Hat Device Edge and image mode in the future!</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-offline.html">Update Image Mode Systems in Disconnected Mode</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
