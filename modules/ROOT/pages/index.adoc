@@ -1,8 +1,6 @@
 = Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL
 :navtitle: Home
 
-WARNING: Pending review
-
 == Goal
 
 This course teaches how to update edge devices and kiosk computers using image mode for RHEL, and how to repurpose those devices by switching to different bootc container images.

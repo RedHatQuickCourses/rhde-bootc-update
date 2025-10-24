@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Troubleshoot RHEL for edge devices with image mode for RHEL by running tools not included in their system image.
 
-WARNING: Pending review
-
 == Troubleshooting image mode systems
 
 Image mode systems run Red Hat Enterprise Linux (RHEL) and have a wide range of the tools available from RHEL itself, third-party vendors, and the open source community, to perform troubleshooting.

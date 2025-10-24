@@ -4,8 +4,6 @@ Goal::
 
 Repurpose RHEL for edge devices with image mode for RHEL by replacing their bootc container images.
 
-WARNING: Pending review
-
 == Introduction
 
 This chapter describes the usage of the bootc utility to replace the system image in image mode systems over the network.

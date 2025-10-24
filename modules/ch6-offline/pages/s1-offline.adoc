@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Update edge devices without reliable network connections to OCI container registries.
 
-WARNING: Pending review
-
 == Using alternate transports with the bootc utility
 
 The bootc ecosystem, which includes the bootc image builder tool, does not provide explicit support for performing disconnected or air-gapped updates of image mode systems, but you can implement such workflows easily by relying on just foundational skills related to Linux container tools.

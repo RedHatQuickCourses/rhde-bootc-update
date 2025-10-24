@@ -4,8 +4,6 @@ Goal::
 
 Describe how updates of image mode systems differ from updates to package mode systems.
 
-WARNING: Pending review
-
 == Introduction
 
 This course, like the https://redhatquickcourses.github.io/rhde-bootc-provision/[previous course] of the image mode with Red Hat Device Edge quick course series, keeps the focus on operations, but switches from day-1 to day-2 operations.

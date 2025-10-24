@@ -8,8 +8,6 @@ Objective::
 Update edge devices by using the bootc utility.
 
 
-WARNING: Pending review
-
 == About transactional updates of image mode systems
 
 Image mode systems are said to apply updates in an atomic and transactional way.

@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Compare the processes for updating systems by switching bootc container images with the process of updating systems by updating individual RPM packages.
 
-WARNING: Pending review
-
 == Review of the image mode system installation and update workflows
 
 This course focuses on the final piece of the image mode system installation and update workflow, as highlighted by the following figure:

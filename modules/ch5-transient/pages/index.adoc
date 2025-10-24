@@ -4,8 +4,6 @@ Goal::
 
 Troubleshoot RHEL for edge devices with image mode for RHEL by applying transient package updates and using toolbx containers.
 
-WARNING: Pending review
-
 == Introduction
 
 This chapter describes common tricks for troubleshooting image mode systems, among them: transient packages and toolbx containers.

@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Revert edge devices to a previous known good bootc container image which is available in the device itself.
 
-WARNING: Pending review
-
 == Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.

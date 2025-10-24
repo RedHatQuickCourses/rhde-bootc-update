@@ -4,8 +4,6 @@ Goal::
 
 Perform disconnected updates of RHEL for edge devices with image mode for RHEL.
 
-WARNING: Pending review
-
 == Introduction
 
 This chapter describes a workflow for applying updates to image mode to disconnected systems, by retrieving the new bootc container image from removable media.

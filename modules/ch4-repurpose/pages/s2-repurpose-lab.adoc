@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Repurpose edge devices by switching to a different bootc container image.
 
-WARNING: Pending review
-
 ////
 This lab relies on a bug of the php-fpm package.
 Someday this bug may be fixed and the lab will need a different example to highlight the same root cause (bootc image with content on /var) and illustrate its remediation (using systemd-tempfiles).

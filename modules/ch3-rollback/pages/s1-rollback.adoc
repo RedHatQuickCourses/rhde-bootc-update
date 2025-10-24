@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Roll back updates to edge devices by using the bootc utility.
 
-WARNING: Pending review
-
 == About transactional rolling back updates of image mode systems
 
 As explained during the previous section, bootc updates are atomic and transactional regarding the state of the read-only system image, but not regarding the state of mutable system configurations and application data.

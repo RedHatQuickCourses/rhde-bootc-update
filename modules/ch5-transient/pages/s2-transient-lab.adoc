@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Troubleshoot issues with edge devices by installing transient packages.
 
-WARNING: Pending review
-
 == Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.

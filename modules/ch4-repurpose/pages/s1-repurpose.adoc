@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Repurpose edge devices by using the bootc utility to switch to a different, and possibly unrelated, bootc container image.
 
-WARNING: Pending review
-
 == Repurpose vs. update image mode systems
 
 As explained during a xref:ch2-online:s1-update-lab[previous section] about image updates, the `bootc update` and `bootc switch` commands perform the same actions, except that the first uses the current system image reference and the second changes the system image reference.

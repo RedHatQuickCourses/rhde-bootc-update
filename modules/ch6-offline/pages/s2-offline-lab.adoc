@@ -8,8 +8,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Update edge devices manually from new bootc container images stored in removable media.
 
-WARNING: Pending review
-
 == Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
