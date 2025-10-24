@@ -90,10 +90,10 @@
     <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
   </li>
 </ul>
   </li>
@@ -226,7 +226,7 @@ Pending review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
@@ -261,7 +261,7 @@ But you must execute the preparation tasks from the first lab of this course.
 <h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You will experiment with another approach to add troubleshooting tools which might be missing in an image mode system: creating toolbx containers, which continue available after reboot, until you explicitly delete them.</p>
+<p>You will experiment with another approach to add troubleshooting tools, which might be missing in an image mode system: creating toolbx containers, which continue available after reboot, until you explicitly delete them.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -280,7 +280,7 @@ LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
 </div>
 </li>
 <li>
-<p>If needed, login to your private registry.</p>
+<p>If necessary, log in to your private registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
@@ -299,8 +299,7 @@ If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="
 </div>
 </li>
 <li>
-<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
-That VM will be your <em>test machine</em>.</p>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.</p>
 <div class="paragraph">
 <p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
 </div>
@@ -338,7 +337,7 @@ Domain 'bootc-iso' started</code></pre>
 </div>
 </li>
 <li>
-<p>Access your <em>test machine</em> and verify that it lacks a couple troubleshooting utilities.</p>
+<p>Access your <em>test machine</em> and verify that it lacks some troubleshooting utilities.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
@@ -379,7 +378,7 @@ package hwloc is not installed</code></pre>
 </div>
 </li>
 <li>
-<p>Also attempt to get information about the system&#8217;s IO performance, and find that the Sysstat package is not installed either.</p>
+<p>Also attempt to get information about the system&#8217;s I/O performance, and find that the Sysstat package is not installed either.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>iostat</strong>
@@ -390,7 +389,7 @@ package sysstat is not installed</code></pre>
 </div>
 </li>
 <li>
-<p>Leave the current running the SSH session to your <em>test machine</em> and open another terminal on your <em>development machine</em> to proceed to the next step.</p>
+<p>Leave the current the SSH session running on your <em>test machine</em> and open another terminal on your <em>development machine</em> to proceed to the next step.</p>
 </li>
 </ol>
 </div>
@@ -400,7 +399,7 @@ package sysstat is not installed</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>On your <em>development machine</em>, verify if there is a copy of standard UBI toolbox container on the private registry.</p>
+<p>On your <em>development machine</em>, verify if there is a copy of the standard UBI toolbox container on the private registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman search registry.lab.example.com:5000/toolbox</strong>
@@ -414,7 +413,7 @@ $ <strong>skopeo inspect docker://registry.lab.example.com:5000/ubi10/toolbox:10
 </div>
 </li>
 <li>
-<p>If the copy is not available, your output will be similar to the following.</p>
+<p>If a copy is not available, your output will be similar to the following.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman search registry.lab.example.com:5000/toolbox</strong>
@@ -436,7 +435,7 @@ Remember that the <code>podman search</code> command and its equivalents with ot
 </div>
 </li>
 <li>
-<p>If the copy is not available, create it so you can keep with the scenario of disconnected deployments.</p>
+<p>If a copy is not available, create one so you can keep with the scenario of disconnected deployments.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>skopeo copy --remove-signatures docker://registry.access.redhat.com/ubi10/toolbox:10.0 docker://registry.lab.example.com:5000/ubi10/toolbox:10.0</strong>
@@ -453,7 +452,7 @@ Writing manifest to image destination</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Switch to the terminal on your _test machine) and use the copy of the toolbx image to create a toolbx container.</p>
+<p>Switch to the terminal on your <em>test machine</em> and use the copy of the toolbx image to create a toolbx container.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
@@ -469,7 +468,7 @@ Enter with: toolbox enter</code></pre>
 <li>
 <p>Enter the toolbox container you just created.</p>
 <div class="paragraph">
-<p>Notice the change of the system prompt, which doesn&#8217;t display the current directory anymore, but includes an hexagonal bullet.</p>
+<p>Notice the change of the system prompt, which no longer displays the current directory, but includes an hexagonal bullet.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -481,7 +480,7 @@ Enter with: toolbox enter</code></pre>
 </li>
 <li>
 <p>View the file systems which are backed by actual disk contents and which are overlays.
-Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same commands from the previous lab.</p>
+Notice that the list of file systems of either type is much longer than the list from outside of the toolbx container, if you compare it with the outputs to the same commands from the previous lab.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t xfs</strong>
@@ -568,7 +567,7 @@ logout</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Verify that toolbx containers are application containers, which you can manage using Podman.</p>
+<p>Verify that toolbx containers are application containers, which you can manage by using Podman.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox list</strong>
@@ -597,7 +596,7 @@ Enter with: toolbox enter stat</code></pre>
 </div>
 </li>
 <li>
-<p>Verify that the new toolbx container is not running, because you didn&#8217;t enter yet.</p>
+<p>Verify that the new toolbx container is not running, because you didn&#8217;t enter it yet.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>toolbox list</strong>
@@ -692,7 +691,7 @@ Failed to connect to system scope bus via local transport: No such file or direc
 </div>
 </li>
 <li>
-<p>Verify that, despite the failure to start the database server, there are configuration files and data directories crated by installing its package.</p>
+<p>Verify that, despite the failure to start the database server, there are configuration files and data directories created by installing its package.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls /etc/my.cnf.d</strong>
@@ -715,11 +714,11 @@ logout</code></pre>
 </div>
 </li>
 <li>
-<p>Verify if any of the changes made while in the second toolbox container affect your <em>test machine</em>.</p>
+<p>Verify whether any of the changes made while in the second toolbox container affect your <em>test machine</em>.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Verify if there is text file on your home directory.</p>
+<p>Verify if there is a text file on your home directory.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ls $HOME/<strong>txt</strong>
@@ -758,7 +757,7 @@ Connection to 127.0.0.1 closed.</code></pre>
 </div>
 </li>
 <li>
-<p>Give it a few moments to reboot and reconnect using SSH</p>
+<p>Give your <em>test machine</em> a few moments to reboot and reconnect by using SSH</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
@@ -806,7 +805,7 @@ logout</code></pre>
 </div>
 </li>
 <li>
-<p>If you wish, stop and delete your toolbx containers using Podman.</p>
+<p>If you wish, stop and delete your toolbx containers by using Podman.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman stop rhel-toolbox-10.0</strong>

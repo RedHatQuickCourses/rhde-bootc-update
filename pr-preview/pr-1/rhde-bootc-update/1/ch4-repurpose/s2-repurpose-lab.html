@@ -90,10 +90,10 @@
     <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
   </li>
 </ul>
   </li>
@@ -226,7 +226,7 @@ Pending review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
@@ -261,8 +261,8 @@ But you must execute the preparation tasks from the first lab of this course.
 <h2 id="_instructions"><a class="anchor" href="#_instructions"></a>Instructions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You will switch an image mode system to a different container image, but it will because of an RPM package which performs an action that is incompatible with image mode.
-You will troubleshoot the failure and find its root cause, then make a second attempt by using an updated bootc container image which implements the recommended fix.</p>
+<p>You will switch an image mode system to a different container image, but it will fail because of an RPM package which performs an action that is incompatible with image mode.
+You will troubleshoot the failure and find its root cause, then make a second attempt by using an updated bootc container image, which implements the recommended fix.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -281,7 +281,7 @@ LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
 </div>
 </li>
 <li>
-<p>If needed, login to your private registry.</p>
+<p>If needed, log in to your private registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
@@ -300,10 +300,9 @@ If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="
 </div>
 </li>
 <li>
-<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
-That VM will be your <em>test machine</em>.</p>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.</p>
 <div class="paragraph">
-<p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
+<p>If you do not have access, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -343,7 +342,7 @@ Domain 'bootc-iso' started</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Enter the <code>temp-test-iso</code> directory and access your local VM using the SSH key in that directory.</p>
+<p>Enter the <code>temp-test-iso</code> directory and access your local VM by using the SSH key in that directory.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd temp-test-iso</strong>
@@ -355,7 +354,7 @@ Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hos
 </div>
 </li>
 <li>
-<p>Find which is the bootc container image that is currently booted.</p>
+<p>Find the bootc container image that is currently booted.</p>
 <div class="paragraph">
 <p>The password for the <code>core</code> user is <code>redhat123</code>.</p>
 </div>
@@ -429,7 +428,7 @@ app.php index.html</code></pre>
 <p>It adds the PHP runtime and its FastCGI engine, as the recommended way of deploying PHP on an Apache HTTP Server.</p>
 </li>
 <li>
-<p>It moves all web app files to a directory outside of <code>/var</code> so they cease to be application data but become part of the proper system image.</p>
+<p>It moves all web application files to a directory outside of <code>/var</code> so they cease to be application data but become part of the proper system image.</p>
 </li>
 </ol>
 </div>
@@ -470,14 +469,14 @@ Writing manifest to image destination</code></pre>
 </div>
 </li>
 <li>
-<p>Switch your <em>test machine</em> to the new bootc container image</p>
+<p>Switch your <em>test machine</em> to the new bootc container image.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Return to the terminal with an open SSH session to your <em>test machine</em></p>
+<p>Return to the terminal with an open SSH session to your <em>test machine</em>.</p>
 </li>
 <li>
-<p>Verify that the VM can access the private registry by checking for available updates:</p>
+<p>Verify that the VM can access the private registry by checking for available updates.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ sudo bootc upgrade --check
@@ -491,7 +490,7 @@ No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0</code></
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If you are continuing from the <a href="../ch3-rollback/s2-rollback-lab.html" class="xref page">previous lab</a>, which performed a roll back operation, the <code>bootc update</code> command will still report "no updates available" because it is smart enough to NOT retry an update which was already rolled back.
+If you are continuing from the <a href="../ch3-rollback/s2-rollback-lab.html" class="xref page">previous lab</a>, which performed a roll back operation, the <code>bootc update</code> command will still report "no updates available" because it is smart enough to NOT retry an update that was already rolled back.
 </td>
 </tr>
 </table>
@@ -519,7 +518,7 @@ No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0</code></
 </div>
 </li>
 <li>
-<p>Switch to the new bootc container image</p>
+<p>Switch to the new bootc container image.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc switch registry.lab.example.com:5000/php-bootc:v1.0</strong>
@@ -574,7 +573,7 @@ If you skipped the previous activity, you would not see a "rollback image" in th
 </div>
 </li>
 <li>
-<p>Reboot the your <em>test machine</em></p>
+<p>Reboot your <em>test machine</em>.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo systemctl reboot --now</strong>
@@ -605,7 +604,7 @@ problems. Please try again later.&lt;/p&gt;
 <li>
 <p>Reconnect to your <em>test machine</em> so you can perform troubleshooting steps.</p>
 <div class="paragraph">
-<p>Remember that your two terminals are in different working directories: one has the files to build the new bootc image, another has the files to manage the local VM that is your <em>test machine</em>.</p>
+<p>Remember that your two terminals are in different working directories: one has the files to build the new bootc image, the other has the files to manage the local VM that is your <em>test machine</em>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -672,7 +671,7 @@ php-fpm-8.3.15-1.el10.x86_64</code></pre>
 </li>
 <li>
 <p>There could be additional files and directories that the package initializes which belongs to application data on image mode systems, but that didn&#8217;t appear in our simplistic test.
-Find these files, so you can deliver to a proper fix for the bootc container image.</p>
+Find these files, so you can deliver a proper fix for the bootc container image.</p>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -732,7 +731,7 @@ fi
 </div>
 </li>
 <li>
-<p>Now that you have a diagnostic, rollback the <em>test machine</em> to its original image, so you can later retry switching to the new image, after you implement a fix.</p>
+<p>Now that you have a diagnostic, roll back the <em>test machine</em> to its original image, so you can later retry switching to the new image, after you implement a fix.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc rollback --apply</strong>
@@ -752,7 +751,7 @@ The fix uses Systemd to create all required directories with proper owner and pe
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Return to the terminal which you used to build the bootc image</p>
+<p>Return to the terminal that you used to build the bootc image</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>basename $(pwd)</strong>
@@ -813,7 +812,7 @@ Writing manifest to image destination</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Reconnect to your local VM, which should be finished rebooting by now, from the roll back operation.</p>
+<p>Reconnect to your local VM, which should be finished rebooting by now, from the rollback operation.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>ssh -i edge-key -p 8022 core@127.0.0.1</strong>
@@ -869,8 +868,9 @@ PHP running at 172.25.250.9 under Apache/2.4.63 (Red Hat Enterprise Linux)</code
 </ol>
 </div>
 <div class="paragraph">
-<p>You experienced an issue that&#8217;s not uncommon when your repurpose an image mode system, caused by RPM packages that initialize application data at build time instead of at boot time.
-You diagnosed and fixed the issue by using Systemd features.</p>
+<p>You experienced an issue that&#8217;s not uncommon when your repurpose an image mode system.
+It was caused by RPM packages that initialize application data at build time instead of at boot time.
+You diagnosed the issue, and then fixed it by using Systemd features.</p>
 </div>
 </div>
 </div>

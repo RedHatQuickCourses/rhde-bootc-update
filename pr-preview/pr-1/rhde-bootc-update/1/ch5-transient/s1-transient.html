@@ -90,10 +90,10 @@
     <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
   </li>
 </ul>
   </li>
@@ -229,18 +229,18 @@ Pending review
 <h2 id="_troubleshooting_image_mode_systems"><a class="anchor" href="#_troubleshooting_image_mode_systems"></a>Troubleshooting image mode systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Image mode systems run Red Hat Enterprise Linux and have a wide range of the tools available from RHEL itself, third-party vendors, and the open source community, to perform troubleshooting.
+<p>Image mode systems run Red Hat Enterprise Linux (RHEL) and have a wide range of the tools available from RHEL itself, third-party vendors, and the open source community, to perform troubleshooting.
 You could use anything from simple system utilities, such as top, to more sophisticated data collection tools, such as performance co-pilot.</p>
 </div>
 <div class="paragraph">
-<p>There is always some tension between running a minimal system image, which is faster to provision and update, and presents a smaller attack surface, and running a larger system image which provides a number of troubleshooting tools ready to use, but potentially adding to its vulnerable attack vectors.</p>
+<p>There is always some tension between running a minimal system image, which is faster to provision and update, and presents a smaller attack surface, and running a larger system image which provides a number of troubleshooting tools ready to use, but potentially adds to its vulnerable attack vectors.</p>
 </div>
 <div class="paragraph">
-<p>With package mode, it is easy to just install any troubleshooting tool the moment you miss it, and then leave it in the system, for the next time you need it.
-This is one of the reasons that make systems configuration diverge over time and create maintainability issues, but also one of the factors that make some professionals insecure about adopting image mode for RHEL.</p>
+<p>With package mode, it is easy to install any troubleshooting tool the moment you miss it, and then leave it in the system, for the next time you need it.
+This is one of the reasons that make systems configuration diverge over time and create maintainability issues, but also one of the factors that make some professionals hesitant to adopt image mode for RHEL.</p>
 </div>
 <div class="paragraph">
-<p>With image mode, you must either include all troubleshooting tools you could ever need on all each and every bootc container image, or learn to live without your preferred tools, right?
+<p>With image mode, you must either include all troubleshooting tools you could ever need on every bootc container image, or learn to live without your preferred tools, right?
 Not true: image mode for RHEL lets you install transient packages using a transient file system overlay.</p>
 </div>
 <div class="paragraph">
@@ -266,10 +266,10 @@ It works with packages downloads which come from any Yum repository (including S
 </div>
 <div class="paragraph">
 <p>If you install more transient packages, they share the same read-write overlay.
-The read-write overlay is discarded in the next boot, so it is intended for packages you intent to use for a short time.</p>
+The read-write overlay is discarded in the next boot, so it is intended for packages you plan on using for a short time.</p>
 </div>
 <div class="paragraph">
-<p>Transient packages are useful for scenarios such as verifying if a package update fixes an issue, before you build a new bootc container image using the package update.</p>
+<p>Transient packages are useful for scenarios such as verifying whether a package update fixes an issue, before you build a new bootc container image using the package update.</p>
 </div>
 <div class="paragraph">
 <p>They are also useful for adding troubleshooting tools which work as system services, for example the <a href="https://access.redhat.com/solutions/276533">Sysstat</a> performance monitoring utilities.
@@ -295,8 +295,8 @@ Toolbx also mounts a series of directories, such as the user home directory and 
 </td>
 <td class="content">
 The official name of the project is really <em>toolbx</em> without the "o" of "box".
-It was not a typo!
-The strange name exists to differentiate from another <em>toolbox</em> open source project, which used to be part of CoreOS and was replaced by the more capable <code>toolbx</code> from the Fedora community.
+It is not a typo!
+The strange name exists to differentiate the project from another <em>toolbox</em> open source project, which used to be part of CoreOS and was replaced by the more capable <code>toolbx</code> from the Fedora community.
 </td>
 </tr>
 </table>
@@ -310,7 +310,7 @@ But for a large number of tools, including tools which require escalating privil
 That container is not discarded on reboot, but it is retained until you explicitly remove it using Podman.</p>
 </div>
 <div class="paragraph">
-<p>You can manage multiple toolbx containers, and start or stop each of then at will.
+<p>You can manage multiple toolbx containers, and start or stop each of them at will.
 This capability becomes handy once you start creating your own toolbx container images, preconfigured with your preferred troubleshooting tools, and also configuration data for your organization CA root, private package repositories, and private container registries.</p>
 </div>
 <div class="paragraph">
@@ -322,8 +322,8 @@ This capability becomes handy once you start creating your own toolbx container 
 <h2 id="_side_effects_of_transient_overlays_and_toolbox_containers"><a class="anchor" href="#_side_effects_of_transient_overlays_and_toolbox_containers"></a>Side effects of transient overlays and toolbox containers</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After reboot, all packages installed using a transient overlay are gone, but any files such packages left in the <code>/etc</code> and <code>/var</code> directories will still be there.
-It is the user responsibility to clean up those files.</p>
+<p>After reboot, all packages installed using a transient overlay are gone, but any files those packages left in the <code>/etc</code> and <code>/var</code> directories will still be there.
+It is the user&#8217;s responsibility to clean up those files.</p>
 </div>
 <div class="paragraph">
 <p>Toolbx containers also affect the system&#8217;s <code>/var</code> directory, which in image mode systems include user&#8217;s home directories in <code>/var/home</code>.
@@ -337,7 +337,7 @@ Selected files from <code>/etc</code> are made available in a toolbx container t
 <h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The next two activities demonstrate the of transient containers and toolbx containers to run commands not available in a bootc container image, and also demonstrates the side-effects of running those commands on the mutable state of an image mode system.</p>
+<p>The next two activities demonstrate the use of transient containers and toolbx containers to run commands not available in a bootc container image, and the side-effects of running those commands on the mutable state of an image mode system.</p>
 </div>
 </div>
 </div>

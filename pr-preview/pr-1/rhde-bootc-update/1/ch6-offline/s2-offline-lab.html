@@ -89,10 +89,10 @@
     <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
   </li>
 </ul>
   </li>
@@ -225,7 +225,7 @@ Pending review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
@@ -240,18 +240,6 @@ If not, please adapt the instructions to your test environment.</p>
 </div>
 <div class="paragraph">
 <p>Make sure you verified your test environment by following the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a> of this course.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This lab applies the same update as in a ch2-online:s2-update-lab.adoc[previous lab] but using a different method (disconnected vs. connected). If you performed the previous lab, which performs a connected update, it is expected that you also performed its  ch3-rollback-lab.adoc[following lab], which rollbacks that update, so your <em>test machine</em> should be the state it was be before the update, which is the same state as in the end of the first lab.
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -278,7 +266,7 @@ LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
 </div>
 </li>
 <li>
-<p>If needed, login to your private registry.</p>
+<p>If necessary, login to your private registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
@@ -297,8 +285,7 @@ If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="
 </div>
 </li>
 <li>
-<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
-That VM will be your <em>test machine</em>.</p>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.</p>
 <div class="paragraph">
 <p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
 </div>
@@ -403,7 +390,7 @@ Again, your output may differ if you performed or skipped any of the previous la
 </div>
 </li>
 <li>
-<p>Change the HTML files which mock a single-page web application.</p>
+<p>Change the HTML files, which mock a single-page web application.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cat /var/www/html/index.html</strong>
@@ -443,11 +430,11 @@ Open a new terminal on your <em>development machine</em> to proceed with the nex
 </div>
 </li>
 <li>
-<p>On your <em>development machine</em>, build and publish a bootc container image which you will use to update (actually, to repurpose) your <em>test machine</em>.</p>
+<p>On your <em>development machine</em>, build and publish a bootc container image that you will use to update (actually, to repurpose) your <em>test machine</em>.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory.</p>
+<p>Create a new working directory, copy sample files from the git repository, and copy the SSH key from the previous working directory.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd</strong>
@@ -479,7 +466,7 @@ Writing manifest to image destination</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-a production workflow would also copy the updated image to a non-floating tag, in the example it could be <code>1.0.0</code>.
+A production workflow would also copy the updated image to a non-floating tag, in the example, it could be <code>1.0.0</code>.
 </td>
 </tr>
 </table>
@@ -489,7 +476,7 @@ a production workflow would also copy the updated image to a non-floating tag, i
 </div>
 </li>
 <li>
-<p>Create an custom installation ISO with the new bootc container image.</p>
+<p>Create a custom installation ISO embedding the new bootc container image.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
@@ -515,7 +502,7 @@ Writing manifest to image destination
 <li>
 <p>Invoke the script which runs the bootc image builder utility.</p>
 <div class="paragraph">
-<p>Be patient, it takes several minutes running.</p>
+<p>Be patient, it takes several minutes to run.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -576,7 +563,7 @@ vda    252:0    0   20G  0 disk
 </div>
 </li>
 <li>
-<p>On your <em>development machine</em>, hot-plug a virtual usb disk in your local VM.</p>
+<p>On your <em>development machine</em>, hot-plug a virtual USB disk in your local VM.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>virsh attach-disk bootc-iso $PWD/nginx-bootc.iso sdb --targetbus usb --mode readonly --live</strong>
@@ -590,8 +577,8 @@ Disk attached successfully</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-You must use the name <code>sdb</code> to refer to the USB storage device form libvirt because it already uses the name <code>sda</code> for the virtual CD-ROM disk, which the RHEL kernel names as the <code>sr0</code> device.
-Also notice that you must provide absolute paths to disk images using the <code>virsh</code> command, unlike the <code>virt-install</code> command which accepts relative paths.
+You must use the name <code>sdb</code> to refer to the USB storage device from libvirt because it already uses the name <code>sda</code> for the virtual CD-ROM disk, which the RHEL kernel names as the <code>sr0</code> device.
+Also notice that you must provide absolute file paths to disk images when using the <code>virsh</code> command, unlike the <code>virt-install</code> command, which accepts relative file paths.
 </td>
 </tr>
 </table>
@@ -760,7 +747,7 @@ GRAB OUTPUT
 </div>
 </li>
 <li>
-<p>Verify that it is running Nginx, while the previous image were running the Apache HTTP Server.</p>
+<p>Verify that it is running Nginx, while the previous image was running the Apache HTTP Server.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>rpm -q nginx</strong>
@@ -795,7 +782,7 @@ Timezone=Asia/Tokyo</code></pre>
 </div>
 </li>
 <li>
-<p>Verify that attempts to check for updates will fail, because the mount point of used for the removable USB storage is set as the location for the system&#8217;s bootc container image.</p>
+<p>Verify that attempts to check for updates will fail, because the mount point used for the removable USB storage is set as the location for the system&#8217;s bootc container image.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>sudo bootc upgrade --check</strong>
@@ -827,7 +814,7 @@ This is the closest we can get to the workflow for an actual physical device, us
 <h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This was the latest activity of this course.
+<p>This was the last activity in this course.
 Stay tuned for new enablement courses for Red Hat Device Edge and image mode in the future!</p>
 </div>
 </div>

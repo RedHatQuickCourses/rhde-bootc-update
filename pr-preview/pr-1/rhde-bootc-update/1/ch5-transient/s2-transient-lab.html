@@ -90,10 +90,10 @@
     <a class="nav-link" href="../ch3-rollback/index.html">Undo Updates on Image Mode Systems</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Rollback Updates to Image Mode Systems</a>
+    <a class="nav-link" href="../ch3-rollback/s1-rollback.html">Roll Back Updates to Image Mode Systems</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Rollback Updates to Edge Devices</a>
+    <a class="nav-link" href="../ch3-rollback/s2-rollback-lab.html">Lab: Roll Back Updates to Edge Devices</a>
   </li>
 </ul>
   </li>
@@ -226,7 +226,7 @@ Pending review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You need a <em>development machine</em> running RHEL, to which you have unrestricted sudo access.
@@ -280,7 +280,7 @@ LICENSE     bib-cloud-init  bib-qcow2 ...</code></pre>
 </div>
 </li>
 <li>
-<p>If needed, login to your private registry.</p>
+<p>If necessary, login to your private registry.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>podman login -u student -p redhat registry.lab.example.com:5000</strong>
@@ -299,8 +299,7 @@ If you do not, please perform the <a href="#ch1-bib:s3-prereqs-lab.adoc" class="
 </div>
 </li>
 <li>
-<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.
-That VM will be your <em>test machine</em>.</p>
+<p>Verify that you have access to the local VM which is your <em>test machine</em> by using libvirt&#8217;s session interface.</p>
 <div class="paragraph">
 <p>If you do not, please perform the preparation tasks from the <a href="../ch1-updates/s3-prereqs-lab.html" class="xref page">first lab</a>.</p>
 </div>
@@ -354,7 +353,7 @@ Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hos
 </div>
 </li>
 <li>
-<p>Find which is the bootc container image that is currently booted.</p>
+<p>Determine which bootc container image is currently booted.</p>
 <div class="paragraph">
 <p>The password for the <code>core</code> user is <code>redhat123</code>.</p>
 </div>
@@ -370,7 +369,7 @@ Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hos
 <li>
 <p>Now suppose you want to find out if the <code>bootc status</code> command can provide additional details.</p>
 <div class="paragraph">
-<p>The usual way would be accessing its online documentation, but the <code>man</code> command is missing in the standard base bootc container image for RHEL.</p>
+<p>The usual way would be accessing its online documentation, however the <code>man</code> command is missing in the standard base bootc container image for RHEL.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -387,14 +386,14 @@ package man-db is not installed</code></pre>
 <li>
 <p>Use transient packages to access online documentation on your <em>test machine</em>.</p>
 <div class="paragraph">
-<p>It is possible to install RHEL excluding documentation from all packages, but this is not the case of the standard bootc container image for RHEL.
+<p>It is possible to install RHEL excluding documentation from all packages, but this is not the case for the standard bootc container image for RHEL.
 It is missing just the <code>man</code> command.</p>
 </div>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
 <p>First, review the mounted file systems.
-The complete list of mounted file is very long, because of the many virtual file systems and ram disks such as <code>/proc</code> and <code>/run</code>, so filter the list to display only on-disk file system using XFS.</p>
+The complete list of mounted file systems is very long, because of the many virtual file systems and ram disks such as <code>/proc</code> and <code>/run</code>, so filter the list to display only on-disk file systems using XFS.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t xfs</strong>
@@ -407,7 +406,7 @@ The complete list of mounted file is very long, because of the many virtual file
 </div>
 </li>
 <li>
-<p>Also notice that the root file system is actually an overlay file system, backed by the currently deployed bootc container image.</p>
+<p>Also verify that that the root file system is actually an overlay file system, backed by the currently deployed bootc container image.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>mount -t overlay</strong>
@@ -560,7 +559,7 @@ $ <strong>sudo ls /var/lib/mysql/</strong>
 </div>
 </li>
 <li>
-<p>If you wish, you can leave the SSH session your <em>test machine</em> open, because you will use it in the next activity.</p>
+<p>If you wish, you can leave the SSH session on your <em>test machine</em> open, because you will use it in the next activity.</p>
 </li>
 </ol>
 </div>
@@ -576,7 +575,7 @@ $ <strong>sudo ls /var/lib/mysql/</strong>
 <h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The next activity demonstrates the use of toolbx containers to as a way of installing troubleshooting utilities in an image mode system.</p>
+<p>The next activity demonstrates the use of toolbx containers to install troubleshooting utilities in an image mode system.</p>
 </div>
 </div>
 </div>
