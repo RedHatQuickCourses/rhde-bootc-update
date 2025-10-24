@@ -1,42 +1,42 @@
 :time_estimate: 3
 
-= Rollback Updates to Image Mode Systems
+= Roll Back Updates to Image Mode Systems
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 Objective::
-Rollback updates to edge devices by using the bootc utility.
+Roll back updates to edge devices by using the bootc utility.
 
 WARNING: Pending review
 
 == About transactional rolling back updates of image mode systems
 
-As explained during the previous section, bootc updates are atomic and transactional regarding the state of the read-only system image, but not regarding the state of mutable ssytem configurations and application data.
+As explained during the previous section, bootc updates are atomic and transactional regarding the state of the read-only system image, but not regarding the state of mutable system configurations and application data.
 
 Consequently, roll backs may require additional actions to be performed at runtime, by Systemd units embedded into a bootc image, or manually, as a day-2 activity, or even by day-2 automation.
 Else, the system configuration and application data may be left in a state that is not compatible with the system image it rolled back to.
 
-== Bootc rollback operation and system configurations
+== Bootc roll back operation and system configurations
 
-A `bootc rollback` operation is comparatively simpler than `bootc update` or `bootc switch` operations.
-The rollback operation just changes the boot order of the existing bootc deployments, so the previous one boots instead of the current one.
+A `bootc rollback` operation is comparatively simpler than a `bootc update` or `bootc switch` operations.
+The roll back operation basically changes the boot order of the existing bootc deployments, so the previous one boots instead of the current one.
 
 The `bootc rollback` changes the system boot loader configuration to boot from the previous bootc container image deployment.
 That means it will boot from not just the Linux kernel from the previous bootc container image, but it also uses the root file system from the previous image, and it also uses the copy of `/etc` that was created at the time that image was originally deployed.
 
-The rollback operation does NOT perform a new tree-way merge of the `/etc` directory, but uses whatever was the content of that directory in that deployment, which effectively means system configurations are rolled back also.
-Local day-2 changes performed while that deployment were active are retained, but other day-2 changes performed after the update are lost.
+The roll back operation does NOT perform a new three-way merge of the `/etc` directory, but uses whatever was the content of that directory in that deployment, which effectively means system configurations are rolled back also.
+Local day-2 changes performed while that deployment was active are retained, but other day-2 changes performed after the update are lost.
 
 Notice it is not a "reset" to the `/etc` contents from the previous bootc image: it is a "reset" to the mutable state that was in `/etc` right before the last update.
 
-== Application data during rollback.
+== Application data during roll back
 
-After rollback, an image mode system remains using the same copy of the `/var` directory that was already in use before the operation, which was also the same as before the last update.  Bootc rollbacks, like updates and switches do NOT change the `/var` directory in anyway.
+After roll back, an image mode system remains using the same copy of the `/var` directory that was already in use before the operation, which was also the same as before the last update.  Bootc roll backs, like updates and switches do NOT change the `/var` directory in anyway.
 
-So, if a `bootc update` resulted in changes to application data, for example migrating a relational database to a new schema, those changes may be incompatible with the system image booted after a rollback.
-It is the responsibility of the bootc image itself, or if its administrator, to revert those changes, for example by restoring a database backup.
+So, if a `bootc update` resulted in changes to application data, for example migrating a relational database to a new schema, those changes may be incompatible with the system image booted after a roll back.
+It is the responsibility of the bootc image itself, or of its administrator, to revert those changes, for example by restoring a database backup.
 
 == What's next
 
-The next lab configures an image mode rollbacks the system that was updates to the previous lab, so it is back to the image from before the update, as it started this course, and demonstrate that system settings also roll backs but not application data.
+The next lab roll backs the image mode system that was updated during the previous lab, so it returns to the image from before the update, and is left in the state as it started this course, and demonstrates that system settings also roll backs but not application data.
 
