@@ -16,7 +16,7 @@ Worst case, it would require a specially crafted RPM package, or installing some
 https://issues.redhat.com/browse/RHEL-119865#
 ////
 
-== Before you Begin
+== Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
 The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
@@ -33,8 +33,8 @@ But you must execute the preparation tasks from the first lab of this course.
 
 == Instructions
 
-You will switch an image mode system to a different container image, but it will because of an RPM package which performs an action that is incompatible with image mode.
-You will troubleshoot the failure and find its root cause, then make a second attempt by using an updated bootc container image which implements the recommended fix.
+You will switch an image mode system to a different container image, but it will fail because of an RPM package which performs an action that is incompatible with image mode.
+You will troubleshoot the failure and find its root cause, then make a second attempt by using an updated bootc container image, which implements the recommended fix.
 
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
@@ -47,7 +47,7 @@ $ *ls rhde-bootc-samples/*
 LICENSE     bib-cloud-init  bib-qcow2 ...
 --
 
-.. If needed, login to your private registry.
+.. If needed, log in to your private registry.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -65,9 +65,8 @@ $ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.
 --
 
 .. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
-That VM will be your _test machine_.
 +
-If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
+If you do not have access, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
 +
 [source,subs="verbatim,quotes"]
 --
@@ -89,7 +88,7 @@ Domain 'bootc-iso' started
 
 2. Access your _test machine_ and verify it is running a system image which provides a mock of a single-page web application.
 
-.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
+.. Enter the `temp-test-iso` directory and access your local VM by using the SSH key in that directory.
 +
 // Need the ssh-kegen -R command in the first lab, here it could be left out.
 +
@@ -102,7 +101,7 @@ Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hos
 [core@bootc-iso ~]$ 
 --
 
-.. Find which is the bootc container image that is currently booted.
+.. Find the bootc container image that is currently booted.
 +
 The password for the `core` user is `redhat123`.
 +
@@ -151,7 +150,7 @@ app.php index.html
 --
 ... It adds the PHP runtime and its FastCGI engine, as the recommended way of deploying PHP on an Apache HTTP Server.
 
-... It moves all web app files to a directory outside of `/var` so they cease to be application data but become part of the proper system image.
+... It moves all web application files to a directory outside of `/var` so they cease to be application data but become part of the proper system image.
 --
 +
 [source,subs="verbatim,quotes"]
@@ -171,11 +170,11 @@ $ *skopeo copy containers-storage:localhost/php-bootc docker://registry.lab.exam
 Writing manifest to image destination
 --
 
-4. Switch your _test machine_ to the new bootc container image
+4. Switch your _test machine_ to the new bootc container image.
 
-.. Return to the terminal with an open SSH session to your _test machine_
+.. Return to the terminal with an open SSH session to your _test machine_.
 
-.. Verify that the VM can access the private registry by checking for available updates:
+.. Verify that the VM can access the private registry by checking for available updates.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -183,7 +182,7 @@ $ sudo bootc upgrade --check
 No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
 --
 +
-NOTE: If you are continuing from the xref:ch3-rollback:s2-rollback-lab.adoc[previous lab], which performed a roll back operation, the `bootc update` command will still report "no updates available" because it is smart enough to NOT retry an update which was already rolled back.
+NOTE: If you are continuing from the xref:ch3-rollback:s2-rollback-lab.adoc[previous lab], which performed a roll back operation, the `bootc update` command will still report "no updates available" because it is smart enough to NOT retry an update that was already rolled back.
 
 .. If you skipped the previous two activities of this course, the `bootc upgrade` command will fail because your _test machine_ does not have TLS certificates and credentials for accessing the private registry.
 +
@@ -204,7 +203,7 @@ $ *sudo bootc upgrade --check*
 No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
 --
 
-.. Switch to the new bootc container image
+.. Switch to the new bootc container image.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -237,7 +236,7 @@ $ *sudo bootc status*
 +
 NOTE: If you skipped the previous activity, you would not see a "rollback image" in the output of the `bootc status` command.
 
-.. Reboot the your _test machine_
+.. Reboot your _test machine_.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -266,7 +265,7 @@ problems. Please try again later.</p>
 
 .. Reconnect to your _test machine_ so you can perform troubleshooting steps.
 +
-Remember that your two terminals are in different working directories: one has the files to build the new bootc image, another has the files to manage the local VM that is your _test machine_.
+Remember that your two terminals are in different working directories: one has the files to build the new bootc image, the other has the files to manage the local VM that is your _test machine_.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -319,7 +318,7 @@ php-fpm-8.3.15-1.el10.x86_64
 --
 
 6. There could be additional files and directories that the package initializes which belongs to application data on image mode systems, but that didn't appear in our simplistic test.
-Find these files, so you can deliver to a proper fix for the bootc container image.
+Find these files, so you can deliver a proper fix for the bootc container image.
 +
 IMPORTANT: Remember that changes to `/var` are NOT applied to an image mode system during image updates.
 This explains why the new bootc container image would work, if tested on a container engine, or if used to provision a new system, but fail on switch and update.
@@ -363,7 +362,7 @@ fi
 # Raised by new pool installation or new extension installation
 --
 
-.. Now that you have a diagnostic, rollback the _test machine_ to its original image, so you can later retry switching to the new image, after you implement a fix.
+.. Now that you have a diagnostic, roll back the _test machine_ to its original image, so you can later retry switching to the new image, after you implement a fix.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -377,7 +376,7 @@ Connection to 127.0.0.1 closed.
 7. Update the new bootc container image to initialize application data at boot time instead of at build time.
 The fix uses Systemd to create all required directories with proper owner and permissions.
 
-.. Return to the terminal which you used to build the bootc image
+.. Return to the terminal that you used to build the bootc image
 +
 [source,subs="verbatim,quotes"]
 --
@@ -415,7 +414,7 @@ Writing manifest to image destination
 
 8. Return to the terminal used to access your _test machine_ and try again switching to the new bootc container image, to verify that the fix works as intended.
 
-.. Reconnect to your local VM, which should be finished rebooting by now, from the roll back operation.
+.. Reconnect to your local VM, which should be finished rebooting by now, from the rollback operation.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -462,8 +461,9 @@ $ *curl 127.0.0.1:8080/app.php*
 PHP running at 172.25.250.9 under Apache/2.4.63 (Red Hat Enterprise Linux)
 --
 
-You experienced an issue that's not uncommon when your repurpose an image mode system, caused by RPM packages that initialize application data at build time instead of at boot time.
-You diagnosed and fixed the issue by using Systemd features.
+You experienced an issue that's not uncommon when your repurpose an image mode system.
+It was caused by RPM packages that initialize application data at build time instead of at boot time.
+You diagnosed the issue, and then fixed it by using Systemd features.
 
 == What's next
 

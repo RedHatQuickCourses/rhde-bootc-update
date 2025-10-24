@@ -8,8 +8,8 @@ WARNING: Pending review
 
 == Introduction
 
-This chapter describes the usage of the bootc utility to replace the system image in a image mode systems over the network.
+This chapter describes the usage of the bootc utility to replace the system image in image mode systems over the network.
 
-You will see that there is no significant differences between updating and repurposing an image mode system, except that you are using a different image name or tag than the current active system image.
+You will see that there is no significant difference between updating and repurposing an image mode system, except that you are using a different image name or tag than the current active system image.
 
 In the end, the current system image and the new system image being deployed do not need to have any relationship, which has interesting implications on how updates affect system configuration and application data.

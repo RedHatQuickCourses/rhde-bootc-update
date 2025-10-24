@@ -16,9 +16,9 @@ From the perspective of the bootc utility, the new and old images could be compl
 Alternatively, the new reference could point to a copy of the same image, just in a different container registry, or assigned to a different tag.
 
 If your organization uses floating tags, then `bootc upgrade` can be used to update an image mode system to a newer bootc container image assigned to the same tag.
-If not, all updates would require a `bootc switch`, so you can specify the image tag which provides the expected new version of the system software.
+If not, all updates would require a `bootc switch`, so you can specify the image tag that provides the expected new version of the system software.
 
-It was already possible to repurpose a system running package mode, but it was potentially hard: you had to install, update, and remove multiple packages, and deal with their configurations and data files and directories.
+It was already possible to repurpose a system running package mode, but it was potentially difficult: you had to install, update, and remove multiple packages, and deal with their configurations and data files and directories.
 Repurposing an image mode system is conceptually simpler, because it means just switching to a different system image.
 But it still requires dealing with left overs from the packages on the old image in system configurations and application data directories.
 
@@ -38,4 +38,4 @@ By the same reason, the `/var` directory may retain data from applications which
 == What's next
 
 The next lab switches an image mode system to a bootc container image which includes a package not designed for image mode.
-The it demonstrates how to troubleshoot the issues that happen after the switch, and how to update the bootc container image so it works for a switch or update operation without manual intervention.
+The lab demonstrates how to troubleshoot the issues that occur after the switch, and how to update the bootc container image so it works for a switch or update operation without manual intervention.
