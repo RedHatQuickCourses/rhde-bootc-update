@@ -9,7 +9,7 @@ Prepare a test environment for performing connected and disconnected updates to 
 
 WARNING: Pending review
 
-== Before you Begin
+== Before you begin
 
 You need a _development machine_ running Red Hat Enterprise Linux (RHEL), to which you have unrestricted sudo rights, and access to RHEL package repositories.
 That machine must have plenty of disk space to store multiple container images and multiple virtual machine (VM) images.
@@ -25,11 +25,11 @@ You will verify that you have access to mirrors of RHEL package repositories and
 You will also configure your _development machine_ with RHEL virtualization tools, based on libvirt, to use local VMs to stand in for physical edge devices.
 
 In the end of this lab, you provision a _test machine_, as a local VM, from a bootc container image.
-Most activities of this course will focus on the _test machine_.
+Most activities in this course will focus on the _test machine_.
 
 // Is it better to configure the creds for the private registry here or in the update and repurpose labs? The final lab, the disconnected updates, won't need that.
 
-If you are reusing the same classroom environment of the https://redhatquickcourses.github.io/rhde-bootc-build/[previous^] https://redhatquickcourses.github.io/rhde-bootc-provision/[courses^] in the image mode with Red Hat Device Edge quick course series, you should have everything ready and will skip most steps here.
+If you are reusing the same classroom environment of the https://redhatquickcourses.github.io/rhde-bootc-build/[previous^] https://redhatquickcourses.github.io/rhde-bootc-provision/[courses^] in this series, you should have everything ready and can skip most of thee steps.
 
 1. Verify that your _development machine_ has access to the RHEL package repositories from a DNF mirror.
 
@@ -43,8 +43,8 @@ rhel-10.0-for-x86_64-appstream-rpms                                             
 rhel-10.0-for-x86_64-baseos-rpms                                                                          Red Hat Enterprise Linux 10.0 BaseOS (dvd)
 --
 
-.. Verify that your RHEL package repositories do NOT point to the Red Hat customer portal.
-Instead they should point to a machine inside your virtual labs environment.
+.. Verify that your RHEL package repositories do NOT point to the Red Hat Customer Portal.
+Instead, they should point to a machine inside your virtual labs environment.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -77,7 +77,7 @@ Login Succeeded!
 .. List all images available on the private registry.
 The list should include some application container images and some bootc container images, for different releases of RHEL.
 +
-NOTE: if you are continuing from the https://redhatquickcourses.github.io/rhde-bootc-build/[previous^] https://redhatquickcourses.github.io/rhde-bootc-provision/[courses^], your search results will include more images than displayed here.
+NOTE: If you are continuing from the https://redhatquickcourses.github.io/rhde-bootc-build/[previous^] https://redhatquickcourses.github.io/rhde-bootc-provision/[courses^], your search results will include more images than displayed here.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -91,7 +91,7 @@ registry.lab.example.com:5000/rhel9-eus/rhel-9.6-bootc-image-builder
 registry.lab.example.com:5000/ubi10/ubi                               
 registry.lab.example.com:5000/ubi9/ubi 
 --
-IMPORTANT: The `podman search` command, and similar commands from other tools such as Docker, are not reliable to list container images in a production container registry nor to verify the availability of an image by its name and tag.
+IMPORTANT: The `podman search` command, and similar commands from other tools such as Docker, are neither reliable to list container images in a production container registry nor to verify the availability of an image by its name and tag.
 The `podman search` command works here only because there is a small number of container images stored in the private registry.
 
 4. Install the RHEL virtualization tools.
@@ -118,7 +118,7 @@ CPU model:           x86_64
 ...
 --
 
-5. If you need, clone the course samples repository from GitHub.
+5. If necessary, clone the course samples repository from GitHub.
 
 .. If you already cloned that Git repository from the previous course you can skip to the next step.
 +
@@ -139,7 +139,7 @@ Cloning into 'rhde-bootc-samples'...
 ...
 --
 
-.. If you think that your clone may be outdated, because you started the previous courses before this remaining courses was released, you can just update your local clone.
+.. If you think that your clone may be outdated, because you started the previous courses before this course was released, you can just update your local clone.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -240,9 +240,9 @@ Writing manifest to image destination
 $ *mkdir output*
 --
 
-.. Invoke the script which runs the bootc image builder utility.
+.. Invoke the script that runs the bootc image builder utility.
 +
-Be patient, it takes several minutes running.
+Be patient, it takes several minutes to run.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -281,9 +281,9 @@ $ *cp output/bootiso/install.iso httpd-system.iso*
 $ *export LABEL=RHEL-10-0-BaseOS-x86_64*
 --
 
-.. Invoke the script which creates a _test VM_ from the ISO.
+.. Invoke the script that creates a _test VM_ from the ISO.
 +
-After the installation is complete and the VM reboots, detach from its virtual serial console using kbd:[Ctrl+C].
+After the installation is complete and the VM reboots, detach from its virtual serial console by using kbd:[Ctrl+C].
 +
 [source,subs="verbatim,quotes"]
 --
@@ -300,7 +300,7 @@ Escape character is ^] (Ctrl + ])
 
 9. Verify that the test VM runs a web server with the mock web application files.
 
-.. Use the SSH hey to access your _test VM_.
+.. Use the SSH key to access your _test VM_.
 If you are using the same classroom from previous courses, first remove any host key from your known hosts file.
 +
 [source,subs="verbatim,quotes"]
@@ -345,4 +345,4 @@ If you need more context and explanation about the `bootc-iso` VM, please refer 
 == What's next
 
 The next chapter demonstrates how to update an image mode system to a new bootc container image from an OCI container registry.
-Later in this course we will also demonstrate how to update an image mode system to a new bootc container image from removable media, for scenarios that network access to an OCI container registry is not practical.
+Later in this course, we will also demonstrate how to update an image mode system to a new bootc container image from removable media, for scenarios in which network access to an OCI container registry is not practical.
