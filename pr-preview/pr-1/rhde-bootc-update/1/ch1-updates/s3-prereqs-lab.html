@@ -226,7 +226,7 @@ Pending review
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you Begin</h2>
+<h2 id="_before_you_begin"><a class="anchor" href="#_before_you_begin"></a>Before you begin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You need a <em>development machine</em> running Red Hat Enterprise Linux (RHEL), to which you have unrestricted sudo rights, and access to RHEL package repositories.
@@ -250,10 +250,10 @@ You will also configure your <em>development machine</em> with RHEL virtualizati
 </div>
 <div class="paragraph">
 <p>In the end of this lab, you provision a <em>test machine</em>, as a local VM, from a bootc container image.
-Most activities of this course will focus on the <em>test machine</em>.</p>
+Most activities in this course will focus on the <em>test machine</em>.</p>
 </div>
 <div class="paragraph">
-<p>If you are reusing the same classroom environment of the <a href="https://redhatquickcourses.github.io/rhde-bootc-build/" target="_blank" rel="noopener">previous</a> <a href="https://redhatquickcourses.github.io/rhde-bootc-provision/" target="_blank" rel="noopener">courses</a> in the image mode with Red Hat Device Edge quick course series, you should have everything ready and will skip most steps here.</p>
+<p>If you are reusing the same classroom environment of the <a href="https://redhatquickcourses.github.io/rhde-bootc-build/" target="_blank" rel="noopener">previous</a> <a href="https://redhatquickcourses.github.io/rhde-bootc-provision/" target="_blank" rel="noopener">courses</a> in this series, you should have everything ready and can skip most of thee steps.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -273,8 +273,8 @@ rhel-10.0-for-x86_64-baseos-rpms                                                
 </div>
 </li>
 <li>
-<p>Verify that your RHEL package repositories do NOT point to the Red Hat customer portal.
-Instead they should point to a machine inside your virtual labs environment.</p>
+<p>Verify that your RHEL package repositories do NOT point to the Red Hat Customer Portal.
+Instead, they should point to a machine inside your virtual labs environment.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>dnf repoinfo rhel-10.0-for-x86_64-baseos-rpms | grep baseurl</strong>
@@ -322,7 +322,7 @@ The list should include some application container images and some bootc contain
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-if you are continuing from the <a href="https://redhatquickcourses.github.io/rhde-bootc-build/" target="_blank" rel="noopener">previous</a> <a href="https://redhatquickcourses.github.io/rhde-bootc-provision/" target="_blank" rel="noopener">courses</a>, your search results will include more images than displayed here.
+If you are continuing from the <a href="https://redhatquickcourses.github.io/rhde-bootc-build/" target="_blank" rel="noopener">previous</a> <a href="https://redhatquickcourses.github.io/rhde-bootc-provision/" target="_blank" rel="noopener">courses</a>, your search results will include more images than displayed here.
 </td>
 </tr>
 </table>
@@ -347,7 +347,7 @@ registry.lab.example.com:5000/ubi9/ubi</code></pre>
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-The <code>podman search</code> command, and similar commands from other tools such as Docker, are not reliable to list container images in a production container registry nor to verify the availability of an image by its name and tag.
+The <code>podman search</code> command, and similar commands from other tools such as Docker, are neither reliable to list container images in a production container registry nor to verify the availability of an image by its name and tag.
 The <code>podman search</code> command works here only because there is a small number of container images stored in the private registry.
 </td>
 </tr>
@@ -389,7 +389,7 @@ CPU model:           x86_64
 </div>
 </li>
 <li>
-<p>If you need, clone the course samples repository from GitHub.</p>
+<p>If necessary, clone the course samples repository from GitHub.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
@@ -424,7 +424,7 @@ Cloning into 'rhde-bootc-samples'...
 </div>
 </li>
 <li>
-<p>If you think that your clone may be outdated, because you started the previous courses before this remaining courses was released, you can just update your local clone.</p>
+<p>If you think that your clone may be outdated, because you started the previous courses before this course was released, you can just update your local clone.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">$ <strong>cd rhde-bootc-samples</strong>
@@ -556,9 +556,9 @@ Writing manifest to image destination
 </div>
 </li>
 <li>
-<p>Invoke the script which runs the bootc image builder utility.</p>
+<p>Invoke the script that runs the bootc image builder utility.</p>
 <div class="paragraph">
-<p>Be patient, it takes several minutes running.</p>
+<p>Be patient, it takes several minutes to run.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -618,9 +618,9 @@ It is fine if you have other VMs besides <code>bootc-iso</code>.
 </div>
 </li>
 <li>
-<p>Invoke the script which creates a <em>test VM</em> from the ISO.</p>
+<p>Invoke the script that creates a <em>test VM</em> from the ISO.</p>
 <div class="paragraph">
-<p>After the installation is complete and the VM reboots, detach from its virtual serial console using <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>After the installation is complete and the VM reboots, detach from its virtual serial console by using <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -644,7 +644,7 @@ Escape character is ^] (Ctrl + ])</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Use the SSH hey to access your <em>test VM</em>.
+<p>Use the SSH key to access your <em>test VM</em>.
 If you are using the same classroom from previous courses, first remove any host key from your known hosts file.</p>
 <div class="listingblock">
 <div class="content">
@@ -703,7 +703,7 @@ Misc tests of bootc images and firewalld.</code></pre>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The next chapter demonstrates how to update an image mode system to a new bootc container image from an OCI container registry.
-Later in this course we will also demonstrate how to update an image mode system to a new bootc container image from removable media, for scenarios that network access to an OCI container registry is not practical.</p>
+Later in this course, we will also demonstrate how to update an image mode system to a new bootc container image from removable media, for scenarios in which network access to an OCI container registry is not practical.</p>
 </div>
 </div>
 </div>
