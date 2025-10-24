@@ -1,0 +1,484 @@
+:time_estimate: 13
+
+= Lab: Update Edge Devices from a Container Registry
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Update edge devices manually from new bootc container images published in an OCI container registry.
+
+== Before you begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+== Instructions
+
+You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and then update that system to a new version of its bootc container image.
+After performing the update, you will verify that configuration and application data are preserved by the update.
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *ls rhde-bootc-samples/*
+LICENSE     bib-cloud-init  bib-qcow2 ...
+--
+
+.. If needed, log in to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to the local VM which, is your _test machine_, by using libvirt's session interface.
++
+If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+2. Access your _test machine_ and perform day-2 configurations, which affect system settings and application data.
++
+// Move or repeat some steps to the previous lab, to validate the newly built VM is fine?
+
+.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
++
+// Need the ssh-kegen -R command in the first lab, here it could be left out.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cd temp-test-iso*
+$ *ssh-keygen -R '[127.0.0.1]:8022'*
+# Host [127.0.0.1]:8022 found: line 7
+/home/student/.ssh/known_hosts updated.
+Original contents retained as /home/student/.ssh/known_hosts.old
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Record the hash of the current bootc container image of the test system.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Verify that the system is configured with UTC as its timezone and change it to reflect local settings.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=UTC
+$ *sudo timedatectl set-timezone 'America/Cancun'*
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+--
+
+.. Change the HTML files which mock a single-page web application.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cat /var/www/html/index.html*
+Misc tests of bootc images and firewalld
+$ *sudo bash -c "echo 'Hacked the webapp' > /var/www/html/index.html"*
+$ *curl 127.0.0.1*
+Hacked the webapp
+--
+
+.. Try to install Cockpit.
++
+IMPORTANT: It will fail, but do NOT add the `--transient` option.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q cockpit*
+package cockpit is not installed
+$ *sudo yum install cockpit*
+...
+This bootc system is configured to be read-only. Pass --transient to perform this transaction in a transient overlay which will reset when the system reboots.
+Operation aborted.
+--
+
+.. Show bootc update timer is active, and disable it to ensure you have control of when the system will apply updates.
++
+// You may find that the service (not the time) failed, if your VM is running for long enough. It's because the VM has no certs or credentials to access the private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl is-active bootc-fetch-apply-updates.timer*
+active
+$ *sudo systemctl mask bootc-fetch-apply-updates.timer*
+Created symlink '/etc/systemd/system/bootc-fetch-apply-updates.timer' → '/dev/null'.
+$ *systemctl is-active bootc-fetch-apply-updates.timer*
+failed
+--
++
+NOTE: If you notice that the timer, or its associated service, failed, ignore that for now.
+As you will see later in this lab, the _test machine_ is not properly configured to access the private registry, which would provide bootc container image updates.
+
+.. Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
+Open a new terminal on your _development machine_ to proceed with the next step.
+
+3. Build and publish an updated bootc container image.
+
+.. Create a new working directory, copy sample files from git repository, and copy the SSH key from the previous working directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *mkdir temp-test-update*
+$ **cp -r rhde-bootc-samples/httpd-update/* temp-test-update**
+$ **cp temp-test-iso/edge-key* temp-test-update**
+$ *cd temp-test-update*
+--
+
+.. Review the Containerfile for the updated bootc container image.
+It makes the following changes:
++
+--
+... Installs and enables the Cockpit service.
+
+... Moves the updated single-page web application files to the `/webapp/html` directory, which is read-only, and changes the Apache Web Server configuration to match.
+
+... Puts a placeholder file in the old location for the web application files, the `/var/www/html` directory, which is actually an application data directory.
+--
++
+[source,subs="verbatim,quotes"]
+--
+include::1@samples:httpd-update:example$Containerfile[]
+--
+
+.. If you prefer, you can compare the updated Containerfile with the original one for the `httpd-system` bootc container image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *diff Containerfile ../rhde-bootc-samples/httpd-system*
+4c4
+<   dnf install -y firewalld httpd cockpit && \
+---
+>   dnf install -y firewalld httpd && \
+...
+--
+
+.. Build a new bootc container image and publish it in the private registry using the same tag used for initial provisioning of your _test machine_.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *podman build -t httpd-system:v1.0.1 .*
+...
+Successfully tagged localhost/httpd-system:v1.0.1
+e1390a4dc788a24e36c7ec2da82784ce4d594665eeed9060802e59c0fcfed6c7
+$ *skopeo copy containers-storage:localhost/httpd-system:v1.0.1 docker://registry.lab.example.com:5000/httpd-system:v1.0*
+...
+Copying config e1390a4dc7 done   | 
+Writing manifest to image destination
+--
+
+4. Apply the image update.
+
+.. Return to the terminal running an SSH session to your _test machine_ and attempt to check for the availability of updates.
++
+.. It is expected to fail, because the _test machine_ was never configured with credentials and a CA root for the private registry.
+You can confirm it by attempting to log in by using Podman.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc upgrade --check*
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Error: authenticating creds for "registry.lab.example.com:5000": pinging container registry registry.lab.example.com:5000: Get "https://registry.lab.example.com:5000/v2/": tls: failed to verify certificate: x509: certificate signed by unknown authority
+--
+
+.. Copy the CA root from the private registry, add it to the system's trusted CAs, and try again to log in to the private registry by using Podman.
++
+[source,subs="verbatim,quotes"]
+--
+$ *scp student@utility:/opt/registry/certs/domain.crt*
+domain.crt
+$ *sudo cp domain.crt /etc/pki/ca-trust/source/anchors/*
+$ *sudo update-ca-trust*
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Checking for bootc container image updates still fails because the bootc utility does not share registry access credentials with application containers.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc update --check*
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: reading manifest v1.0 in registry.lab.example.com:5000/httpd-system: authentication required
+--
+
+.. Copy the registry credentials file from the root user's runtime data directory to the location expected by the bootc utility.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo cp /run/containers/0/auth.json /etc/ostree/auth.json*
+--
+
+.. Now it works.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc update --check*
+Update available for: docker://registry.lab.example.com:5000/httpd-system:v1.0
+  Version: 10.0
+  Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+...
+--
++
+NOTE: If you get an error about "updating mtime", you can safely ignore it.
+
+.. Apply the update, which reboots your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc update --apply*
+...
+Rebooting system
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Wait a few moments, to give your _test machine_ time to reboot, and verify that it now runs the updated web application.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *curl 127.0.0.1:8080*
+Misc tests of bootc images and firewalld, v1.1
+--
+
+.. Reconnect to your _test machine_ so you can verify all changes to the system image, configurations, and data.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$ 
+--
+
+5. Verify which of the changes from the new image were actually applied to your _test machine_.
+
+.. Verify that the new image is the current booted image, and the previous image is still available for rolling back.
++
+Compare the hashes of each image with your notes from previous steps.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+       Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Verify that the Cockpit is installed and active.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q cockpit*
+cockpit-334.1-1.el10_0.x86_64
+$ *systemctl is-active cockpit.socket*
+active
+--
+
+.. Verify that the Apache Web Server configurations were changed, and that the web application files are in the `/webapp` directory, proving that changes to `/etc` from the new image were applied.
++
+[source,subs="verbatim,quotes"]
+--
+$ *grep DocumentRoot /etc/httpd/conf/httpd.conf*
+# DocumentRoot: The directory out of which you will serve your
+DocumentRoot "/webapp/html"
+    # access content that does not live under the DocumentRoot.
+$ *ls /webapp/html*
+index.html
+$ *cat /webapp/html/index.html*
+Misc tests of bootc images and firewalld, v1.1
+--
+
+.. Verify that the placeholder file, added to the new bootc image, is NOT present in the system.
++
+Also notice that the changed web application files are still in the system, because application data is NOT affected by bootc image upgrades.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls /var/www/html*
+index.html
+$ *cat /var/www/html/index.html*
+Hacked the webapp
+--
+
+.. Attempt to make changes to the current web application files.
+It will fail because now application files are in a read-only directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bash -c "echo 'Hacked the webapp, again' > /webapp/html/index.html"*
+bash: line 1: /webapp/html/index.html: Read-only file system
+--
+
+6. Verify the status of configuration and application data changes applied to your _test machine_ before the update.
+
+.. Verify that you can still check for the availability of bootc image updates, because the system retained the certificate and credentials for accessing the private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc upgrade --check*
+No changes in: docker://registry.lab.example.com:5000/httpd-system:v1.0
+--
+
+.. Verify that the system locale changes were also preserved.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+--
+
+.. Remember that you already checked that application data changes (in the `/var/www/html` directory) were preserved by the bootc image upgrade.
+
+7. *Optional:* Change settings of the local test VM, to enable access to Cockpit.
+
+.. Still on your _test machine_, show that Cockpit is available, but cannot access it because there is no port-forward setting for TCP port 9090 of your local VM.
++
+[source,subs="verbatim,quotes"]
+--
+$ *curl -s 127.0.0.1:9090 | head*
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Loading...</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <meta insert="dynamic_content_here" /><base href="/">
+    <script>
+--
+
+.. Stop your test VM.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh destroy bootc-iso*
+Domain 'bootc-iso' destroyed
+--
+
+.. If you wish, you can review the raw XML definition of your test VM.
++
+It's a very long and verbose definition, but notice, close to its end, the `<interface>` element which includes two `<portForward>` child elements.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh dumpxml bootc-iso | less*
+<domain type='kvm'>
+  <name>bootc-iso</name>
+...
+  <devices>
+    <emulator>/usr/libexec/qemu-kvm</emulator>
+...
+    <interface type='user'>
+      <mac address='52:54:00:af:21:3a'/>
+      <portForward proto='tcp'>
+        <range start='8022' to='22'/>
+      </portForward>
+      <portForward proto='tcp'>
+        <range start='8080' to='80'/>
+      </portForward>
+      <model type='virtio'/>
+      <backend type='passt'/>
+      <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
+    </interface>
+...    
+  </devices>
+</domain>
+--
++
+NOTE: You could make edits to the XML file and apply them back to libvirt by using the `virsh edit bootc-iso` command, but the next steps show a scriptable approach for making the change.
+
+.. Add a third `portForward` element to the libvirt domain of your test VM.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virt-xml bootc-iso --print-diff --define --edit --network portForward2.proto=tcp,portForward2.range0.start=8090,portForward2.range0.to=9090*
+--- Original XML
++++ Altered XML
+@@ -136,6 +136,9 @@
+       <model type="virtio"/>
+       <backend type="passt"/>
+       <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
++      <portForward proto="tcp">
++        <range start="8090" to="9090"/>
++      </portForward>
+     </interface>
+     <serial type="pty">
+       <target type="isa-serial" port="0">
+
+Domain 'bootc-iso' defined successfully.
+--
+
+.. Restart your test VM.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+.. Wait a few moments to give your test VM, that is, your _test machine_, time to reboot.
+Then open a web browser on your _development machine_ and use the URL `\https://127.0.0.1:8090` to access Cockpit on your _test machine_.
+
+You successfully updated your _test machine_ with a new bootc container image and demonstrated that configuration changes and application data are preserved.
+You also demonstrated that new configurations from the updated image are applied, but new application data is not.
+If you need to add initial data from a bootc image update, you need a more sophisticated design, which uses Systemd units to initialize data at first boot instead of just having data files on the image.
+
+== What's Next
+
+The next section introduces the process for rolling back updates of image mode systems, and how it affects configuration and application data.

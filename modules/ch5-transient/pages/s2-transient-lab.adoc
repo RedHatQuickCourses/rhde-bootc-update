@@ -1,0 +1,275 @@
+:time_estimate: 7
+
+= Lab: Troubleshoot Edge Devices Using Transient Packages
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Troubleshoot issues with edge devices by installing transient packages.
+
+== Before you begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+NOTE: You do not need any of the outcomes from the previous three activities, and could skip them.
+But you must execute the preparation tasks from the first lab of this course.
+
+== Instructions
+
+You will experiment with one approach to add troubleshooting tools which might be missing in an image mode system: installing transient packages, which disappear after reboot.
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *ls rhde-bootc-samples/*
+LICENSE     bib-cloud-init  bib-qcow2 ...
+--
+
+.. If necessary, login to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
++
+If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+2. Access your _test machine_ and verify that it lacks the ability to display online documentation, that is, man pages.
+
+.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd temp-test-iso*
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Determine which bootc container image is currently booted.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Now suppose you want to find out if the `bootc status` command can provide additional details.
++
+The usual way would be accessing its online documentation, however the `man` command is missing in the standard base bootc container image for RHEL.
++
+[source,subs="verbatim,quotes"]
+--
+$ *man bootc*
+-bash: man: command not found
+$ *rpm -q man-db*
+package man-db is not installed
+--
+
+3. Use transient packages to access online documentation on your _test machine_.
++
+It is possible to install RHEL excluding documentation from all packages, but this is not the case for the standard bootc container image for RHEL.
+It is missing just the `man` command.
+
+.. First, review the mounted file systems.
+The complete list of mounted file systems is very long, because of the many virtual file systems and ram disks such as `/proc` and `/run`, so filter the list to display only on-disk file systems using XFS.
++
+[source,subs="verbatim,quotes"]
+--
+$ *mount -t xfs*
+/dev/vda3 on /sysroot type xfs (ro,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /etc type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /sysroot/ostree/deploy/default/var type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda3 on /var type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+/dev/vda2 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+--
+
+.. Also verify that that the root file system is actually an overlay file system, backed by the currently deployed bootc container image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *mount -t overlay*
+composefs on / type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)
+--
+
+.. Attempt to install the `man-db` package, as you would do in a package mode system.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dnf install man-db*
+...
+This bootc system is configured to be read-only. Pass --transient to perform this transaction in a transient overlay which will reset when the system reboots.
+Operation aborted.
+--
+
+.. Try again, this time specifying the use of transient packages.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dnf install --transient man-db*
+...
+Complete!
+--
+
+.. Access the online docs for the `bootc` command.
++
+[source,subs="verbatim,quotes"]
+--
+$ *man bootc status*
+...
+SYNOPSIS
+       bootc status [--format] [--format-version] [--booted] [-h|--help]
+
+DESCRIPTION
+       Display status
+
+       If  standard  output  is a terminal, this will output a description of the bootc system state. If standard output is not a terminal, output a YAML-formatted object using a schema intended to match a Kubernetes
+       resource that describes the state of the booted system.
+...
+--
+
+.. Verify that there is now a second overlay file system, on `/usr`.
+This overlay enables transient packages.
++
+[source,subs="verbatim,quotes"]
+--
+$ *mount -t overlay*
+composefs on / type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)
+overlay on /usr type overlay (ro,relatime,seclabel,lowerdir=usr,upperdir=/var/tmp/ostree-unlock-ovl.ENSDE3/upper,workdir=/var/tmp/ostree-unlock-ovl.ENSDE3/work,uuid=on)
+--
+
+.. To show that transient packages can leave lasting side-effects on image mode systems, install and start a MySQL Server.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dnf install --transient mysql8.4-server*
+..
+Complete!
+$ *sudo systemctl start mysqld*
+--
+
+.. Verify that the MySQL Server package added system configuration files and application data files.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls /etc/my.cnf.d/*
+client.cnf  mysql-server.cnf
+$ *sudo ls /var/lib/mysql/*
+'#ib_16384_0.dblwr'  '#innodb_temp'   binlog.index   client-cert.pem   ibdata1   mysql.ibd         mysql_upgrade_history   mysqlx.sock.lock     public_key.pem    sys
+'#ib_16384_1.dblwr'   auto.cnf        ca-key.pem     client-key.pem    ibtmp1    mysql.sock        mysql_upgrade_info      performance_schema   server-cert.pem   undo_001
+'#innodb_redo'        binlog.000001   ca.pem         ib_buffer_pool    mysql     mysql.sock.lock   mysqlx.sock             private_key.pem      server-key.pem    undo_002
+--
+
+4. Verify that transient packages are gone after a reboot.
+
+.. Reboot your _test machine_.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo systemctl reboot --now*
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Give it some time to reboot and reconnect using SSH.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Verify that the `man` command and its package are gone.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *man bootc*
+-bash: man: command not found
+$ *rpm -q man-db*
+package man-db is not installed
+--
+
+.. Verify that there the overlay on `/usr` is also gone.
++
+[source,subs="verbatim,quotes"]
+--
+$ *mount -t overlay*
+composefs on / type overlay (ro,relatime,seclabel,lowerdir+=/run/ostree/.private/cfsroot-lower,datadir+=/sysroot/ostree/repo/objects,redirect_dir=on,metacopy=on)
+--
+
+.. Verify that the MySQL Server is gone.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q mysql8.4-server*
+package mysql8.4-server is not installed
+$ *sudo systemctl status mysqld*
+Unit mysqld.service could not be found.
+--
+
+.. Verify that the configuration and data files of the MySQL Server are still present in your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls /etc/my.cnf.d/*
+client.cnf  mysql-server.cnf
+$ *sudo ls /var/lib/mysql/*
+'#ib_16384_0.dblwr'  '#innodb_redo'   auto.cnf        binlog.index   ca.pem            client-key.pem   ibdata1   mysql.ibd               mysql_upgrade_info   private_key.pem   server-cert.pem   sys        undo_002
+'#ib_16384_1.dblwr'  '#innodb_temp'   binlog.000001   ca-key.pem     client-cert.pem   ib_buffer_pool   mysql     mysql_upgrade_history   performance_schema   public_key.pem    server-key.pem    undo_001
+--
+
+.. If you wish, you can leave the SSH session on your _test machine_ open, because you will use it in the next activity.
+
+You installed transient packages, verified that the packages themselves (and their executable programs) disappear after reboot, but changes they made to system settings and application data do not disappear and may require manual cleaning up.
+
+== What's next
+
+The next activity demonstrates the use of toolbx containers to install troubleshooting utilities in an image mode system.

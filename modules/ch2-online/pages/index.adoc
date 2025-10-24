@@ -1,0 +1,14 @@
+= Apply Updates to Image Mode Systems from the Network
+
+Goal::
+
+Publish and validate updates of RHEL for edge devices using image mode for RHEL using an OCI container registry.
+
+== Introduction
+
+This chapter describes the general usage of the bootc utility to apply manual and automated updates to image mode systems over the network.
+
+Unlike with package mode systems, where updating an individual package is a very distinct operation from installing a new package, and could bring in an unknown number of dependent package installations or updates, updating an image mode system always deploys a complete new system image, which replaces the previous one entirely.
+
+The main concern, during an update, is that image mode systems preserve application data in `/var` and merge current system configurations in `/etc` with new systems configurations from the new image.
+

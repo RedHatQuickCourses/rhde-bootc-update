@@ -1,0 +1,453 @@
+:time_estimate: 13
+:nginx-bootc-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: c1832c2dafbb1e1908e422dbaf6f9c7165a8399b24b90db3da2eb120b4977d8f
+
+= Lab: Update Edge Devices from Removable Media
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Update edge devices manually from new bootc container images stored in removable media.
+
+== Before you begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+Make sure you verified your test environment by following the xref:ch1-updates:s3-prereqs-lab.adoc[first lab] of this course.
+
+== Instructions
+
+You will create a custom ISO installation media image which can be used for both provisioning new systems and updating existing systems, and then you will emulate the usage of the image as an USB storage device, to apply the update in a local VM.
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *ls rhde-bootc-samples/*
+LICENSE     bib-cloud-init  bib-qcow2 ...
+--
+
+.. If necessary, login to your private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Verify that you have a bootc container image named `httpd-system:v1.0` in your private container registry.
+If you do not, please perform the xref:ch1-bib:s3-prereqs-lab.adoc[first lab], which builds and publishes that image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.com:5000/httpd-system:v1.0*
+["v1.0"]
+--
+
+.. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
++
+If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+2. Access your _test machine_ and perform day-2 configurations, which affect system settings and application data, to demonstrate that behavior is the same as with online updates.
+
+.. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cd temp-test-iso*
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Record the hash of the current bootc container image of the test system.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
++
+NOTE: The previous output assumes you did not perform any of the previous labs, except for the first one, and you would get a different output if you did.
+Those differences are inconsequential for the current lab.
+
+.. Change the system time zone.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=UTC
+$ *sudo timedatectl set-timezone 'Asia/Tokyo'*
+$ *timedatectl show -p Timezone*
+Timezone=Asia/Tokyo
+--
++
+NOTE: Again, your output may differ if you performed or skipped any of the previous labs, and it is inconsequential for the current lab.
+
+.. Change the HTML files, which mock a single-page web application.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cat /var/www/html/index.html*
+Misc tests of bootc images and firewalld
+$ *sudo bash -c "echo 'Before a disconnected update' > /var/www/html/index.html"*
+$ *curl 127.0.0.1*
+Before a disconnected update
+--
++
+NOTE: Once more, the current state of your _test machine_ depends on which of the previous labs you performed, and differences are inconsequential for the current lab.
+
+.. Disable the bootc update timer to ensure you have control of when the system will apply updates.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl mask bootc-fetch-apply-updates.timer*
+Created symlink '/etc/systemd/system/bootc-fetch-apply-updates.timer' → '/dev/null'.
+--
+
+.. Keep this terminal open, and with the SSH session running, because you will return to it to apply updates.
+Open a new terminal on your _development machine_ to proceed with the next step.
+
+3. On your _development machine_, build and publish a bootc container image that you will use to update (actually, to repurpose) your _test machine_.
++
+////
+From nginx-core package
+/var/lib/nginx
+/var/lib/nginx/tmp
+/var/log/nginx
+/var/log/nginx/access.log
+/var/log/nginx/error.log
+
+[root@bootc-iso ~]# ls -lZd /var/lib/nginx
+drwxrwx---. 3 nginx root system_u:object_r:httpd_var_lib_t:s0 17 Oct 15 15:10 /var/lib/nginx
+[root@bootc-iso ~]# ls -lZd /var/log/nginx
+drwx--x--x. 2 root root system_u:object_r:httpd_log_t:s0 41 Oct 15 15:10 /var/log/nginx
+[root@bootc-iso ~]# ls -lZ /var/log/nginx
+total 8
+-rw-r--r--. 1 root root system_u:object_r:httpd_log_t:s0   90 Oct 15 15:11 access.log
+-rw-r--r--. 1 root root system_u:object_r:httpd_log_t:s0 2677 Oct 15 15:19 error.log
+[root@bootc-iso ~]# ls -lZd /var/lib/nginx/tmp
+drwxrwx---. 7 nginx root system_u:object_r:httpd_var_lib_t:s0 78 Oct 15 15:10 /var/lib/nginx/tmp
+
+It seems these directories, if missing, are created at service start, because I had no issues during the switch, unlike with the PHP-FPM image
+////
+
+.. Create a new working directory, copy sample files from the git repository, and copy the SSH key from the previous working directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *mkdir temp-test-disconnected*
+$ **cp -r rhde-bootc-samples/nginx-bootc/* temp-test-disconnected**
+$ **cp temp-test-iso/edge-key* temp-test-disconnected**
+$ *cd temp-test-disconnected*
+--
+
+.. Build a new bootc container image and publish it in the private registry.
++
+[source,subs="verbatim,quotes"]
+--
+$ *podman build -t nginx-bootc:v1.0 .*
+...
+Successfully tagged localhost/nginx-bootc:v1.0
+e1390a4dc788a24e36c7ec2da82784ce4d594665eeed9060802e59c0fcfed6c7
+$ *skopeo copy containers-storage:localhost/nginx-bootc:v1.0 docker://registry.lab.example.com:5000/nginx-bootc:v1.0*
+...
+Copying config e1390a4dc7 done   | 
+Writing manifest to image destination
+--
++
+NOTE: A production workflow would also copy the updated image to a non-floating tag, in the example, it could be `1.0.0`.
+
+4. Create a custom installation ISO embedding the new bootc container image.
+
+.. Log in again on your private registry, but this time as the root user.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo podman login -u student -p redhat registry.lab.example.com:5000*
+Login Succeeded!
+--
+
+.. Download the bootc container image to the container storage of the root user.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo podman pull registry.lab.example.com:5000/nginx-bootc:v1.0*
+...
+Writing manifest to image destination
+...
+--
+
+.. Invoke the script which runs the bootc image builder utility.
++
+Be patient, it takes several minutes to run.
++
+[source,subs="verbatim,quotes"]
+--
+$ *mkdir output*
+$ *bash bib-nginx.sh*
+...
+Message: Results saved in .
+--
+
+.. Copy the installable ISO from the bootc image builder output directory to a more permanent location, and give it an easily identifiable name.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cp output/bootiso/install.iso nginx-bootc.iso*
+--
+
+5. Connect the update media to your _test machine_ as a virtual USB storage device.
++
+Pay attention because you will be running commands in two different shells.
++
+--
+... One, on your _development machine_, in the `temp-test-iso` directory, which is the one you used to start the `bib-iso` local VM and also the one you use to start SSH sessions to your _test machine_.
+
+... Another, also on your _development machine_, in the `temp-test-disconnected` directory, which is the one you used to create the custom installation ISO.
+--
+
+.. On your _test machine_, list the disk devices recognized by your local VM.
++
+[source,subs="verbatim,quotes"]
+--
+$ *lsblk*
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0     11:0    1  1.8G  0 rom  
+vda    252:0    0   20G  0 disk 
+├─vda1 252:1    0    1M  0 part 
+├─vda2 252:2    0    1G  0 part /boot
+└─vda3 252:3    0   19G  0 part /var
+                                /sysroot/ostree/deploy/default/var
+                                /etc
+                                /sysroot
+--
+
+.. On your _development machine_, hot-plug a virtual USB disk in your local VM.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh attach-disk bootc-iso $PWD/nginx-bootc.iso sdb --targetbus usb --mode readonly --live*
+Disk attached successfully
+--
++
+NOTE: You must use the name `sdb` to refer to the USB storage device from libvirt because it already uses the name `sda` for the virtual CD-ROM disk, which the RHEL kernel names as the `sr0` device.
+Also notice that you must provide absolute file paths to disk images when using the `virsh` command, unlike the `virt-install` command, which accepts relative file paths.
+
+.. Verify that the kernel on your local VM recognizes that a new USB disk device was attached.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo dmesg | tail*
+[17625.346096] usbcore: registered new interface driver uas
+[17626.375851] scsi 6:0:0:0: Direct-Access     QEMU     QEMU HARDDISK    2.5+ PQ: 0 ANSI: 5
+[17626.376748] scsi 6:0:0:0: Attached scsi generic sg1 type 0
+[17626.389850] sd 6:0:0:0: Power-on or device reset occurred
+[17626.392628] sd 6:0:0:0: [sda] 3846408 512-byte logical blocks: (1.97 GB/1.83 GiB)
+[17626.393591] sd 6:0:0:0: [sda] Write Protect is on
+[17626.393833] sd 6:0:0:0: [sda] Mode Sense: 63 00 80 08
+[17626.394500] sd 6:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[17626.664333]  sda: sda1 sda2 sda3
+[17626.665089] sd 6:0:0:0: [sda] Attached SCSI disk
+--
++
+NOTE: The RHEL kernel names the libvirt `sdb` disk as the `sda` device.
+
+.. Mount the first partition, which contains the actual RHEL installer file system, and verify that it contains a bootc container image, using the OCI format, in its `container` directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo mount -o ro /dev/sda1 /var/mnt/*
+mount: /var/mnt: WARNING: source write-protected, mounted read-only.
+$ *ls /var/mnt/*
+EFI  boot  container  images  osbuild-base.ks  osbuild.ks
+$ *ls /var/mnt/container/*
+blobs  index.json  oci-layout
+--
+
+.. Unfortunately, bootc image builder does not store the human-friendly name and tag of the bootc container image when creating a custom installation ISO.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cat /var/mnt/container/index.json | jq*
+{
+  "schemaVersion": 2,
+  "manifests": [
+    {
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "digest": "sha256:{nginx-bootc-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+      "size": 11740
+    }
+  ]
+}
+--
+
+.. You can verify, on your _development machine_, that the digest in the installation ISO matches the image in the private container registry.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ skopeo inspect --format '{{.Digest}}' docker://registry.lab.example.com:5000/nginx-bootc:v1.0
+sha256:{nginx-bootc-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+--
+
+6. Apply the disconnected image update.
+
+.. Stage the new bootc container image on your _test machine_.
+Because there is a single container image in the OCI directory of the installation ISO, you do not need to specify any image name, tag, or digest.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc switch --transport oci /var/mnt/container*
+...
+Queued for next boot: ostree-unverified-image:oci:/var/mnt/container
+  Version: 10.0
+  Digest: sha256:{nginx-bootc-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+--
+
+.. Umount the virtual USB device.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo umount /var/mnt*
+--
+
+.. On your _development machine_, unplug the virtual USB device.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh detach-disk bootc-iso sdb*
+Disk detached successfully
+--
+
+.. Reboot your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl reboot*
+...
+Connection to 127.0.0.1 closed.
+--
+
+.. Wait a few moments, to give your _test machine_ time to reboot, and verify, from your _development machine_, that it now runs the updated web application.
++
+[source,subs="verbatim,quotes"]
+--
+$ *curl 127.0.0.1:8080*
+Mock web application, now under Nginx.
+--
+
+.. Reconnect to your _test machine_ so you can verify its status after applying the new bootc container image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+...
+[core@bootc-iso ~]$ 
+--
+
+7. Verify that changes, from the new image, were applied to your _test machine_, and day-2 changes to configuration and data were retained.
+
+.. Verify that the new image is the current booted image, and the previous image is still available for rolling back.
++
+Compare the hashes of each image with your notes from previous steps.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+GRAB OUTPUT
+● Booted image: oci:/var/mnt/container
+        Digest: sha256:{nginx-bootc-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-10-15 23:59:15.583009054 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Verify that it is running Nginx, while the previous image was running the Apache HTTP Server.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q nginx*
+nginx-1.26.3-1.el10.x86_64
+$ *systemctl is-active nginx*
+active
+$ *rpm -q httpd*
+package httpd is not installed
+$ *systemctl is-active httpd*
+inactive
+--
+
+.. Verify that changes to the old mock web application are still in the system, because application data is NOT affected by bootc image upgrades.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls /var/www/html*
+index.html
+$ *cat /var/www/html/index.html*
+Before a disconnected update
+--
+
+.. Verify that the change to the system locale changes was also preserved.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=Asia/Tokyo
+--
+
+.. Verify that attempts to check for updates will fail, because the mount point used for the removable USB storage is set as the location for the system's bootc container image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc upgrade --check*
+ERROR Upgrading: Creating importer: failed to invoke method OpenImage: failed to invoke method OpenImage: open /var/mnt/container/index.json: no such file or directory--
+--
+
+.. If you hot-plug the virtual USB device and mount it, the check succeeds, so you could use the `bootc update` command for the next update, if you wish.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc upgrade --check*
+No changes in: ostree-unverified-image:oci:/var/mnt/container
+--
+
+You performed a disconnected system image update, by using a virtual USB media.
+This is the closest we can get to the workflow for an actual physical device, using the classroom environment, and enables a developer to test any automation which requires removable USB media and that would behave differently with other kinds of storage devices.
+
+== What's Next
+
+This was the last activity in this course.
+Stay tuned for new enablement courses for Red Hat Device Edge and image mode in the future!

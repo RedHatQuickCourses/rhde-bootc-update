@@ -1,14 +1,11 @@
 = Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL
 :navtitle: Home
 
-WARNING: Work in progress
-
-
 == Goal
 
 This course teaches how to update edge devices and kiosk computers using image mode for RHEL, and how to repurpose those devices by switching to different bootc container images.
 
-It is the third in a series of quick courses about using image mode for RHEL with Red Hat Device Edge, which will consist of three courses:
+It is the third in a series of quick courses about using image mode for RHEL with Red Hat Device Edge, which consists of the following courses:
 
 . https://redhatquickcourses.github.io/rhde-bootc-build/[Building System Images for Red Hat Device Edge with Image Mode for RHEL] (pre-requisite course)
 
@@ -17,7 +14,7 @@ It is the third in a series of quick courses about using image mode for RHEL wit
 . *Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL* (this course)
 
 IMPORTANT: Red Hat associates must enroll using its https://ADD-LINK[Red Hat University] entry, and Red Hat Partners must enroll using its ADD-LINK[Red Hat Partner Connect] entry.
-Red Hat employees and partners must also enroll on HOL019 by following the links on the _Classroom environment_ heading bellow
+Red Hat employees and partners must also enroll on HOL019 by following the links included under the _Classroom environment_ heading bellow.
 
 == Objectives
 
@@ -118,4 +115,4 @@ For documentation about Red Hat Device Edge, check its https://docs.redhat.com/e
 Training Content Architect +
 Red Hat - Product Portfolio Marketing & Learning
 
-//Special thanks to Colin Walters and Gregory Giguashvili, who provided sample commands and scripts which either inspired or were copied verbatim to the hands-on activities in this course.
+Special thanks to Colin Walters and Gregory Giguashvili, who provided sample commands and scripts which either inspired or were copied verbatim to the hands-on activities in this course.

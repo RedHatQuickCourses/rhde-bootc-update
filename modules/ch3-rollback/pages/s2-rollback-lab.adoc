@@ -1,0 +1,268 @@
+:time_estimate: 7
+
+= Lab: Roll Back Updates to Edge Devices
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Revert edge devices to a previous known good bootc container image which is available in the device itself.
+
+== Before you begin
+
+You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
+The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
+
+These instructions were tested on RHEL 10.0 but should work with minimal or no changes on newer and older RHEL releases, since 9.6.
+
+If you are using the course classroom, log in on the `workstation` VM as the user `student` with password `student`.
+If not, please adapt the instructions to your test environment.
+
+IMPORTANT: This activity is a continuation of the xref:ch2-online:s2-update-lab.adoc[previous lab] of this course.
+You must perform the two activities in sequence, without destroying your classroom environment or its VMs.
+
+== Instructions
+
+You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and then roll back that system to a previously installed bootc container image.
+After rolling back, you will verify that system configurations were also rolled back to the state from before the update, but application data retains changes performed after the update.
+
+1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
+
+.. Verify that you have a clone of the sample code repository of this course in your home directory.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cd*
+$ *ls rhde-bootc-samples*
+LICENSE  bib-cloud-init  bib-qcow2 ...
+...
+--
+
+.. Verify that you have access to the local VM named `bootc-iso` by using libvirt's session interface.
+That VM is your _test machine_.
++
+If you do not have access, please perform the xref:ch2-online:s2-update-lab.adoc[previous lab].
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh list --all*
+ Id   Name               State
+-----------------------------------
+ -    bootc-iso          shut off
+--
++
+NOTE: It is fine if you have other local VMs on your system.
+
+.. If your `bootc-iso` VM is not running (like in the output of the previous command), start it.
++
+[source,subs="verbatim,quotes"]
+--
+$ *virsh start bootc-iso*
+Domain 'bootc-iso' started
+--
+
+.. Verify that you have a directory named `temp-test-iso` with files that were used to create and access your _test machine_.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ls temp-test-iso/*
+bib-iso.sh  config.toml  edge-key  edge-key.pub  httpd-system.iso ...
+--
+
+2. Access your _test machine_ and perform day-2 configurations, which affect system settings and application data.
+
+.. Enter the `temp-test-iso` directory and access your local VM by using the SSH key in that directory.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *cd temp-test-iso*
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Verify that there are two deployed bootc container images in the system, and that the currently booted image is the most recent one.
++
+The password for the `core` user is `redhat123`.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+       Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Verify that the system is configured with a non-UTC time zone and change it to a different non-UTC time zone.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+$ *sudo timedatectl set-timezone 'US/Alaska'*
+$ *timedatectl show -p Timezone*
+Timezone=US/Alaska
+--
+
+.. Change the default index page of the Apache HTTP Server, which contains files to mock a single-page web application.
+Also verify that the current system image is NOT serving the application from the default document root.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cat /var/www/html/index.html*
+Hacked the webapp
+$ *sudo bash -c "echo 'Cleaned the webapp' > /var/www/html/index.html"*
+$ *curl 127.0.0.1*
+Misc tests of bootc images and firewalld, v1.1
+--
+
+.. Verify that Cockpit is installed and enabled.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q cockpit*
+cockpit-334.1-1.el10_0.x86_64
+$ *sudo systemctl is-active cockpit.socket*
+active
+--
+
+3. Reboot your _test machine_, so it reverts to its previous bootc container image.
+
+.. Verify that the bootc update timer is disabled.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl is-active bootc-fetch-apply-updates.timer*
+inactive
+--
++
+IMPORTANT: If the timer were enabled, it would be recommended to disable it before a roll back operation, to prevent another image update from overriding the roll back operation.
+
+.. Roll back the system.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc rollback*
+Next boot: rollback deployment
+--
+
+.. Verify that the human-readable output of the `bootc status` command displays no indication that a roll back operation was queued.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+       Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+         Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+--
+
+.. Verify that the next boot uses the roll back image and that a roll back is queued for the next reboot, by using the bootc extended status.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status --format json | jq -r '.spec.bootOrder'*
+rollback
+$ *sudo bootc status --format json | jq -r '.status.rollbackQueued'*
+true
+--
+
+.. Reboot the system.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl reboot --now*
+...
+Connection to 127.0.0.1 closed.
+--
+
+4. Access your _test machine_ and verify how its configuration and application data were affected by rolling back its system image.
+
+.. Give your VM a few moments to reboot and reconnect to it by using SSH.
++
+[source,subs="verbatim,quotes"]
+--
+$ *ssh -i edge-key -p 8022 core@127.0.0.1*
+Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hosts.
+...
+[core@bootc-iso ~]$ 
+--
+
+.. Verify that the booted image is no longer the most recent one.
++
+[source,subs="verbatim,quotes,attributes"]
+--
+$ *sudo bootc status*
+● Booted image: registry.lab.example.com:5000/httpd-system:v1.0
+        Digest: sha256:{httpd-system-v1-hash-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+       Version: 10.0 (2025-09-15 19:03:35.318301268 UTC)
+
+  Rollback image: registry.lab.example.com:5000/httpd-system:v1.0
+          Digest: sha256:{httpd-system-v2-hash-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb}
+         Version: 10.0 (2025-09-30 22:54:29.224606481 UTC)
+--
+
+.. Verify that the currently booted image is the same for the next boot and that there is no roll back operation queued.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo bootc status --format json | jq -r '.spec.bootOrder'*
+default
+$ *sudo bootc status --format json | jq -r '.status.rollbackQueued'*
+false
+--
+
+.. Verify that the time zone changed to the value from before the update, that is, system configurations were also rolled back.
++
+[source,subs="verbatim,quotes"]
+--
+$ *timedatectl show -p Timezone*
+Timezone=America/Cancun
+--
+
+.. Verify that the default web root directory contains data from after the update, that is, application data is NOT rolled back.
++
+[source,subs="verbatim,quotes"]
+--
+$ *cat /var/www/html/index.html*
+Cleaned the webapp
+--
+
+.. Verify that, because the rolled back system image stores web application files on the default web root, it now serves the application as changed after the update, which may be unexpected.
++
+[source,subs="verbatim,quotes"]
+--
+$ *curl 127.0.0.1*
+Cleaned the webapp
+--
+
+.. Verify that Cockpit is not available, because it was not present in the rolled back system image.
++
+[source,subs="verbatim,quotes"]
+--
+$ *rpm -q cockpit*
+package cockpit is not installed
+--
+
+.. Verify that the auto-update time remains inactive, because it was masked before applying the update.
++
+[source,subs="verbatim,quotes"]
+--
+$ *sudo systemctl is-active bootc-fetch-apply-updates.timer*
+inactive
+--
+
+You observed that rolling back the system image also rolls back system settings (the `/etc` directory) because it is part of the bootc image deployment.
+You also observed that rolling back the system image does NOT roll back application data (the `/var` directory) because it is not part of the bootc deployment, and you may need to perform manual data cleaning and migration for the system to work after rolling back.
+
+== What's next
+
+The next chapter presents a variation of the update operation, where you switch a system to a different and possibly unrelated bootc container image.
+

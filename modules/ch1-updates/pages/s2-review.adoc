@@ -1,0 +1,22 @@
+:time_estimate: 5
+
+= TBD: Review of Building and Provisioning Edge Devices With RHEL Image Mode
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+Objective::
+Lorem ipsum
+
+WARNING: Not started yet
+
+////
+== Interactive Quiz
+
+++++
+<iframe type="text/javascript" src='_attachments/s2-quiz.html' style="width: 768px; height: 532px" allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" frameborder="0"></iframe>
+++++
+////
+
+== What's Next
+
+The first activity verifies that you have all necessary prerequisites to build and deploy bootc container images in a disconnected environment.
