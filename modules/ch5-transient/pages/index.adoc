@@ -2,7 +2,7 @@
 
 Goal::
 
-Troubleshoot RHEL for edge devices with image mode for RHEL by applying transient package updates and using toolbox containers.
+Troubleshoot RHEL for edge devices with image mode for RHEL by applying transient package updates and using toolbx containers.
 
 WARNING: Pending review
 

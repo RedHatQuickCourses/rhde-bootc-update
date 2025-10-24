@@ -9,7 +9,7 @@ Troubleshoot issues with edge devices by running toolbox containers.
 
 WARNING: Pending review
 
-== Before you Begin
+== Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
 The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
@@ -28,7 +28,7 @@ But you must execute the preparation tasks from the first lab of this course.
 
 // Toolbox (https://github.com/containers/toolbox) is the same as Toolbx (https://containertoolbx.org/) and the later is now the official name (but commands and container images didn't change)
 
-You will experiment with another approach to add troubleshooting tools which might be missing in an image mode system: creating toolbx containers, which continue available after reboot, until you explicitly delete them.
+You will experiment with another approach to add troubleshooting tools, which might be missing in an image mode system: creating toolbx containers, which continue available after reboot, until you explicitly delete them.
 
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
@@ -41,7 +41,7 @@ $ *ls rhde-bootc-samples/*
 LICENSE     bib-cloud-init  bib-qcow2 ...
 --
 
-.. If needed, login to your private registry.
+.. If necessary, log in to your private registry.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -59,7 +59,6 @@ $ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.
 --
 
 .. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
-That VM will be your _test machine_.
 +
 If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
 +
@@ -81,7 +80,7 @@ $ *virsh start bootc-iso*
 Domain 'bootc-iso' started
 --
 
-2. Access your _test machine_ and verify that it lacks a couple troubleshooting utilities.
+2. Access your _test machine_ and verify that it lacks some troubleshooting utilities.
 
 .. Enter the `temp-test-iso` directory and access your local VM using the SSH key in that directory.
 +
@@ -116,7 +115,7 @@ $ *rpm -q hwloc*
 package hwloc is not installed
 --
 
-.. Also attempt to get information about the system's IO performance, and find that the Sysstat package is not installed either.
+.. Also attempt to get information about the system's I/O performance, and find that the Sysstat package is not installed either.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -126,13 +125,13 @@ $ *rpm -q sysstat*
 package sysstat is not installed
 --
 
-.. Leave the current running the SSH session to your _test machine_ and open another terminal on your _development machine_ to proceed to the next step.
+.. Leave the current the SSH session running on your _test machine_ and open another terminal on your _development machine_ to proceed to the next step.
 
 3. Make a toolbx container available in the private registry.
 +
 // Remove this step after an update of HOL019 to provide that image preloaded.
 
-.. On your _development machine_, verify if there is a copy of standard UBI toolbox container on the private registry.
+.. On your _development machine_, verify if there is a copy of the standard UBI toolbox container on the private registry.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -145,7 +144,7 @@ $ *skopeo inspect docker://registry.lab.example.com:5000/ubi10/toolbox:10.0*
 ...
 --
 
-.. If the copy is not available, your output will be similar to the following.
+.. If a copy is not available, your output will be similar to the following.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -156,7 +155,7 @@ FATA[0000] Error parsing image name "docker://registry.lab.example.com:5000/ubi1
 +
 NOTE: Remember that the `podman search` command and its equivalents with other container engines are NOT a reliable way to determine if a container image exists in an OCI container registry, because of limitations inherited from the Docker Distribution API.
 
-.. If the copy is not available, create it so you can keep with the scenario of disconnected deployments.
+.. If a copy is not available, create one so you can keep with the scenario of disconnected deployments.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -167,7 +166,7 @@ Writing manifest to image destination
 
 4. Use a toolbx container to collect information about the NUMA architecture of your _test machine_.
 
-.. Switch to the terminal on your _test machine) and use the copy of the toolbx image to create a toolbx container.
+.. Switch to the terminal on your _test machine_ and use the copy of the toolbx image to create a toolbx container.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -182,7 +181,7 @@ Enter with: toolbox enter
 
 .. Enter the toolbox container you just created.
 +
-Notice the change of the system prompt, which doesn't display the current directory anymore, but includes an hexagonal bullet.
+Notice the change of the system prompt, which no longer displays the current directory, but includes an hexagonal bullet.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -192,7 +191,7 @@ $ *toolbox enter*
 --
 
 .. View the file systems which are backed by actual disk contents and which are overlays.
-Notice that the list of file systems of either time is much longer than outside of the toolbx container, if you compare with the outputs to the same commands from the previous lab.
+Notice that the list of file systems of either type is much longer than the list from outside of the toolbx container, if you compare it with the outputs to the same commands from the previous lab.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -259,7 +258,7 @@ logout
 
 5. Verify that toolbx containers are application containers, and you can have multiple of them, each with their own container file system.
 
-.. Verify that toolbx containers are application containers, which you can manage using Podman.
+.. Verify that toolbx containers are application containers, which you can manage by using Podman.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -286,7 +285,7 @@ Created container: stat
 Enter with: toolbox enter stat
 --
 
-.. Verify that the new toolbx container is not running, because you didn't enter yet.
+.. Verify that the new toolbx container is not running, because you didn't enter it yet.
 +
 [source,subs="verbatim,quotes,attributes"]
 --
@@ -369,7 +368,7 @@ $ *sudo systemctl start mysqld*
 Failed to connect to system scope bus via local transport: No such file or directory
 --
 
-.. Verify that, despite the failure to start the database server, there are configuration files and data directories crated by installing its package.
+.. Verify that, despite the failure to start the database server, there are configuration files and data directories created by installing its package.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -387,9 +386,9 @@ $ *exit*
 logout
 --
 
-7. Verify if any of the changes made while in the second toolbox container affect your _test machine_.
+7. Verify whether any of the changes made while in the second toolbox container affect your _test machine_.
 
-.. Verify if there is text file on your home directory.
+.. Verify if there is a text file on your home directory.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -420,7 +419,7 @@ $ *sudo systemctl reboot --now*
 Connection to 127.0.0.1 closed.
 --
 
-.. Give it a few moments to reboot and reconnect using SSH
+.. Give your _test machine_ a few moments to reboot and reconnect by using SSH
 +
 [source,subs="verbatim,quotes"]
 --
@@ -464,7 +463,7 @@ sysstat-12.7.6-2.el10.x86_64
 logout
 --
 
-.. If you wish, stop and delete your toolbx containers using Podman.
+.. If you wish, stop and delete your toolbx containers by using Podman.
 +
 [source,subs="verbatim,quotes"]
 --

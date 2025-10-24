@@ -9,7 +9,7 @@ Troubleshoot issues with edge devices by installing transient packages.
 
 WARNING: Pending review
 
-== Before you Begin
+== Before you begin
 
 You need a _development machine_ running RHEL, to which you have unrestricted sudo access.
 The _development machine_ has access to mirrors of RHEL package repositories and bootc container images.
@@ -39,7 +39,7 @@ $ *ls rhde-bootc-samples/*
 LICENSE     bib-cloud-init  bib-qcow2 ...
 --
 
-.. If needed, login to your private registry.
+.. If necessary, login to your private registry.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -57,7 +57,6 @@ $ *skopeo inspect --format '{{ json .RepoTags }}' docker://registry.lab.example.
 --
 
 .. Verify that you have access to the local VM which is your _test machine_ by using libvirt's session interface.
-That VM will be your _test machine_.
 +
 If you do not, please perform the preparation tasks from the xref:ch1-updates:s3-prereqs-lab.adoc[first lab].
 +
@@ -92,7 +91,7 @@ Warning: Permanently added '[127.0.0.1]:8022' (ED25519) to the list of known hos
 [core@bootc-iso ~]$ 
 --
 
-.. Find which is the bootc container image that is currently booted.
+.. Determine which bootc container image is currently booted.
 +
 The password for the `core` user is `redhat123`.
 +
@@ -106,7 +105,7 @@ $ *sudo bootc status*
 
 .. Now suppose you want to find out if the `bootc status` command can provide additional details.
 +
-The usual way would be accessing its online documentation, but the `man` command is missing in the standard base bootc container image for RHEL.
+The usual way would be accessing its online documentation, however the `man` command is missing in the standard base bootc container image for RHEL.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -118,11 +117,11 @@ package man-db is not installed
 
 3. Use transient packages to access online documentation on your _test machine_.
 +
-It is possible to install RHEL excluding documentation from all packages, but this is not the case of the standard bootc container image for RHEL.
+It is possible to install RHEL excluding documentation from all packages, but this is not the case for the standard bootc container image for RHEL.
 It is missing just the `man` command.
 
 .. First, review the mounted file systems.
-The complete list of mounted file is very long, because of the many virtual file systems and ram disks such as `/proc` and `/run`, so filter the list to display only on-disk file system using XFS.
+The complete list of mounted file systems is very long, because of the many virtual file systems and ram disks such as `/proc` and `/run`, so filter the list to display only on-disk file systems using XFS.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -134,7 +133,7 @@ $ *mount -t xfs*
 /dev/vda2 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
 --
 
-.. Also notice that the root file system is actually an overlay file system, backed by the currently deployed bootc container image.
+.. Also verify that that the root file system is actually an overlay file system, backed by the currently deployed bootc container image.
 +
 [source,subs="verbatim,quotes"]
 --
@@ -269,10 +268,10 @@ $ *sudo ls /var/lib/mysql/*
 '#ib_16384_1.dblwr'  '#innodb_temp'   binlog.000001   ca-key.pem     client-cert.pem   ib_buffer_pool   mysql     mysql_upgrade_history   performance_schema   public_key.pem    server-key.pem    undo_001
 --
 
-.. If you wish, you can leave the SSH session your _test machine_ open, because you will use it in the next activity.
+.. If you wish, you can leave the SSH session on your _test machine_ open, because you will use it in the next activity.
 
 You installed transient packages, verified that the packages themselves (and their executable programs) disappear after reboot, but changes they made to system settings and application data do not disappear and may require manual cleaning up.
 
 == What's next
 
-The next activity demonstrates the use of toolbx containers to as a way of installing troubleshooting utilities in an image mode system.
+The next activity demonstrates the use of toolbx containers to install troubleshooting utilities in an image mode system.
