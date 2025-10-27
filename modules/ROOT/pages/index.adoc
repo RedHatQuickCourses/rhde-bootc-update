@@ -13,7 +13,7 @@ It is the third in a series of quick courses about using image mode for RHEL wit
 
 . *Updating and Repurposing Red Hat Device Edge Systems with Image Mode for RHEL* (this course)
 
-IMPORTANT: Red Hat associates must enroll using its https://ADD-LINK[Red Hat University] entry, and Red Hat Partners must enroll using its ADD-LINK[Red Hat Partner Connect] entry.
+IMPORTANT: Red Hat associates must enroll using its https://training-lms.redhat.com/sso/saml/auth/rhlpint?RelayState=deeplinkoffering%3D86334529[Red Hat University] entry, and Red Hat Partners must enroll using its https://training-lms.redhat.com/sso/saml/auth/rhopen?RelayState=deeplinkoffering%3D84937349[Red Hat Partner Connect] entry.
 Red Hat employees and partners must also enroll on HOL019 by following the links included under the _Classroom environment_ heading bellow.
 
 == Objectives
