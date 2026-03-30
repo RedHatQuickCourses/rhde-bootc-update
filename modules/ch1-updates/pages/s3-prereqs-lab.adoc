@@ -29,6 +29,8 @@ Most activities in this course will focus on the _test machine_.
 
 If you are reusing the same classroom environment of the https://redhatquickcourses.github.io/rhde-bootc-build/[previous^] https://redhatquickcourses.github.io/rhde-bootc-provision/[courses^] in this series, you should have everything ready and can skip most of thee steps.
 
+include::ch1-updates:partial$set-permissive.adoc[]
+
 1. Verify that your _development machine_ has access to the RHEL package repositories from a DNF mirror.
 
 .. List the configured package repositories.

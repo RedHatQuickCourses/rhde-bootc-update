@@ -25,6 +25,8 @@ You must perform the two activities in sequence, without destroying your classro
 You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and then roll back that system to a previously installed bootc container image.
 After rolling back, you will verify that system configurations were also rolled back to the state from before the update, but application data retains changes performed after the update.
 
+include::ch1-updates:partial$set-permissive.adoc[]
+
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
 .. Verify that you have a clone of the sample code repository of this course in your home directory.

@@ -34,6 +34,9 @@ But you must execute the preparation tasks from the first lab of this course.
 You will switch an image mode system to a different container image, but it will fail because of an RPM package which performs an action that is incompatible with image mode.
 You will troubleshoot the failure and find its root cause, then make a second attempt by using an updated bootc container image, which implements the recommended fix.
 
+
+include::ch1-updates:partial$set-permissive.adoc[]
+
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
 .. Verify that you have a clone of the sample code repository of this course in your home directory.

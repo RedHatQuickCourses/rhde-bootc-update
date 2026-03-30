@@ -26,6 +26,8 @@ But you must execute the preparation tasks from the first lab of this course.
 
 You will experiment with one approach to add troubleshooting tools which might be missing in an image mode system: installing transient packages, which disappear after reboot.
 
+include::ch1-updates:partial$set-permissive.adoc[]
+
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
 .. Verify that you have a clone of the sample code repository of this course in your home directory.

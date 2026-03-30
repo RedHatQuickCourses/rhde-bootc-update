@@ -24,6 +24,8 @@ Make sure you verified your test environment by following the xref:ch1-updates:s
 You will perform manual day-2 configurations to an image mode system, to emulate changes that would occur to real systems, and then update that system to a new version of its bootc container image.
 After performing the update, you will verify that configuration and application data are preserved by the update.
 
+include::ch1-updates:partial$set-permissive.adoc[]
+
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
 .. Verify that you have a clone of the sample code repository of this course in your home directory.

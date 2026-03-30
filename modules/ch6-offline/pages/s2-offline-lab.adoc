@@ -24,6 +24,8 @@ Make sure you verified your test environment by following the xref:ch1-updates:s
 
 You will create a custom ISO installation media image which can be used for both provisioning new systems and updating existing systems, and then you will emulate the usage of the image as an USB storage device, to apply the update in a local VM.
 
+include::ch1-updates:partial$set-permissive.adoc[]
+
 1. Prepare to start this activity by checking that you have the outcomes from previous activities on your _development machine_.
 
 .. Verify that you have a clone of the sample code repository of this course in your home directory.
